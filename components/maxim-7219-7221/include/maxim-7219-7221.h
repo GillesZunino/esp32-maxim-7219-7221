@@ -10,4 +10,102 @@
 #include <driver/gpio.h>
 
 
-void func(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+/**
+ * @brief Handle to a MAXIM 7219 / 7221 device.
+ */
+struct led_driver_maxim7219;
+typedef struct led_driver_maxim7219* led_driver_maxim7219_handle_t; ///< Handle to a MAXIM 7219 / 7221 device
+
+/**
+ * @brief MAXIM 7219 / 7221 register addresses.
+ */
+typedef enum {
+    MAXIM7219_NOOP_ADDRESS = 0x00,
+    MAXIM7219_DIGIT0_ADDRESS = 0x01,
+    MAXIM7219_DIGIT1_ADDRESS = 0x02,
+    MAXIM7219_DIGIT2_ADDRESS = 0x03,
+    MAXIM7219_DIGIT3_ADDRESS = 0x04,
+    MAXIM7219_DIGIT4_ADDRESS = 0x05,
+    MAXIM7219_DIGIT5_ADDRESS = 0x06,
+    MAXIM7219_DIGIT6_ADDRESS = 0x07,
+    MAXIM7219_DIGIT7_ADDRESS = 0x08,
+    MAXIM7219_DECODE_MODE_ADDRESS = 0x09,
+    MAXIM7219_INTENSITY_ADDRESS = 0x0A,
+    MAXIM7219_SCAN_LIMIT_ADDRESS = 0x0B,
+    MAXIM7219_SHUTDOWN_ADDRESS = 0x0C,
+    MAXIM7219_DISPLAY_TEST_ADDRESS = 0x0F
+} maxim7219_address_t;
+
+/**
+ * @brief MAXIM 7219 / 7221 Code B font symbols.
+ */
+typedef enum {
+    MAXIM7219_CODE_B_FONT_0 = 0,
+    MAXIM7219_CODE_B_FONT_1 = 1,
+    MAXIM7219_CODE_B_FONT_2 = 2,
+    MAXIM7219_CODE_B_FONT_3 = 3,
+    MAXIM7219_CODE_B_FONT_4 = 4,
+    MAXIM7219_CODE_B_FONT_5 = 5,
+    MAXIM7219_CODE_B_FONT_6 = 6,
+    MAXIM7219_CODE_B_FONT_7 = 7,
+    MAXIM7219_CODE_B_FONT_8 = 8,
+    MAXIM7219_CODE_B_FONT_9 = 9,
+    MAXIM7219_CODE_B_FONT_MINUS = 10,
+    MAXIM7219_CODE_B_FONT_E = 11,
+    MAXIM7219_CODE_B_FONT_H = 12,
+    MAXIM7219_CODE_B_FONT_L = 13,
+    MAXIM7219_CODE_B_FONT_P = 14,
+    MAXIM7219_CODE_B_FONT_BLANK = 15
+} maxim7219_code_b_font_t;
+
+/**
+ * @brief MAXIM 7219 / 7221 segments.
+ */
+typedef enum {
+    MAXIM7219_SEGMENT_G = 0x01,
+    MAXIM7219_SEGMENT_F = 0x02,
+    MAXIM7219_SEGMENT_E = 0x04,
+    MAXIM7219_SEGMENT_D = 0x08,
+    MAXIM7219_SEGMENT_C = 0x10,
+    MAXIM7219_SEGMENT_B = 0x20,
+    MAXIM7219_SEGMENT_A = 0x40,
+    MAXIM7219_SEGMENT_DP = 0x80
+} maxim7219_segment_t;
+
+/**
+ * @brief Configuration of the SPI bus for MAXIM 7219 / 7221 device.
+ */
+typedef struct maxim7219_spi_config {
+    spi_host_device_t host_id;          ///< SPI bus ID. Which buses are available depends on the specific chip
+    spi_clock_source_t clock_source;    ///< Select SPI clock source, `SPI_CLK_SRC_DEFAULT` by default
+    int clock_speed_hz;                 ///< SPI clock speed in Hz. Derived from `clock_source`
+    int input_delay_ns;                 ///< Maximum data valid time of slave. The time required between SCLK and MISO
+    int spics_io_num;                   ///< CS GPIO pin for this device, or `GPIO_NUM_NC` (-1) if not used
+    int queue_size;                     ///< SPI transaction queue size. See 'spi_device_queue_trans()'
+} maxim7219_spi_config_t;
+
+/**
+ * @brief Configuration of MAXIM 7219 / 7221 device.
+ */
+typedef struct maxim7219_config {
+    maxim7219_spi_config_t spi_cfg;       ///< SPI configuration for MCP2515
+} maxim7219_config_t;
+
+/**
+ * @brief MAXIM 7219 / 7221 operation mode.
+ */
+typedef enum {
+    MAXIM7219_SHUTDOWN_MODE = 0,
+    MAXIM7219_NORMAL_MODE = 1,
+    MAXIM7219_TEST_MODE = 2
+} maxim7219_mode_t;
+
+
+#ifdef __cplusplus
+}
+#endif
