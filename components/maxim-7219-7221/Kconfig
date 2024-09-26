@@ -1,0 +1,19 @@
+# -----------------------------------------------------------------------------------
+# Copyright 2024, Gilles Zunino
+# -----------------------------------------------------------------------------------
+
+menu "MAXIM 7219 / 7221 Driver"
+
+    config MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        bool "Enable MAXIM 7219 / 7221 debug log"
+        default n
+        help
+            whether to enable the debug log message for the MAXIM 7219 / 7221 driver.
+            Note that this option only controls the MAXIM 7219 / 7221 logs.
+
+    config MAXIM_7219_7221_SANITIZER
+        bool "Enable GCC sanitizers"
+        default n
+        help
+            Select this option to enable GCC sanitizers ("-fsanitize=undefined -fno-sanitize=shift-base") on the MAXIM 7219 / 7221 driver. Enabling GCC sanitizer can make the code much larger and should not be enabled in production builds.
+endmenu
