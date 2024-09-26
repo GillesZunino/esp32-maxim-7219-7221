@@ -1,0 +1,20 @@
+# Peripherial states
+.vscode/.espidf.peripherals.state.json
+
+# ESP-IDF menuconfig output
+sdkconfig
+sdkconfig.old
+
+# ESP-IDF debugger adapter intermediates
+debug.log
+esp-idf-vscode-generated.gdb
+
+# ESP-IDF build intermediates and output
+**/managed_components/**
+**/build/**
+
+# ESP-IDF component manager lock file
+**/dependencies.lock
+
+# ESP-IDF unit test
+**/unity-app/**
