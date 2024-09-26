@@ -1,0 +1,3 @@
+version: "0.0.1"
+description: "This is a test component"
+url: "https://mycomponent.com"  # The homepage of the component. It can be a GitHub repository page.
