@@ -1,0 +1,73 @@
+// -----------------------------------------------------------------------------------
+// Copyright 2024, Gilles Zunino
+// -----------------------------------------------------------------------------------
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "EIDF | Eclipse (JTAG + UART)",
+      "type": "gdbtarget",
+      "request": "attach",
+
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Monitor: Start the monitor (RESET)",
+
+      "initCommands": [
+        "set mem inaccessible-by-default off",
+        "set remote hardware-watchpoint-limit {IDF_TARGET_CPU_WATCHPOINT_NUM}",
+        "monitor reset halt",
+        "maintenance flush register-cache"
+      ]
+    },
+    {
+      "name": "GDB | cppgdb (JTAG + UART)",
+      "type": "cppdbg",
+      "request": "launch",
+
+      "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
+
+      "linux": {
+        "MIMode": "gdb",
+        "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+        "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf"
+      },
+      "osx": {
+        "MIMode": "gdb",
+        "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+        "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf"
+      },
+      "windows": {
+        "MIMode": "gdb",
+        "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+        "program": "${workspaceFolder}\\build\\${command:espIdf.getProjectName}.elf"
+      },
+
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        { "name": "PATH", "value": "${config:idf.customExtraPaths}" }
+      ],
+
+      "preLaunchTask": "Monitor: Start the monitor (RESET)",
+
+      "setupCommands": [
+        { "text": "target extended-remote :3333" },
+        { "text": "set mem inaccessible-by-default off" },
+        { "text": "set remote hardware-watchpoint-limit {IDF_TARGET_CPU_WATCHPOINT_NUM}" },
+        { "text": "monitor reset halt" },
+        { "text": "maintenance flush register-cache" }
+      ],
+
+      "externalConsole": false,
+      "logging": {
+        "exceptions": true,
+        "programOutput": true,
+        "moduleLoad": true,
+        "trace": false,
+        "traceResponse": false,
+        "engineLogging": false,
+        "natvisDiagnostics": false
+      }
+    }
+  ]
+}

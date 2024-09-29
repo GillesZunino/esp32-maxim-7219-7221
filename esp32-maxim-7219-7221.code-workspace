@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_basic"
+		}
+	],
+	"settings": {
+		"cmake.configureOnEdit": false,
+		"cmake.configureOnOpen": false,
+
+		"idf.telemetry": false,
+		"idf.showOnboardingOnInit": false,
+		
+		"files.associations": {}
+	}
+}
