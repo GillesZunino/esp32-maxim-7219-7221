@@ -29,6 +29,7 @@ static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t h
 
 static esp_err_t check_driver_configuration_private(const maxim7219_config_t* config);
 static esp_err_t check_maxim_handle_private(led_driver_maxim7219_handle_t handle);
+static esp_err_t check_maxim_chain_id_private(led_driver_maxim7219_handle_t handle, uint8_t chainId);
 
 
 esp_err_t led_driver_max7219_init(const maxim7219_config_t* config, led_driver_maxim7219_handle_t* handle) {
@@ -173,6 +174,7 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
 
 esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_mode_t mode) {
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
 
     uint16_t length = 0;
     maxim7219_command_t buffer[2];
@@ -268,4 +270,8 @@ static esp_err_t check_maxim_handle_private(led_driver_maxim7219_handle_t handle
     }
 
     return ESP_OK;
+}
+
+static esp_err_t check_maxim_chain_id_private(led_driver_maxim7219_handle_t handle, uint8_t chainId) {
+    return (chainId >= 1) && (chainId <= handle->hw_config.chain_length) ? ESP_OK : ESP_ERR_INVALID_ARG;
 }
