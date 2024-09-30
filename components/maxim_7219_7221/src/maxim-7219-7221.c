@@ -209,6 +209,40 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
     return led_driver_max7219_send_private(handle, buffer, length);
 }
 
+esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_t handle, maxim7219_decode_mode_t decodeMode) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+
+    uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+    maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+    if (buffer != NULL) {
+        // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>| to all chips
+        for (uint8_t chipIndex = 0; chipIndex < handle->hw_config.chain_length; chipIndex++) {
+            buffer[chipIndex].address = MAXIM7219_DECODE_MODE_ADDRESS;
+            buffer[chipIndex].data = decodeMode;
+        }
+    } else {
+        return ESP_ERR_NO_MEM;
+    }
+
+    // Transmit to the device - There is no data to read back
+    return led_driver_max7219_send_private(handle, buffer, length);
+}
+
+esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_decode_mode_t decodeMode) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+
+    // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>|
+    uint16_t length = 1 * sizeof(maxim7219_command_t);
+    maxim7219_command_t buffer[1];
+
+    buffer[0].address = MAXIM7219_DECODE_MODE_ADDRESS;
+    buffer[0].data = decodeMode;
+
+    // Transmit to the device - There is no data to read back
+    return led_driver_max7219_send_private(handle, buffer, length);
+}
+
 
 static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t length) {
     bool useTxData = length <= 4;

@@ -161,6 +161,21 @@ typedef enum {
     MAXIM7219_TEST_MODE = 2
 } maxim7219_mode_t;
 
+/**
+ * @brief MAXIM 7219 / 7221 code B digit decode.
+ */
+typedef enum {
+    MAXIM7219_CODE_B_NO_DECODE = 0x00,
+    MAXIM7219_CODE_B_DECODE_DIGIT_1 = 0x01,
+    MAXIM7219_CODE_B_DECODE_DIGIT_2 = 0x02,
+    MAXIM7219_CODE_B_DECODE_DIGIT_3 = 0x04,
+    MAXIM7219_CODE_B_DECODE_DIGIT_4 = 0x08,
+    MAXIM7219_CODE_B_DECODE_DIGIT_5 = 0x10,
+    MAXIM7219_CODE_B_DECODE_DIGIT_6 = 0x20,
+    MAXIM7219_CODE_B_DECODE_DIGIT_7 = 0x40,
+    MAXIM7219_CODE_B_DECODE_DIGIT_8 = 0x40,
+} maxim7219_decode_mode_t;
+
 
 /**
  * @brief Initialize the MAXIM 7219 / 7221 driver.
@@ -211,6 +226,33 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
  *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
  */
 esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_mode_t mode);
+
+/**
+ * @brief Configure digit decoding on all MAXIM 7219 / 7221 devices on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  decodeMode The decode mode to configure. See `maxim7219_decode_mode_t` for possible values
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_t handle, maxim7219_decode_mode_t decodeMode);
+
+/**
+ * @brief Configure digit decoding on a specific MAXIM 7219 / 7221 device on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  decodeMode The decode mode to configure. See `maxim7219_decode_mode_t` for possible values
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_decode_mode_t decodeMode);
 
 
 #ifdef __cplusplus
