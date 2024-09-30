@@ -73,6 +73,10 @@ void app_main(void) {
     ESP_LOGI(TAG, "Set Test mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
 
+    // Configure decode mode to 'decode for all digits'
+    ESP_LOGI(TAG, "Configure decode for code B on all digits in the chain");
+    ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
+
     // Switch to 'normal' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
     ESP_LOGI(TAG, "Set Normal mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
