@@ -23,18 +23,18 @@ const int MISO_INPUT_DELAY_NANO_SECONDS = 60;
 const spi_host_device_t SPI_HOSTID = SPI2_HOST;
 
 // SPI Pins
-const gpio_num_t CS_PIN = GPIO_NUM_19;
-const gpio_num_t SCLK_PIN = GPIO_NUM_18;
-const gpio_num_t MOSI_PIN = GPIO_NUM_16;
+const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
+const gpio_num_t CLK_PIN = GPIO_NUM_18;
+const gpio_num_t DIN_PIN = GPIO_NUM_16;
 
 
 
 void app_main(void) {
     // Configure SPI bus to communicate with MCP2515
     spi_bus_config_t spiBusConfig = {
-        .mosi_io_num = MOSI_PIN,
+        .mosi_io_num = DIN_PIN,
         .miso_io_num = GPIO_NUM_NC,
-        .sclk_io_num = SCLK_PIN,
+        .sclk_io_num = CLK_PIN,
 
         .data2_io_num = GPIO_NUM_NC,
         .data3_io_num = GPIO_NUM_NC,
