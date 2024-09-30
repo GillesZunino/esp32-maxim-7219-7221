@@ -177,27 +177,45 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
 
     uint16_t length = 0;
-    maxim7219_command_t buffer[2];
+    maxim7219_command_t* buffer = NULL;
 
     switch (mode) {
         case MAXIM7219_SHUTDOWN_MODE:
         case MAXIM7219_NORMAL_MODE: {
-            length = 2 * sizeof(maxim7219_command_t);
-             // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0|
-            buffer[0].address = MAXIM7219_TEST_ADDRESS;
-            buffer[0].data = 0;
+            length = 2 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+            buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+            if (buffer != NULL) {
+                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
+                // Only populate the command for the requested item in the chain
+                uint8_t chipIndex = 2 * (chainId - 1);
 
-            // Then enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>|
-            buffer[1].address = MAXIM7219_SHUTDOWN_ADDRESS;
-            buffer[1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
+                // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
+                buffer[chipIndex].address = MAXIM7219_TEST_ADDRESS;
+                buffer[chipIndex].data = 0;
+
+                // Then enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
+                buffer[chipIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
+                buffer[chipIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
+            } else {
+                return ESP_ERR_NO_MEM;
+            }
         }
         break;
 
         case MAXIM7219_TEST_MODE: {
+            length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+            buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+            if (buffer != NULL) {
+                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
+                // Only populate the command for the requested item in the chain
+                uint8_t chipIndex = 1 * (chainId - 1);
+
             // Send |MAXIM7219_TEST_ADDRESS|1|
-            length = 1 * sizeof(maxim7219_command_t);
-            buffer[0].address = MAXIM7219_TEST_ADDRESS;
-            buffer[0].data = 1;
+                buffer[chipIndex].address = MAXIM7219_TEST_ADDRESS;
+                buffer[chipIndex].data = 1;
+            } else {
+                return ESP_ERR_NO_MEM;
+            }
         }
         break;
 
@@ -206,7 +224,13 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
     }
 
     // Transmit to the device - There is no data to read back
-    return led_driver_max7219_send_private(handle, buffer, length);
+    esp_err_t err = led_driver_max7219_send_private(handle, buffer, length);
+
+    if (buffer != NULL) {
+        heap_caps_free(buffer);
+    }
+
+    return err;
 }
 
 esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_t handle, maxim7219_decode_mode_t decodeMode) {
@@ -232,15 +256,28 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t hand
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
 
-    // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>|
-    uint16_t length = 1 * sizeof(maxim7219_command_t);
-    maxim7219_command_t buffer[1];
+    uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+    maxim7219_command_t*buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+    if (buffer != NULL) {
+        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
+        // Only populate the command for the requested item in the chain
+        uint8_t chipIndex = 1 * (chainId - 1);
 
-    buffer[0].address = MAXIM7219_DECODE_MODE_ADDRESS;
-    buffer[0].data = decodeMode;
+        // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>|
+        buffer[chipIndex].address = MAXIM7219_DECODE_MODE_ADDRESS;
+        buffer[chipIndex].data = decodeMode;
+    } else {
+        return ESP_ERR_NO_MEM;
+    }
 
     // Transmit to the device - There is no data to read back
-    return led_driver_max7219_send_private(handle, buffer, length);
+    esp_err_t err =  led_driver_max7219_send_private(handle, buffer, length);
+
+    if (buffer != NULL) {
+        heap_caps_free(buffer);
+    }
+
+    return err;
 }
 
 
