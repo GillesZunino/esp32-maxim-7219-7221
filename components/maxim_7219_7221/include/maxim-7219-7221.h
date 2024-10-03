@@ -229,6 +229,10 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_
 /**
  * @brief Configure digit decoding on a specific MAXIM 7219 / 7221 device on the chain.
  * 
+ * @note The chain is organized as follows:
+ *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
+ *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
+ * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
  * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
  * @param[in]  decodeMode The decode mode to configure. See `maxim7219_decode_mode_t` for possible values
@@ -255,6 +259,10 @@ esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_han
 
 /**
  * @brief Configure scan limit on a specific MAXIM 7219 / 7221 device on the chain.
+ * 
+ * @note The chain is organized as follows:
+ *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
+ *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
  * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
@@ -285,6 +293,10 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
 /**
  * @brief Set the operation mode on a specific MAXIM 7219 / 7221 device on the chain.
  * 
+ * @note The chain is organized as follows:
+ *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
+ *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
+ * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
  * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
  * @param[in]  mode The mode to configure. See `maxim7219_mode_t` for possible values 
@@ -312,6 +324,10 @@ esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t h
 
 /**
  * @brief Set intensity on a specific MAXIM 7219 / 7221 devices on the chain.
+ * 
+ * @note The chain is organized as follows:
+ *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
+ *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
  * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
