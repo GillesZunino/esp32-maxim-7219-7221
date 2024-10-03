@@ -170,6 +170,69 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t hand
     return err;
 }
 
+esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t digits) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+
+    // Number of digits to display must be between 1 and 8
+    if ((digits < 1) || (digits > 8)) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+    maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+    if (buffer != NULL) {
+        // Send |MAXIM7219_SCAN_LIMIT_ADDRESS|<digits - 1>| to all chips
+        for (uint8_t chipIndex = 0; chipIndex < handle->hw_config.chain_length; chipIndex++) {
+            buffer[chipIndex].address = MAXIM7219_SCAN_LIMIT_ADDRESS;
+            buffer[chipIndex].data = digits - 1;
+        }
+    } else {
+        return ESP_ERR_NO_MEM;
+    }
+
+    // Transmit to the device - There is no data to read back
+    esp_err_t err =  led_driver_max7219_send_private(handle, buffer, length);
+
+    if (buffer != NULL) {
+        heap_caps_free(buffer);
+    }
+
+    return err;
+}
+
+esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digits) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+
+    // Number of digits to display must be between 1 and 8
+    if ((digits < 1) || (digits > 8)) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+    maxim7219_command_t*buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+    if (buffer != NULL) {
+        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
+        // Only populate the command for the requested item in the chain
+        uint8_t chipIndex = 1 * (chainId - 1);
+
+        // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>|
+        buffer[chipIndex].address = MAXIM7219_SCAN_LIMIT_ADDRESS;
+        buffer[chipIndex].data = digits - 1;
+    } else {
+        return ESP_ERR_NO_MEM;
+    }
+
+    // Transmit to the device - There is no data to read back
+    esp_err_t err =  led_driver_max7219_send_private(handle, buffer, length);
+
+    if (buffer != NULL) {
+        heap_caps_free(buffer);
+    }
+
+    return err;
+}
+
 esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle, maxim7219_mode_t mode) {
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
 
@@ -371,11 +434,6 @@ static esp_err_t check_driver_configuration_private(const maxim7219_config_t* co
 
     // Check SPI configuration - /CS (LOAD) must be specified as it is used to latch data
     if (config->spi_cfg.spics_io_num == GPIO_NUM_NC) {
-        return ESP_ERR_INVALID_ARG;
-    }
-
-    // Check hardware configuration - Scan Limit must be 1 to 8
-    if ((config->hw_config.scan_limit < 1) || (config->hw_config.scan_limit > 8)) {
         return ESP_ERR_INVALID_ARG;
     }
 

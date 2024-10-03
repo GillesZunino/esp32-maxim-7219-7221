@@ -62,20 +62,23 @@ void app_main(void) {
         },
         .hw_config = {
             .chain_length = 1,
-            .scan_limit = 8,
             .chip_type = MAXIM_7219_TYPE
         }
     };
     ESP_LOGI(TAG, "Initialize MCP2515 driver");
     ESP_ERROR_CHECK(led_driver_max7219_init(&maxim7219InitConfig, &led_maxim7219_handle));
     
-    // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
-    ESP_LOGI(TAG, "Set Test mode");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
+    // Configure scan limits on all displays
+    ESP_LOGI(TAG, "COnfigure scan limits to all digits (8)");
+    ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_maxim7219_handle, 8));
 
     // Configure decode mode to 'decode for all digits'
     ESP_LOGI(TAG, "Configure decode for code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
+
+    // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
+    ESP_LOGI(TAG, "Set Test mode");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
 
     // Switch to 'normal' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
     ESP_LOGI(TAG, "Set Normal mode");

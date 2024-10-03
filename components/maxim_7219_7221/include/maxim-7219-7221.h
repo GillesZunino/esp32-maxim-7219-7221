@@ -139,7 +139,6 @@ typedef enum {
  * @brief MAXIM LED Driver hardware configuration.
  */
 typedef struct maxim7219_hw_config {
-    uint8_t scan_limit;                 ///< MAXIM 7219 / 7221 scan limit (1 to 8)
     uint8_t chain_length;               ///< Number of MAXIM 7219 / 7221 connected (1 to 255). See "Cascading Drivers" in the MAXIM datasheet
     maxim7219_type_t chip_type;         ///< Type of chip. These chips are jostyl compatible but some operations (i.e. brightness setting) is different 
 } maxim7219_hw_config_t;
@@ -231,32 +230,6 @@ esp_err_t led_driver_max7219_init(const maxim7219_config_t* config, led_driver_m
 esp_err_t led_driver_max7219_free(led_driver_maxim7219_handle_t handle);
 
 
-/**
- * @brief Set the operation mode on all MAXIM 7219 / 7221 devices on the chain.
- *
- * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
- * @param[in]  mode The mode to configure. See `maxim7219_mode_t` for possible values
- *
- * @return
- *      - ESP_OK: Success
- *      - ESP_ERR_INVALID_ARG: Invalid argument
- *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
- */
-esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle, maxim7219_mode_t mode);
-
-/**
- * @brief Set the operation mode on a specific MAXIM 7219 / 7221 device on the chain.
- * 
- * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
- * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
- * @param[in]  mode The mode to configure. See `maxim7219_mode_t` for possible values 
- *
- * @return
- *      - ESP_OK: Success
- *      - ESP_ERR_INVALID_ARG: Invalid argument
- *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
- */
-esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_mode_t mode);
 
 /**
  * @brief Configure digit decoding on all MAXIM 7219 / 7221 devices on the chain.
@@ -284,6 +257,63 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_
  *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
  */
 esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_decode_mode_t decodeMode);
+
+/**
+ * @brief Configure scan limits all MAXIM 7219 / 7221 devices on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t digits);
+
+/**
+ * @brief Configure scan limit on a specific MAXIM 7219 / 7221 device on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digits);
+
+
+
+/**
+ * @brief Set the operation mode on all MAXIM 7219 / 7221 devices on the chain.
+ *
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  mode The mode to configure. See `maxim7219_mode_t` for possible values
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle, maxim7219_mode_t mode);
+
+/**
+ * @brief Set the operation mode on a specific MAXIM 7219 / 7221 device on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  mode The mode to configure. See `maxim7219_mode_t` for possible values 
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_mode_t mode);
+
 
 /**
  * @brief Configure intensity on all MAXIM 7219 / 7221 devices on the chain.
