@@ -165,9 +165,9 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t hand
     uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
     maxim7219_command_t*buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
     if (buffer != NULL) {
-        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
-        // Only populate the command for the requested item in the chain
-        uint8_t chipIndex = 1 * (chainId - 1);
+        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
+        // The data for the last chip on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
+        uint8_t chipIndex = handle->hw_config.chain_length - chainId;
 
         // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>|
         buffer[chipIndex].address = MAXIM7219_DECODE_MODE_ADDRESS;
@@ -228,11 +228,11 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t 
     uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
     maxim7219_command_t*buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
     if (buffer != NULL) {
-        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
-        // Only populate the command for the requested item in the chain
-        uint8_t chipIndex = 1 * (chainId - 1);
+        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
+        // The data for the last chip on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
+        uint8_t chipIndex = handle->hw_config.chain_length - chainId;
 
-        // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>|
+        // Send |MAXIM7219_SCAN_LIMIT_ADDRESS|<mode>|
         buffer[chipIndex].address = MAXIM7219_SCAN_LIMIT_ADDRESS;
         buffer[chipIndex].data = digits - 1;
     } else {
@@ -317,9 +317,9 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
             length = 2 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
             buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
             if (buffer != NULL) {
-                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
-                // Only populate the command for the requested item in the chain
-                uint8_t chipIndex = 2 * (chainId - 1);
+                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
+                // The data for the last chip on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
+                uint8_t chipIndex = 2 * (handle->hw_config.chain_length - chainId);
 
                 // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
                 buffer[chipIndex].address = MAXIM7219_TEST_ADDRESS;
@@ -338,9 +338,9 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
             length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
             buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
             if (buffer != NULL) {
-                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
-                // Only populate the command for the requested item in the chain
-                uint8_t chipIndex = 1 * (chainId - 1);
+                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
+                // The data for the last chip on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
+                uint8_t chipIndex = handle->hw_config.chain_length - chainId;
 
             // Send |MAXIM7219_TEST_ADDRESS|1|
                 buffer[chipIndex].address = MAXIM7219_TEST_ADDRESS;
@@ -397,9 +397,9 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle,
     uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
     maxim7219_command_t*buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
     if (buffer != NULL) {
-        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS
-        // Only populate the command for the requested item in the chain
-        uint8_t chipIndex = 1 * (chainId - 1);
+        // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
+        // The data for the last chip on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
+        uint8_t chipIndex = handle->hw_config.chain_length - chainId;
 
         // Send |MAXIM7219_INTENSITY_ADDRESS|<intensity>|
         buffer[chipIndex].address = MAXIM7219_INTENSITY_ADDRESS;
