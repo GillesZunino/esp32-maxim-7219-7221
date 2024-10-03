@@ -45,22 +45,24 @@ typedef enum {
  * @brief MAXIM 7219 / 7221 Code B font symbols.
  */
 typedef enum {
-    MAXIM7219_CODE_B_FONT_0 = 0,
-    MAXIM7219_CODE_B_FONT_1 = 1,
-    MAXIM7219_CODE_B_FONT_2 = 2,
-    MAXIM7219_CODE_B_FONT_3 = 3,
-    MAXIM7219_CODE_B_FONT_4 = 4,
-    MAXIM7219_CODE_B_FONT_5 = 5,
-    MAXIM7219_CODE_B_FONT_6 = 6,
-    MAXIM7219_CODE_B_FONT_7 = 7,
-    MAXIM7219_CODE_B_FONT_8 = 8,
-    MAXIM7219_CODE_B_FONT_9 = 9,
-    MAXIM7219_CODE_B_FONT_MINUS = 10,
-    MAXIM7219_CODE_B_FONT_E = 11,
-    MAXIM7219_CODE_B_FONT_H = 12,
-    MAXIM7219_CODE_B_FONT_L = 13,
-    MAXIM7219_CODE_B_FONT_P = 14,
-    MAXIM7219_CODE_B_FONT_BLANK = 15
+    MAXIM7219_CODE_B_FONT_0 = 0,        ///< Digit 0
+    MAXIM7219_CODE_B_FONT_1 = 1,        ///< Digit 1
+    MAXIM7219_CODE_B_FONT_2 = 2,        ///< Digit 2
+    MAXIM7219_CODE_B_FONT_3 = 3,        ///< Digit 3
+    MAXIM7219_CODE_B_FONT_4 = 4,        ///< Digit 4
+    MAXIM7219_CODE_B_FONT_5 = 5,        ///< Digit 5
+    MAXIM7219_CODE_B_FONT_6 = 6,        ///< Digit 6
+    MAXIM7219_CODE_B_FONT_7 = 7,        ///< Digit 7
+    MAXIM7219_CODE_B_FONT_8 = 8,        ///< Digit 8
+    MAXIM7219_CODE_B_FONT_9 = 9,        ///< Digit 9
+    MAXIM7219_CODE_B_FONT_MINUS = 10,   ///< Minus sign
+    MAXIM7219_CODE_B_FONT_E = 11,       ///< E letter
+    MAXIM7219_CODE_B_FONT_H = 12,       ///< H letter
+    MAXIM7219_CODE_B_FONT_L = 13,       ///< L letter
+    MAXIM7219_CODE_B_FONT_P = 14,       ///< P letter
+    MAXIM7219_CODE_B_FONT_BLANK = 15,   ///< Blank
+
+    MAXIM7219_CODE_B_DP_MASK = 0x80     ///< Decimal Point mask - Cmbine with other symbols to add a decimal point as `MAXIM7219_CODE_B_FONT_0 | MAXIM7219_CODE_B_DP_MASK`
 } maxim7219_code_b_font_t;
 
 /**
