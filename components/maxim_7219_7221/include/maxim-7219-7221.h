@@ -183,6 +183,32 @@ typedef enum {
 
 
 /**
+ * @brief MAXIM 7219 / 7221 intensity PWM step.
+ * @note The intensity is controlled by a PWM signal. The duty cycle of the PWM signal depends on the type of chip:
+ *       * MAXIM 7219 MAXIM7219_INTENSITY_STEP_1 means 1/16 duty cycle.
+ *       * MAXIM 7221 MAXIM7219_INTENSITY_STEP_1 means 1/32 duty cycle.
+ */
+typedef enum {
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_1 = 0x00,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2 = 0x01,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_3 = 0x02,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4 = 0x03,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_5 = 0x04,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_6 = 0x05,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_7 = 0x06,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_8 = 0x07,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_9 = 0x08,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_10 = 0x09,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_11 = 0x0A,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_12 = 0x0B,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_13 = 0x0C,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_14 = 0x0D,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_15 = 0x0E,
+    MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_16 = 0x0F
+} maxim7219_intensity_t;
+
+
+/**
  * @brief Initialize the MAXIM 7219 / 7221 driver.
  * 
  * @param[in]  config Pointer to a configuration structure for the MAXIM 7219 / 7221 driver
@@ -259,6 +285,32 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_
  */
 esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_decode_mode_t decodeMode);
 
+/**
+ * @brief Configure intensity on all MAXIM 7219 / 7221 devices on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  intensity The duty cycle to set. See `maxim7219_intensity_t` for possible values
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t handle, maxim7219_intensity_t intensity);
+
+/**
+ * @brief Set intensity on a specific MAXIM 7219 / 7221 devices on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  intensity The duty cycle to set. See `maxim7219_intensity_t` for possible values
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_intensity_t intensity);
 
 #ifdef __cplusplus
 }
