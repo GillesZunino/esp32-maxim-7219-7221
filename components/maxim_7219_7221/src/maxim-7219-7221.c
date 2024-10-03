@@ -12,6 +12,22 @@
 static const char* LedDriverMaxim7219LogTag = "leddriver-maxim7219";
 
 
+typedef enum {
+    MAXIM7219_NOOP_ADDRESS = 0x00,
+    MAXIM7219_DIGIT0_ADDRESS = 0x01,
+    MAXIM7219_DIGIT1_ADDRESS = 0x02,
+    MAXIM7219_DIGIT2_ADDRESS = 0x03,
+    MAXIM7219_DIGIT3_ADDRESS = 0x04,
+    MAXIM7219_DIGIT4_ADDRESS = 0x05,
+    MAXIM7219_DIGIT5_ADDRESS = 0x06,
+    MAXIM7219_DIGIT6_ADDRESS = 0x07,
+    MAXIM7219_DIGIT7_ADDRESS = 0x08,
+    MAXIM7219_DECODE_MODE_ADDRESS = 0x09,
+    MAXIM7219_INTENSITY_ADDRESS = 0x0A,
+    MAXIM7219_SCAN_LIMIT_ADDRESS = 0x0B,
+    MAXIM7219_SHUTDOWN_ADDRESS = 0x0C,
+    MAXIM7219_TEST_ADDRESS = 0x0F
+} maxim7219_address_t;
 
 typedef struct led_driver_maxim7219 {
     maxim7219_spi_config_t spi_cfg;
@@ -348,8 +364,6 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
 
     return err;
 }
-
-
 
 esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t handle, maxim7219_intensity_t intensity) {
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
