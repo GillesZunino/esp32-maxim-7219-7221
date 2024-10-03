@@ -27,7 +27,7 @@ typedef enum {
     MAXIM7219_SCAN_LIMIT_ADDRESS = 0x0B,
     MAXIM7219_SHUTDOWN_ADDRESS = 0x0C,
     MAXIM7219_TEST_ADDRESS = 0x0F
-} maxim7219_address_t;
+} __attribute__ ((__packed__)) maxim7219_address_t;
 
 typedef struct led_driver_maxim7219 {
     maxim7219_spi_config_t spi_cfg;
