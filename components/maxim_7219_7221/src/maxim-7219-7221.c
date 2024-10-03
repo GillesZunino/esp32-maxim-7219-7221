@@ -249,7 +249,13 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_
     }
 
     // Transmit to the device - There is no data to read back
-    return led_driver_max7219_send_private(handle, buffer, length);
+    esp_err_t err = led_driver_max7219_send_private(handle, buffer, length);
+
+    if (buffer != NULL) {
+        heap_caps_free(buffer);
+    }
+
+    return err;
 }
 
 esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_decode_mode_t decodeMode) {
