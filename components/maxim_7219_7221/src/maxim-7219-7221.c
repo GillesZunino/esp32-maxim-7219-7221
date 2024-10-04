@@ -182,38 +182,26 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t 
 
 esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle, maxim7219_mode_t mode) {
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-
-    uint16_t length = 0;
-    maxim7219_command_t* buffer = NULL;
-
+    
     switch (mode) {
         case MAXIM7219_SHUTDOWN_MODE:
         case MAXIM7219_NORMAL_MODE: {
-            length = 2 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
-            buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
-            if (buffer != NULL) {
-                for (uint8_t deviceIndex = 0; deviceIndex < 2 * handle->hw_config.chain_length; deviceIndex += 2) {
-                    // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
-                    buffer[deviceIndex].address = MAXIM7219_TEST_ADDRESS;
-                    buffer[deviceIndex].data = 0;
-
-                    // Then enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
-                    buffer[deviceIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
-                    buffer[deviceIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
-                }
-
-
-                    // Transmit to the device - There is no data to read back
-                    esp_err_t err = led_driver_max7219_send_private(handle, buffer, length);
-
-                    if (buffer != NULL) {
-                        heap_caps_free(buffer);
+            // Take exclusive access of the SPI bus
+            ESP_RETURN_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), LedDriverMaxim7219LogTag, "%s() Unable to acquire SPI bus", __func__);
+    
+                    // Leave test mode (if on) by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
+                    maxim7219_command_t command = { .address = MAXIM7219_TEST_ADDRESS, .data = 0 };
+                    esp_err_t err = send_chain_command_private(handle, 0, &command);
+                    if (err == ESP_OK) {
+                        // Enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
+                        maxim7219_command_t command = { .address = MAXIM7219_SHUTDOWN_ADDRESS, .data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1 };
+                        err = send_chain_command_private(handle, 0, &command);
                     }
 
-                    return err;
-            } else {
-                return ESP_ERR_NO_MEM;
-            }
+            // Release access to the SPI bus
+            spi_device_release_bus(handle->spi_device_handle);
+
+            return err;
         }
         break;
         case MAXIM7219_TEST_MODE: {
@@ -232,38 +220,25 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
 
-    uint16_t length = 0;
-    maxim7219_command_t* buffer = NULL;
-
     switch (mode) {
         case MAXIM7219_SHUTDOWN_MODE:
         case MAXIM7219_NORMAL_MODE: {
-            length = 2 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
-            buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
-            if (buffer != NULL) {
-                // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
-                // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
-                uint8_t deviceIndex = 2 * (handle->hw_config.chain_length - chainId);
+            // Take exclusive access of the SPI bus
+            ESP_RETURN_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), LedDriverMaxim7219LogTag, "%s() Unable to acquire SPI bus", __func__);
 
-                // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
-                buffer[deviceIndex].address = MAXIM7219_TEST_ADDRESS;
-                buffer[deviceIndex].data = 0;
+                    // Leave test mode (if on) by sending |MAXIM7219_TEST_ADDRESS|0| to the requested device
+                    maxim7219_command_t command = { .address = MAXIM7219_TEST_ADDRESS, .data = 0 };
+                    esp_err_t err = send_chain_command_private(handle, chainId, &command);
+                    if (err == ESP_OK) {
+                        // Enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to the requested device
+                        maxim7219_command_t command = { .address = MAXIM7219_SHUTDOWN_ADDRESS, .data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1 };
+                        err = send_chain_command_private(handle, chainId, &command);
+                    }
 
-                // Then enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
-                buffer[deviceIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
-                buffer[deviceIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
+            // Release access to the SPI bus
+            spi_device_release_bus(handle->spi_device_handle);
 
-                // Transmit to the device - There is no data to read back
-                esp_err_t err = led_driver_max7219_send_private(handle, buffer, length);
-
-                if (buffer != NULL) {
-                    heap_caps_free(buffer);
-                }
-
-                return err;
-            } else {
-                return ESP_ERR_NO_MEM;
-            }
+            return err;
         }
         break;
 
