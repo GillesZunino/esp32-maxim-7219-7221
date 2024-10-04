@@ -102,7 +102,7 @@ typedef enum {
  * @brief Configuration of the SPI bus for MAXIM 7219 / 7221 device.
  */
 typedef struct maxim7219_spi_config {
-    spi_host_device_t host_id;          ///< SPI bus ID. Which buses are available depends on the specific chip
+    spi_host_device_t host_id;          ///< SPI bus ID. Which buses are available depends on the specific device
     spi_clock_source_t clock_source;    ///< Select SPI clock source, `SPI_CLK_SRC_DEFAULT` by default
     int clock_speed_hz;                 ///< SPI clock speed in Hz. Derived from `clock_source`
     int input_delay_ns;                 ///< Maximum data valid time of slave. The time required between SCLK and MISO
@@ -111,7 +111,7 @@ typedef struct maxim7219_spi_config {
 } maxim7219_spi_config_t;
 
 /**
- * @brief Type of MAXIM LED driver chip connected.
+ * @brief Type of MAXIM LED driver device connected.
  */
 typedef enum {
     MAXIM_7219_TYPE = 1,                ///< MAXIM 7219 LED Driver variant
@@ -123,7 +123,7 @@ typedef enum {
  */
 typedef struct maxim7219_hw_config {
     uint8_t chain_length;               ///< Number of MAXIM 7219 / 7221 connected (1 to 255). See "Cascading Drivers" in the MAXIM datasheet
-    maxim7219_type_t chip_type;         ///< Type of chip. These chips are jostyl compatible but some operations (i.e. brightness setting) is different 
+    maxim7219_type_t device_type;       ///< Type of device. These devices are mostly compatible but some operations (i.e. brightness setting) are different 
 } maxim7219_hw_config_t;
 
 /**
@@ -165,7 +165,7 @@ typedef enum {
 
 /**
  * @brief MAXIM 7219 / 7221 intensity PWM step.
- * @note The intensity is controlled by a PWM signal. The duty cycle of the PWM signal depends on the type of chip:
+ * @note The intensity is controlled by a PWM signal. The duty cycle of the PWM signal depends on the type of device:
  *       * MAXIM 7219 MAXIM7219_INTENSITY_STEP_1 means 1/16 duty cycle.
  *       * MAXIM 7221 MAXIM7219_INTENSITY_STEP_1 means 1/32 duty cycle.
  */
@@ -234,7 +234,7 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
- * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  chainId Index of the MAXIM device to configure starting at 1 for the first device
  * @param[in]  decodeMode The decode mode to configure. See `maxim7219_decode_mode_t` for possible values
  *
  * @return
@@ -265,7 +265,7 @@ esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_han
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
- * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  chainId Index of the MAXIM device to configure starting at 1 for the first device
  * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
  *
  * @return
@@ -298,7 +298,7 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
- * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  chainId Index of the MAXIM device to configure starting at 1 for the first device
  * @param[in]  mode The mode to configure. See `maxim7219_mode_t` for possible values 
  *
  * @return
@@ -330,7 +330,7 @@ esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t h
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
  * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
- * @param[in]  chainId Index of the MAXIM chip to configure starting at 1 for the first device
+ * @param[in]  chainId Index of the MAXIM device to configure starting at 1 for the first device
  * @param[in]  intensity The duty cycle to set. See `maxim7219_intensity_t` for possible values
  *
  * @return

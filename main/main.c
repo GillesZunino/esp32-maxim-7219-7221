@@ -62,7 +62,7 @@ void app_main(void) {
         },
         .hw_config = {
             .chain_length = 1,
-            .chip_type = MAXIM_7219_TYPE
+            .device_type = MAXIM_7219_TYPE
         }
     };
     ESP_LOGI(TAG, "Initialize MCP2515 driver");

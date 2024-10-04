@@ -192,14 +192,14 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
             length = 2 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
             buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
             if (buffer != NULL) {
-                for (uint8_t chipIndex = 0; chipIndex < 2 * handle->hw_config.chain_length; chipIndex += 2) {
+                for (uint8_t deviceIndex = 0; deviceIndex < 2 * handle->hw_config.chain_length; deviceIndex += 2) {
                     // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
-                    buffer[chipIndex].address = MAXIM7219_TEST_ADDRESS;
-                    buffer[chipIndex].data = 0;
+                    buffer[deviceIndex].address = MAXIM7219_TEST_ADDRESS;
+                    buffer[deviceIndex].data = 0;
 
                     // Then enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
-                    buffer[chipIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
-                    buffer[chipIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
+                    buffer[deviceIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
+                    buffer[deviceIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
                 }
 
 
@@ -242,16 +242,16 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
             buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
             if (buffer != NULL) {
                 // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
-                // The data for the last device on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
-                uint8_t chipIndex = 2 * (handle->hw_config.chain_length - chainId);
+                // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
+                uint8_t deviceIndex = 2 * (handle->hw_config.chain_length - chainId);
 
                 // First, leave test mode by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
-                buffer[chipIndex].address = MAXIM7219_TEST_ADDRESS;
-                buffer[chipIndex].data = 0;
+                buffer[deviceIndex].address = MAXIM7219_TEST_ADDRESS;
+                buffer[deviceIndex].data = 0;
 
                 // Then enter normal or shutdown mode by sending |MAXIM7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
-                buffer[chipIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
-                buffer[chipIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
+                buffer[deviceIndex + 1].address = MAXIM7219_SHUTDOWN_ADDRESS;
+                buffer[deviceIndex + 1].data = mode == MAXIM7219_SHUTDOWN_MODE ? 0 : 1;
 
                 // Transmit to the device - There is no data to read back
                 esp_err_t err = led_driver_max7219_send_private(handle, buffer, length);
@@ -304,16 +304,16 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
     maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
     if (buffer != NULL) {
         if (chainId == 0) {
-            // Send all chips the same .address and .data
-            for (uint8_t chipIndex = 0; chipIndex < handle->hw_config.chain_length; chipIndex++) {
-                buffer[chipIndex] = *pCmd;
+            // Send all devices the same .address and .data
+            for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
+                buffer[deviceIndex] = *pCmd;
             }
         } else {
             // Target a specific device in the chain - The device is given in chainId which is 1-based
             // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
-            // The data for the last device on the chain needs to be sent first so chipId n is at index hw_config.chain_length - 1 in the array
-            uint8_t chipIndex = handle->hw_config.chain_length - chainId;
-            buffer[chipIndex] = *pCmd;
+            // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
+            uint8_t deviceIndex = handle->hw_config.chain_length - chainId;
+            buffer[deviceIndex] = *pCmd;
         }
     } else {
         return ESP_ERR_NO_MEM;
@@ -368,8 +368,8 @@ static esp_err_t check_driver_configuration_private(const maxim7219_config_t* co
         return ESP_ERR_INVALID_ARG;
     }
 
-    // Check hardware configuration - Chip type must be either MAXIM_7219_TYPE or MAXIM_7221_TYPE
-    if ((config->hw_config.chip_type != MAXIM_7219_TYPE) && (config->hw_config.chip_type != MAXIM_7221_TYPE)) {
+    // Check hardware configuration - Device type must be either MAXIM_7219_TYPE or MAXIM_7221_TYPE
+    if ((config->hw_config.device_type != MAXIM_7219_TYPE) && (config->hw_config.device_type != MAXIM_7221_TYPE)) {
         return ESP_ERR_INVALID_ARG;
     }
 
