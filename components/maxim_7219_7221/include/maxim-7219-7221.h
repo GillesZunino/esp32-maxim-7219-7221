@@ -97,43 +97,6 @@ typedef enum {
     MAXIM7219_CUSTOM_BLANK = 0                                                                                                                                                      ///< Blank
 } maxim7219_custom_font_t;
 
-
-/**
- * @brief Configuration of the SPI bus for MAXIM 7219 / 7221 device.
- */
-typedef struct maxim7219_spi_config {
-    spi_host_device_t host_id;          ///< SPI bus ID. Which buses are available depends on the specific device
-    spi_clock_source_t clock_source;    ///< Select SPI clock source, `SPI_CLK_SRC_DEFAULT` by default
-    int clock_speed_hz;                 ///< SPI clock speed in Hz. Derived from `clock_source`
-    int input_delay_ns;                 ///< Maximum data valid time of slave. The time required between SCLK and MISO
-    int spics_io_num;                   ///< CS GPIO pin for this device, or `GPIO_NUM_NC` (-1) if not used
-    int queue_size;                     ///< SPI transaction queue size. See 'spi_device_queue_trans()'
-} maxim7219_spi_config_t;
-
-/**
- * @brief Type of MAXIM LED driver device connected.
- */
-typedef enum {
-    MAXIM_7219_TYPE = 1,                ///< MAXIM 7219 LED Driver variant
-    MAXIM_7221_TYPE = 2                 ///< MAXIM 7221 LED Driver variant
-} maxim7219_type_t;
-
-/**
- * @brief MAXIM LED Driver hardware configuration.
- */
-typedef struct maxim7219_hw_config {
-    uint8_t chain_length;               ///< Number of MAXIM 7219 / 7221 connected (1 to 255). See "Cascading Drivers" in the MAXIM datasheet
-    maxim7219_type_t device_type;       ///< Type of device. These devices are mostly compatible but some operations (i.e. brightness setting) are different 
-} maxim7219_hw_config_t;
-
-/**
- * @brief Configuration of MAXIM 7219 / 7221 device.
- */
-typedef struct maxim7219_config {
-    maxim7219_spi_config_t spi_cfg;       ///< SPI configuration for MCP2515
-    maxim7219_hw_config_t hw_config;      ///< MAXIM 7219 / 7221 hardware configuration
-} maxim7219_config_t;
-
 /**
  * @brief MAXIM 7219 / 7221 code B digit decode.
  */
@@ -187,6 +150,45 @@ typedef enum {
     MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_15 = 0x0E,      ///< Intensity duty cycle 15/16 (MAXIM 7219) or 29/32 (MAXIM 7221)
     MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_16 = 0x0F       ///< Intensity duty cycle 16/16 (MAXIM 7219) or 31/32 (MAXIM 7221)
 } maxim7219_intensity_t;
+
+
+
+/**
+ * @brief Configuration of the SPI bus for MAXIM 7219 / 7221 device.
+ */
+typedef struct maxim7219_spi_config {
+    spi_host_device_t host_id;          ///< SPI bus ID. Which buses are available depends on the specific device
+    spi_clock_source_t clock_source;    ///< Select SPI clock source, `SPI_CLK_SRC_DEFAULT` by default
+    int clock_speed_hz;                 ///< SPI clock speed in Hz. Derived from `clock_source`
+    int input_delay_ns;                 ///< Maximum data valid time of slave. The time required between SCLK and MISO
+    int spics_io_num;                   ///< CS GPIO pin for this device, or `GPIO_NUM_NC` (-1) if not used
+    int queue_size;                     ///< SPI transaction queue size. See 'spi_device_queue_trans()'
+} maxim7219_spi_config_t;
+
+/**
+ * @brief Type of MAXIM LED driver device connected.
+ */
+typedef enum {
+    MAXIM_7219_TYPE = 1,                ///< MAXIM 7219 LED Driver variant
+    MAXIM_7221_TYPE = 2                 ///< MAXIM 7221 LED Driver variant
+} maxim7219_type_t;
+
+/**
+ * @brief MAXIM LED Driver hardware configuration.
+ */
+typedef struct maxim7219_hw_config {
+    uint8_t chain_length;               ///< Number of MAXIM 7219 / 7221 connected (1 to 255). See "Cascading Drivers" in the MAXIM datasheet
+    maxim7219_type_t device_type;       ///< Type of device. These devices are mostly compatible but some operations (i.e. brightness setting) are different 
+} maxim7219_hw_config_t;
+
+/**
+ * @brief Configuration of MAXIM 7219 / 7221 device.
+ */
+typedef struct maxim7219_config {
+    maxim7219_spi_config_t spi_cfg;       ///< SPI configuration for MCP2515
+    maxim7219_hw_config_t hw_config;      ///< MAXIM 7219 / 7221 hardware configuration
+} maxim7219_config_t;
+
 
 
 /**
@@ -339,6 +341,27 @@ esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t h
  *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
  */
 esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_intensity_t intensity);
+
+/**
+ * @brief Set the given digit code on a MAXIM 7219 / 7221 device on the chain.
+ * 
+ * @note The chain is organized as follows:
+ *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
+ *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  chainId Index of the MAXIM device to configure starting at 1 for the first device
+ * @param[in]  digit The digit to set (1 to 8)
+ * @param[in]  digitCode The digit code to set. A `maxim7219_code_b_font_t` value for digits in Code B decode mode or a combination of `maxim7219_segment_t` values for devices in no decode mode
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode);
+
+
 
 #ifdef __cplusplus
 }

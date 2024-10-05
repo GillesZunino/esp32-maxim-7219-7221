@@ -182,7 +182,7 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t 
 
 esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle, maxim7219_mode_t mode) {
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-    
+
     switch (mode) {
         case MAXIM7219_SHUTDOWN_MODE:
         case MAXIM7219_NORMAL_MODE: {
@@ -268,6 +268,20 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle,
 
     // Send |MAXIM7219_INTENSITY_ADDRESS|<intensity>| to the requested device
     maxim7219_command_t command = { .address = MAXIM7219_SCAN_LIMIT_ADDRESS, .data = intensity };
+    return send_chain_command_private(handle, chainId, &command);
+}
+
+esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+
+    // Digit must be between 1 and 8
+    if ((digit < 1) || (digit > 8)) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    // Send |MAXIM7219_DIGIT<digit>_ADDRESS|<digitCode>| to the requested device
+    maxim7219_command_t command = { .address = digit, .data = digitCode };
     return send_chain_command_private(handle, chainId, &command);
 }
 
