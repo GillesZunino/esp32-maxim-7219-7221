@@ -9,7 +9,7 @@
 #include "maxim-7219-7221.h"
 
 
-static const char* LedDriverMaxim7219LogTag = "leddriver-maxim7219";
+DRAM_ATTR static const char* LedDriverMaxim7219LogTag = "leddriver-max72[19|21]";
 
 
 typedef enum {

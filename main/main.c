@@ -9,7 +9,7 @@
 
 #include "maxim-7219-7221.h"
 
-const char* TAG = "maxim72xx_main";
+const char* TAG = "maxim72[19|21]_main";
 
 //
 // NOTE: For maximum performance, prefer IO MUX over GPIO Matrix routing
