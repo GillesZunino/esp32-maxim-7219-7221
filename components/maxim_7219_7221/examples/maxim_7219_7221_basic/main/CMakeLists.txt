@@ -1,2 +1,2 @@
-idf_component_register(SRCS "maxim-7219-7221-basic.c"
+idf_component_register(SRCS "maxim_7219_7221_basic.c"
                        INCLUDE_DIRS ".")

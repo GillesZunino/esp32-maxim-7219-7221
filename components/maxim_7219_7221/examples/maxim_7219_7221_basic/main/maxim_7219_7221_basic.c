@@ -7,7 +7,7 @@
 #include <freertos/FreeRTOS.h>
 #include <esp_check.h>
 
-#include "maxim-7219-7221.h"
+#include "maxim_7219_7221.h"
 
 const char* TAG = "maxim72xx_main";
 

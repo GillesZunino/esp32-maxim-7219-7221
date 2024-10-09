@@ -1,5 +1,5 @@
 set(srcs
-    "src/maxim-7219-7221.c"
+    "src/maxim_7219_7221.c"
 )
 
 idf_component_register(SRCS ${srcs}

@@ -4,12 +4,13 @@
 
 #include <string.h>
 
+#include <esp_attr.h>
 #include <esp_check.h>
 
-#include "maxim-7219-7221.h"
+#include "maxim_7219_7221.h"
 
 
-DRAM_ATTR static const char* LedDriverMaxim7219LogTag = "leddriver-max72[19|21]";
+DRAM_ATTR static const char* LedDriverMaxim7219LogTag = "leddriver_max7219|21";
 
 
 typedef enum {
@@ -286,6 +287,39 @@ esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uin
 }
 
 
+// esp_err_t led_driver_max7219_set_digits(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount) {
+//     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+//     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, startChainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+
+//     // Start digit must be between 1 and 8
+//     if ((startDigitId < 1) || (startDigitId > 8)) {
+//         return ESP_ERR_INVALID_ARG;
+//     }
+
+//     // Number of digits must not push us past the end of the chain
+//     // TODO: validate
+
+//     // TODO: validate startChain, startDigit, digitCodesCount, digitCodes
+
+//     // TODO: Allocate the right size for the buffer
+//     uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
+//     maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+//     if (buffer != NULL) {
+//         // TODO
+//     } else {
+//         return ESP_ERR_NO_MEM;
+//     }
+
+//     // Transmit to the device - There is no data to read back
+//     esp_err_t err =  led_driver_max7219_send_private(handle, buffer, length);
+
+//     if (buffer != NULL) {
+//         heap_caps_free(buffer);
+//     }
+
+//     return err;
+// }
+
 
 
 static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle, uint8_t chainId, const maxim7219_command_t* const pCmd) {
@@ -293,11 +327,15 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
     maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
     if (buffer != NULL) {
         if (chainId == 0) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+#endif
             // Send all devices the same .address and .data
             for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
                 buffer[deviceIndex] = *pCmd;
             }
         } else {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+#endif
             // Target a specific device in the chain - The device is given in chainId which is 1-based
             // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
             // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
@@ -305,6 +343,8 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
             buffer[deviceIndex] = *pCmd;
         }
     } else {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+#endif
         return ESP_ERR_NO_MEM;
     }
 
