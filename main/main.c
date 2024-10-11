@@ -69,11 +69,11 @@ void app_main(void) {
     ESP_ERROR_CHECK(led_driver_max7219_init(&maxim7219InitConfig, &led_maxim7219_handle));
     
     // Configure scan limits on all displays
-    ESP_LOGI(TAG, "COnfigure scan limits to all digits (8)");
+    ESP_LOGI(TAG, "Configure scan limits to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_maxim7219_handle, 8));
 
     // Configure decode mode to 'decode for all digits'
-    ESP_LOGI(TAG, "Configure decode for code B on all digits in the chain");
+    ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
 
     // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
