@@ -59,7 +59,7 @@ esp_err_t led_driver_max7219_init(const maxim7219_config_t* config, led_driver_m
     *handle = NULL;
 
     // Check configuration
-    ESP_RETURN_ON_ERROR(check_driver_configuration_private(config), LedDriverMaxim7219LogTag, "%s() Invalid configuration", __func__);
+    ESP_RETURN_ON_ERROR(check_driver_configuration_private(config), LedDriverMaxim7219LogTag, "Invalid configuration");
 
     // Allocate space for our handle
     led_driver_maxim7219_t* pLedMax7219 = heap_caps_calloc(1, sizeof(led_driver_maxim7219_t), MALLOC_CAP_DEFAULT);
@@ -136,7 +136,7 @@ esp_err_t led_driver_max7219_free(led_driver_maxim7219_handle_t handle) {
 }
 
 esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_t handle, maxim7219_decode_mode_t decodeMode) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
 
     // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>| to all devices
     maxim7219_command_t command = { .address = MAXIM7219_DECODE_MODE_ADDRESS, .data = decodeMode };
@@ -144,8 +144,8 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_maxim7219_handle_
 }
 
 esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_decode_mode_t decodeMode) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
     // Send |MAXIM7219_DECODE_MODE_ADDRESS|<mode>| to the requested device
     maxim7219_command_t command = { .address = MAXIM7219_DECODE_MODE_ADDRESS, .data = decodeMode };
@@ -153,7 +153,7 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t hand
 }
 
 esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t digits) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
 
     // Number of digits to display must be between 1 and 8
     if ((digits < 1) || (digits > 8)) {
@@ -166,8 +166,8 @@ esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_han
 }
 
 esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digits) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
     // Number of digits to display must be between 1 and 8
     if ((digits < 1) || (digits > 8)) {
@@ -182,7 +182,7 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t 
 
 
 esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle, maxim7219_mode_t mode) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
 
     switch (mode) {
         case MAXIM7219_SHUTDOWN_MODE:
@@ -218,14 +218,14 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
 }
 
 esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_mode_t mode) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
     switch (mode) {
         case MAXIM7219_SHUTDOWN_MODE:
         case MAXIM7219_NORMAL_MODE: {
             // Take exclusive access of the SPI bus
-            ESP_RETURN_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), LedDriverMaxim7219LogTag, "%s() Unable to acquire SPI bus", __func__);
+            ESP_RETURN_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), LedDriverMaxim7219LogTag, "Unable to acquire SPI bus");
 
                     // Leave test mode (if on) by sending |MAXIM7219_TEST_ADDRESS|0| to the requested device
                     maxim7219_command_t command = { .address = MAXIM7219_TEST_ADDRESS, .data = 0 };
@@ -256,7 +256,7 @@ esp_err_t led_driver_max7219_set_mode(led_driver_maxim7219_handle_t handle, uint
 }
 
 esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t handle, maxim7219_intensity_t intensity) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
 
     // Send |MAXIM7219_SCAN_LIMIT_ADDRESS|<intensity| to all devices
     maxim7219_command_t command = { .address = MAXIM7219_INTENSITY_ADDRESS, .data = intensity };
@@ -264,8 +264,8 @@ esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t h
 }
 
 esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_intensity_t intensity) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
     // Send |MAXIM7219_INTENSITY_ADDRESS|<intensity>| to the requested device
     maxim7219_command_t command = { .address = MAXIM7219_SCAN_LIMIT_ADDRESS, .data = intensity };
@@ -273,8 +273,8 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle,
 }
 
 esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode) {
-    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
     // Digit must be between 1 and 8
     if ((digit < 1) || (digit > 8)) {
