@@ -52,6 +52,9 @@ static esp_err_t check_maxim_chain_id_private(led_driver_maxim7219_handle_t hand
 
 esp_err_t led_driver_max7219_init(const maxim7219_config_t* config, led_driver_maxim7219_handle_t* handle) {
     if (handle == NULL) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "handle must not be NULL");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
     
@@ -109,6 +112,9 @@ cleanup:
 
 esp_err_t led_driver_max7219_free(led_driver_maxim7219_handle_t handle) {
     if (handle->spi_device_handle == NULL) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "handle must not be NULL");
+#endif
         return ESP_ERR_INVALID_STATE;
     }
 
