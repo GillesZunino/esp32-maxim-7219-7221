@@ -284,6 +284,9 @@ esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uin
 
     // Digit must be between 1 and 8
     if ((digit < 1) || (digit > 8)) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "digit must be >= 1 and <= 8");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -334,6 +337,7 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
     if (buffer != NULL) {
         if (chainId == 0) {
 #if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+            ESP_LOGI(LedDriverMaxim7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", pCmd->address, pCmd->data);
 #endif
             // Send all devices the same .address and .data
             for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
@@ -341,6 +345,7 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
             }
         } else {
 #if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+            ESP_LOGI(LedDriverMaxim7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to device %d", pCmd->address, pCmd->data, chainId);
 #endif
             // Target a specific device in the chain - The device is given in chainId which is 1-based
             // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
