@@ -379,26 +379,41 @@ static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t h
 
 static esp_err_t check_driver_configuration_private(const maxim7219_config_t* config) {
     if (config == NULL) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "Configuration must not be NULL");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
     // Check SPI configuration - Clock speed must be non zero and up to 10 MHz
     if ((config->spi_cfg.clock_speed_hz <= 0) || (config->spi_cfg.clock_speed_hz > 10 * 1000000)) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "spi_cfg.clock_speed_hz must be > 0 and <= 10 MHz");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
     // Check SPI configuration - /CS (LOAD) must be specified as it is used to latch data
     if (config->spi_cfg.spics_io_num == GPIO_NUM_NC) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "spi_cfg.spics_io_num must not be GPIO_NUM_NC");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
     // Check hardware configuration - Chain length must be at least 1 and less than 255
     if ((config->hw_config.chain_length < 1) || (config->hw_config.chain_length > 254)) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "hw_config.chain_length must be >= 1 and <= 254");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
     // Check hardware configuration - Device type must be either MAXIM_7219_TYPE or MAXIM_7221_TYPE
     if ((config->hw_config.device_type != MAXIM_7219_TYPE) && (config->hw_config.device_type != MAXIM_7221_TYPE)) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "hw_config.device_type must be MAXIM_7219_TYPE or MAXIM_7221_TYPE");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -407,10 +422,16 @@ static esp_err_t check_driver_configuration_private(const maxim7219_config_t* co
 
 static esp_err_t check_maxim_handle_private(led_driver_maxim7219_handle_t handle) {
     if (handle == NULL) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "handle must not be NULL");
+#endif
         return ESP_ERR_INVALID_ARG;
     }
 
     if (handle->spi_device_handle == NULL) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "led_driver_max7219_init() must be called before any other function");
+#endif
         return ESP_ERR_INVALID_STATE;
     }
 
