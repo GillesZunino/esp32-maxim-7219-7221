@@ -188,7 +188,7 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_maxim7219_handle_t handle
         case MAXIM7219_SHUTDOWN_MODE:
         case MAXIM7219_NORMAL_MODE: {
             // Take exclusive access of the SPI bus
-            ESP_RETURN_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), LedDriverMaxim7219LogTag, "%s() Unable to acquire SPI bus", __func__);
+            ESP_RETURN_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), LedDriverMaxim7219LogTag, "Unable to acquire SPI bus");
     
                     // Leave test mode (if on) by sending |MAXIM7219_TEST_ADDRESS|0| to all devices
                     maxim7219_command_t command = { .address = MAXIM7219_TEST_ADDRESS, .data = 0 };
