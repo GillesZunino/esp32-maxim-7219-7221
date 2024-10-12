@@ -27,8 +27,15 @@ const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
 const gpio_num_t CLK_PIN = GPIO_NUM_18;
 const gpio_num_t DIN_PIN = GPIO_NUM_16;
 
+// Number of devices MAXIM 7219 / 7221 in the chain
+const uint8_t ChainLength = 1;
 
+
+// Handle to the MAXIM 7219 / 7221 driver
 led_driver_maxim7219_handle_t led_maxim7219_handle = NULL;
+
+// TIme in between two display digit changes
+const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
 
 
 void app_main(void) {
@@ -61,14 +68,14 @@ void app_main(void) {
             .queue_size = 8
         },
         .hw_config = {
-            .chain_length = 1,
+            .chain_length = ChainLength,
             .device_type = MAXIM_7219_TYPE
         }
     };
     ESP_LOGI(TAG, "Initialize MCP2515 driver");
     ESP_ERROR_CHECK(led_driver_max7219_init(&maxim7219InitConfig, &led_maxim7219_handle));
     
-    // Configure scan limits on all displays
+    // Configure scan limits on all devices
     ESP_LOGI(TAG, "Configure scan limits to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_maxim7219_handle, 8));
 
@@ -76,17 +83,32 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
 
+    // Set intensity on all devices - MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4 is dim
+    ESP_LOGI(TAG, "Set intensity to 'MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4' on all devices in the chain");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4));
+
     // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
+    // NOTE: Test mode always ignore the configured itensity
     ESP_LOGI(TAG, "Set Test mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
+    vTaskDelay(DelayBetweenUpdates);
 
     // Switch to 'normal' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
     ESP_LOGI(TAG, "Set Normal mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
 
-    
-    
+
     const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
+
+    // Display '8' sequentially on all digits of all devices
+    for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
+        for (uint8_t digitId = 1; digitId <= 8; digitId++) {
+            ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAXIM7219_CODE_B_FONT_8'", chainId, digitId);
+            ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_maxim7219_handle, chainId, digitId, MAXIM7219_CODE_B_FONT_8));
+            vTaskDelay(DelayBetweenUpdates);
+        }
+    }
+    
     do {
         vTaskDelay(DelayBetweenUpdates);
     } while (true);
