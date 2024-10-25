@@ -30,7 +30,7 @@ const gpio_num_t MOSI_PIN = GPIO_NUM_16;
 
 
 void app_main(void) {
-    // Configure SPI bus to communicate with MCP2515
+    // Configure SPI bus to communicate with MAXIM 72119 / 72121
     spi_bus_config_t spiBusConfig = {
         .mosi_io_num = MOSI_PIN,
         .miso_io_num = GPIO_NUM_NC,
