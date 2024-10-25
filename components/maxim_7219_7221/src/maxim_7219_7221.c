@@ -95,7 +95,7 @@ esp_err_t led_driver_max7219_init(const maxim7219_config_t* config, led_driver_m
     };
 
     esp_err_t ret = ESP_OK;
-    ESP_GOTO_ON_ERROR(spi_bus_add_device(config->spi_cfg.host_id, &spiDeviceInterfaceConfig, &pLedMax7219->spi_device_handle), cleanup, LedDriverMaxim7219LogTag, "%s() Failed to spi_bus_add_device()", __func__);
+    ESP_GOTO_ON_ERROR(spi_bus_add_device(config->spi_cfg.host_id, &spiDeviceInterfaceConfig, &pLedMax7219->spi_device_handle), cleanup, LedDriverMaxim7219LogTag, "Failed to spi_bus_add_device()");
     
     pLedMax7219->hw_config = config->hw_config;
     *handle = pLedMax7219;
