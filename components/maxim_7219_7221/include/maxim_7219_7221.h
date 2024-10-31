@@ -43,7 +43,7 @@ typedef enum {
     MAXIM7219_CODE_B_FONT_P = 14,       ///< Letter P
     MAXIM7219_CODE_B_FONT_BLANK = 15,   ///< Blank
 
-    MAXIM7219_CODE_B_DP_MASK = 0x80     ///< Decimal Point mask - Cmbine with other symbols to add a decimal point as `MAXIM7219_CODE_B_FONT_0 | MAXIM7219_CODE_B_DP_MASK`
+    MAXIM7219_CODE_B_DP_MASK = 0x80     ///< Decimal Point mask - Combine with other symbols to add a decimal point as `MAXIM7219_CODE_B_FONT_0 | MAXIM7219_CODE_B_DP_MASK`
 } maxim7219_code_b_font_t;
 
 /**
