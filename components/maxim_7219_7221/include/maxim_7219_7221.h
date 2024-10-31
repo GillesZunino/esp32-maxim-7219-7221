@@ -110,7 +110,7 @@ typedef enum {
     MAXIM7219_CODE_B_DECODE_DIGIT_5 = 0x10,     ///< Code B font decode for the fitfh digit
     MAXIM7219_CODE_B_DECODE_DIGIT_6 = 0x20,     ///< Code B font decode for the sixth digit
     MAXIM7219_CODE_B_DECODE_DIGIT_7 = 0x40,     ///< Code B font decode for the seventh digit
-    MAXIM7219_CODE_B_DECODE_DIGIT_8 = 0x40,     ///< Code B font decode for the eighth digit
+    MAXIM7219_CODE_B_DECODE_DIGIT_8 = 0x80,     ///< Code B font decode for the eighth digit
 
     MAXIM7219_CODE_B_DECODE_ALL = MAXIM7219_CODE_B_DECODE_DIGIT_1 | MAXIM7219_CODE_B_DECODE_DIGIT_2 | MAXIM7219_CODE_B_DECODE_DIGIT_3 |
                                   MAXIM7219_CODE_B_DECODE_DIGIT_4 | MAXIM7219_CODE_B_DECODE_DIGIT_5 | MAXIM7219_CODE_B_DECODE_DIGIT_6 |
