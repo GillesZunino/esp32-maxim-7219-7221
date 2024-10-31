@@ -43,7 +43,7 @@ typedef struct maxim7219_command {
 
 
 static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle, uint8_t chainId, const maxim7219_command_t* const pCmd);
-static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t length);
+static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t lengthInBytes);
 
 static esp_err_t check_driver_configuration_private(const maxim7219_config_t* config);
 static esp_err_t check_maxim_handle_private(led_driver_maxim7219_handle_t handle);
@@ -369,16 +369,16 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
     return err;
 }
 
-static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t length) {
-    bool useTxData = length <= 4;
-    uint8_t transactionLengthInBytes = length * sizeof(maxim7219_command_t);
+static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t lengthInBytes) {
+    bool useTxData = lengthInBytes <= 4;
     spi_transaction_t spiTransaction = {
         .flags = useTxData ? SPI_TRANS_USE_TXDATA : 0,
-        .length = transactionLengthInBytes * 8,
+        .length = lengthInBytes * 8,
         .rxlength = 0
     };
+
     if (useTxData) {
-        memcpy(spiTransaction.tx_data, data, length);
+        memcpy(spiTransaction.tx_data, data, lengthInBytes);
     } else {
         spiTransaction.tx_buffer = data;
     }
