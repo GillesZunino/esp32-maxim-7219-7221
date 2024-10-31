@@ -84,9 +84,9 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
 
-    // Set intensity on all devices - MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4 is dim
-    ESP_LOGI(TAG, "Set intensity to 'MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4' on all devices in the chain");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_4));
+    // Set intensity on all devices - MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2 is dim
+    ESP_LOGI(TAG, "Set intensity to 'MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2));
 
     // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
     // NOTE: Test mode always ignore the configured itensity
