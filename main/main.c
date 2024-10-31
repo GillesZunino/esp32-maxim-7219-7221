@@ -33,7 +33,7 @@ const gpio_num_t DIN_PIN = GPIO_NUM_11;
 #endif
 
 // Number of devices MAXIM 7219 / 7221 in the chain
-const uint8_t ChainLength = 1;
+const uint8_t ChainLength = 3;
 
 
 // Handle to the MAXIM 7219 / 7221 driver
