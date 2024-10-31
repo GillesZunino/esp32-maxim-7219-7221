@@ -13,16 +13,13 @@ const char* TAG = "max72[19|21]_main";
 
 //
 // NOTE: For maximum performance, prefer IO MUX over GPIO Matrix routing
-//  * When using GPIO Matrix routing, the SPI bus speed is limited to 20 MHz and it may be necessary to adjust spi_device_interface_config_t::input_delay_ns (MISO_INPUT_DELAY_NANO_SECONDS below)
 //  * See https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/spi_master.html#gpio-matrix-routing
 //
-const int MISO_INPUT_DELAY_NANO_SECONDS = 60;
-
 
 // SPI Host ID
 const spi_host_device_t SPI_HOSTID = SPI2_HOST;
 
-// SPI Pins - Depends on the chip and the board
+// SPI pins - Depends on the chip and the board
 #if CONFIG_IDF_TARGET_ESP32
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
 const gpio_num_t CLK_PIN = GPIO_NUM_18;
@@ -42,8 +39,6 @@ const uint8_t ChainLength = 1;
 // Handle to the MAXIM 7219 / 7221 driver
 led_driver_maxim7219_handle_t led_maxim7219_handle = NULL;
 
-// TIme in between two display digit changes
-const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
 
 
 void app_main(void) {
@@ -69,8 +64,6 @@ void app_main(void) {
 
             .clock_source = SPI_CLK_SRC_DEFAULT,
             .clock_speed_hz = 10 * 1000000,
-
-            .input_delay_ns = MISO_INPUT_DELAY_NANO_SECONDS,
 
             .spics_io_num = CS_LOAD_PIN,
             .queue_size = 8
