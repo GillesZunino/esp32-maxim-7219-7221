@@ -75,9 +75,14 @@ void app_main(void) {
     };
     ESP_LOGI(TAG, "Initialize MAX 7219 / 7221 driver");
     ESP_ERROR_CHECK(led_driver_max7219_init(&maxim7219InitConfig, &led_maxim7219_handle));
-    
-    // Configure scan limits on all devices
-    ESP_LOGI(TAG, "Configure scan limits to all digits (8)");
+    // NOTE: On power on, the MAXIM 2719 / 7221 starts in shutdown mode - All segments are off
+
+    // Switch to 'test' mode - This turns all segments on all displays ON at maximum intensity
+    ESP_LOGI(TAG, "Set Test mode");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
+
+    // Configure scan limit on all devices
+    ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_maxim7219_handle, 8));
 
     // Configure decode mode to 'decode for all digits'
@@ -88,12 +93,6 @@ void app_main(void) {
     ESP_LOGI(TAG, "Set intensity to 'MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2));
 
-    // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
-    // NOTE: Test mode always ignore the configured itensity
-    const uint8_t TestModeDurationSeconds = 5;
-    ESP_LOGI(TAG, "Set Test mode for %d seconds", TestModeDurationSeconds);
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
-    vTaskDelay(pdMS_TO_TICKS(TestModeDurationSeconds * 1000));
 
     // Switch to 'normal' mode so digits can be displayed
     ESP_LOGI(TAG, "Set Normal mode");
