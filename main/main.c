@@ -95,7 +95,7 @@ void app_main(void) {
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
     vTaskDelay(pdMS_TO_TICKS(TestModeDurationSeconds * 1000));
 
-    // Switch to 'normal' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
+    // Switch to 'normal' mode so digits can be displayed
     ESP_LOGI(TAG, "Set Normal mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
 
