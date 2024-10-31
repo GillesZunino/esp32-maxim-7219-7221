@@ -90,9 +90,10 @@ void app_main(void) {
 
     // Switch to 'test' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
     // NOTE: Test mode always ignore the configured itensity
-    ESP_LOGI(TAG, "Set Test mode");
+    const uint8_t TestModeDurationSeconds = 5;
+    ESP_LOGI(TAG, "Set Test mode for %d seconds", TestModeDurationSeconds);
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_TEST_MODE));
-    vTaskDelay(DelayBetweenUpdates);
+    vTaskDelay(pdMS_TO_TICKS(TestModeDurationSeconds * 1000));
 
     // Switch to 'normal' mode (The MAXIM 2719 / 2722 starts in shutdown mode by default)
     ESP_LOGI(TAG, "Set Normal mode");
