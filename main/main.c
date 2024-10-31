@@ -26,9 +26,9 @@ const gpio_num_t CLK_PIN = GPIO_NUM_18;
 const gpio_num_t DIN_PIN = GPIO_NUM_16;
 #else
 #if CONFIG_IDF_TARGET_ESP32S3
-const gpio_num_t CS_LOAD_PIN = GPIO_NUM_4;
-const gpio_num_t CLK_PIN = GPIO_NUM_5;
-const gpio_num_t DIN_PIN = GPIO_NUM_6;
+const gpio_num_t CS_LOAD_PIN = GPIO_NUM_10;
+const gpio_num_t CLK_PIN = GPIO_NUM_12;
+const gpio_num_t DIN_PIN = GPIO_NUM_11;
 #endif
 #endif
 
