@@ -42,7 +42,7 @@ led_driver_maxim7219_handle_t led_maxim7219_handle = NULL;
 
 
 void app_main(void) {
-    // Configure SPI bus to communicate with MCP2515
+    // Configure SPI bus to communicate with MAXIM 7219 / 7221
     spi_bus_config_t spiBusConfig = {
         .mosi_io_num = DIN_PIN,
         .miso_io_num = GPIO_NUM_NC,
@@ -73,7 +73,7 @@ void app_main(void) {
             .device_type = MAXIM_7219_TYPE
         }
     };
-    ESP_LOGI(TAG, "Initialize MCP2515 driver");
+    ESP_LOGI(TAG, "Initialize MAX 7219 / 7221 driver");
     ESP_ERROR_CHECK(led_driver_max7219_init(&maxim7219InitConfig, &led_maxim7219_handle));
     
     // Configure scan limits on all devices

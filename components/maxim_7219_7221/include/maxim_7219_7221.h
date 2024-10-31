@@ -185,7 +185,7 @@ typedef struct maxim7219_hw_config {
  * @brief Configuration of MAXIM 7219 / 7221 device.
  */
 typedef struct maxim7219_config {
-    maxim7219_spi_config_t spi_cfg;       ///< SPI configuration for MCP2515
+    maxim7219_spi_config_t spi_cfg;       ///< SPI configuration for MAXIM 7219 / 7221
     maxim7219_hw_config_t hw_config;      ///< MAXIM 7219 / 7221 hardware configuration
 } maxim7219_config_t;
 
