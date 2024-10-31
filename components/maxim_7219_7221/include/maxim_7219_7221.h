@@ -166,19 +166,10 @@ typedef struct maxim7219_spi_config {
 } maxim7219_spi_config_t;
 
 /**
- * @brief Type of MAXIM LED driver device connected.
- */
-typedef enum {
-    MAXIM_7219_TYPE = 1,                ///< MAXIM 7219 LED Driver variant
-    MAXIM_7221_TYPE = 2                 ///< MAXIM 7221 LED Driver variant
-} maxim7219_type_t;
-
-/**
  * @brief MAXIM LED Driver hardware configuration.
  */
 typedef struct maxim7219_hw_config {
     uint8_t chain_length;               ///< Number of MAXIM 7219 / 7221 connected (1 to 255). See "Cascading Drivers" in the MAXIM datasheet
-    maxim7219_type_t device_type;       ///< Type of device. These devices are mostly compatible but some operations (i.e. brightness setting) are different 
 } maxim7219_hw_config_t;
 
 /**

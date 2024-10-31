@@ -69,8 +69,7 @@ void app_main(void) {
             .queue_size = 8
         },
         .hw_config = {
-            .chain_length = ChainLength,
-            .device_type = MAXIM_7219_TYPE
+            .chain_length = ChainLength
         }
     };
     ESP_LOGI(TAG, "Initialize MAX 7219 / 7221 driver");

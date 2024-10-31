@@ -420,14 +420,6 @@ static esp_err_t check_driver_configuration_private(const maxim7219_config_t* co
         return ESP_ERR_INVALID_ARG;
     }
 
-    // Check hardware configuration - Device type must be either MAXIM_7219_TYPE or MAXIM_7221_TYPE
-    if ((config->hw_config.device_type != MAXIM_7219_TYPE) && (config->hw_config.device_type != MAXIM_7221_TYPE)) {
-#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
-        ESP_LOGE(LedDriverMaxim7219LogTag, "hw_config.device_type must be MAXIM_7219_TYPE or MAXIM_7221_TYPE");
-#endif
-        return ESP_ERR_INVALID_ARG;
-    }
-
     return ESP_OK;
 }
 
