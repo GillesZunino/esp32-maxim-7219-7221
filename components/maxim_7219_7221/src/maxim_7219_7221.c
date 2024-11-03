@@ -43,7 +43,7 @@ typedef struct maxim7219_command {
 
 
 static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle, uint8_t chainId, const maxim7219_command_t* const pCmd);
-static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t lengthInBytes);
+static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t commandsCount);
 
 static esp_err_t check_driver_configuration_private(const maxim7219_config_t* config);
 static esp_err_t check_maxim_handle_private(led_driver_maxim7219_handle_t handle);
@@ -360,7 +360,7 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
     }
 
     // Transmit to the device - There is no data to read back
-    esp_err_t err = led_driver_max7219_send_private(handle, buffer, length);
+    esp_err_t err = led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length);
 
     if (buffer != NULL) {
         heap_caps_free(buffer);
@@ -369,7 +369,8 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
     return err;
 }
 
-static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t lengthInBytes) {
+static esp_err_t led_driver_max7219_send_private(led_driver_maxim7219_handle_t handle, const maxim7219_command_t* const data, uint16_t commandsCount) {
+    uint16_t lengthInBytes = sizeof(maxim7219_command_t) * commandsCount;
     bool useTxData = lengthInBytes <= 4;
     spi_transaction_t spiTransaction = {
         .flags = useTxData ? SPI_TRANS_USE_TXDATA : 0,
