@@ -161,8 +161,8 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_maxim7219_handle_t hand
 esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_handle_t handle, uint8_t digits) {
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
 
-    // Number of digits to display must be between 1 and 8
-    if ((digits < 1) || (digits > 8)) {
+    // Number of digits to display must be between 1 (MAXIM7219_MIN_DIGIT) and 8 (MAXIM7219_MAX_DIGIT)
+    if ((digits < MAXIM7219_MIN_DIGIT) || (digits > MAXIM7219_MAX_DIGIT)) {
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -175,8 +175,8 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_maxim7219_handle_t 
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
-    // Number of digits to display must be between 1 and 8
-    if ((digits < 1) || (digits > 8)) {
+    // Number of digits to display must be between 1 (MAXIM7219_MIN_DIGIT) and 8 (MAXIM7219_MAX_DIGIT)
+    if ((digits < MAXIM7219_MIN_DIGIT) || (digits > MAXIM7219_MAX_DIGIT)) {
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -282,8 +282,8 @@ esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uin
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, chainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
 
-    // Digit must be between 1 and 8
-    if ((digit < 1) || (digit > 8)) {
+    // Digit must be between 1 (MAXIM7219_MIN_DIGIT) and 8 (MAXIM7219_MAX_DIGIT)
+    if ((digit < MAXIM7219_MIN_DIGIT) || (digit > MAXIM7219_MAX_DIGIT)) {
 #if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
         ESP_LOGE(LedDriverMaxim7219LogTag, "digit must be >= 1 and <= 8");
 #endif
