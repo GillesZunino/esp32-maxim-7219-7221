@@ -261,6 +261,10 @@ esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_maxim7219_han
  * @param[in]  chainId Index of the MAXIM device to configure starting at 1 for the first device
  * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
  *
+ * @attention It is recommended to set the same scan limit on all devices otherwise a display might appear brighter than others.
+ *            For example:
+ *              * If twelve digits are required, set the scan limit to six on two MAXIM 7219 / 7221 devices.
+ *              * If eleven digits are required, set the scan limit to six on two MAXIM 7219 / 7221 devices and leave one digit driver unconnected.
  * @return
  *      - ESP_OK: Success
  *      - ESP_ERR_INVALID_ARG: Invalid argument
