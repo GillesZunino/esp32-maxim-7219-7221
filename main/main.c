@@ -74,7 +74,7 @@ void app_main(void) {
     };
     ESP_LOGI(TAG, "Initialize MAX 7219 / 7221 driver");
     ESP_ERROR_CHECK(led_driver_max7219_init(&maxim7219InitConfig, &led_maxim7219_handle));
-    // NOTE: On power on, the MAXIM 2719 / 7221 starts in shutdown mode - All segments are off
+    // NOTE: On power on, the MAXIM 2719 / 7221 starts in shutdown mode - All blank, scan mode is 1 digit, no CODE B decode, intensity is minimum
 
     // Switch to 'test' mode - This turns all segments on all displays ON at maximum intensity
     ESP_LOGI(TAG, "Set Test mode");
