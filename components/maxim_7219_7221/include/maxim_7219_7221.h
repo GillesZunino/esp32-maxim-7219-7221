@@ -15,6 +15,10 @@ extern "C" {
 #endif
 
 
+#define MAXIM7219_MIN_DIGIT 1   ///< A MAXIM 7219 / 7221 can drive a minimum of 1 digits
+#define MAXIM7219_MAX_DIGIT 8   ///< A MAXIM 7219 / 7221 can drive a maximum of 8 digits
+
+
 /**
  * @brief Handle to a MAXIM 7219 / 7221 device.
  */
