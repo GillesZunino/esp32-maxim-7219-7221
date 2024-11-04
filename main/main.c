@@ -35,7 +35,7 @@ const gpio_num_t DIN_PIN = GPIO_NUM_11;
 // Number of devices MAXIM 7219 / 7221 in the chain
 const uint8_t ChainLength = 3;
 
-// Time between two disaply update
+// Time between two display update
 const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
 
 
