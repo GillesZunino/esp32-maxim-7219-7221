@@ -355,6 +355,7 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
         }
     } else {
 #if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "Not enough memory to allocate command buffer [chain length (%d)]", handle->hw_config.chain_length);
 #endif
         return ESP_ERR_NO_MEM;
     }
