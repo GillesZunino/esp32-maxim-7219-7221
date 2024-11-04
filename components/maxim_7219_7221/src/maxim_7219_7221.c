@@ -332,8 +332,7 @@ esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uin
 
 
 static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle, uint8_t chainId, const maxim7219_command_t* const pCmd) {
-    uint16_t length = handle->hw_config.chain_length * sizeof(maxim7219_command_t);
-    maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
+    maxim7219_command_t* buffer = heap_caps_calloc(handle->hw_config.chain_length, sizeof(maxim7219_command_t), MALLOC_CAP_DMA);
     if (buffer != NULL) {
         if (chainId == 0) {
 #if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
