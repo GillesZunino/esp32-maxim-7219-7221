@@ -35,6 +35,10 @@ const gpio_num_t DIN_PIN = GPIO_NUM_11;
 // Number of devices MAXIM 7219 / 7221 in the chain
 const uint8_t ChainLength = 3;
 
+// Time between two disaply update
+const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
+
+
 
 // Handle to the MAXIM 7219 / 7221 driver
 led_driver_maxim7219_handle_t led_maxim7219_handle = NULL;
@@ -92,17 +96,25 @@ void app_main(void) {
     ESP_LOGI(TAG, "Set intensity to 'MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2));
 
+    // Reset all digits to 'blank' for a clean visual effect - We use MAXIM7219_CODE_B_FONT_BLANK since we configured Code B decode
+    // When the MAXIM 7219 / 7221 is put in test mode, it preserves whatever digits were programmed before
+    // If no digits were programmed before entering test mode, the MAXIM 7219 / 7221 will load '8' in all digits
+    ESP_LOGI(TAG, "Set all digits to blank");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_maxim7219_handle, MAXIM7219_CODE_B_FONT_BLANK));
 
-    // Switch to 'normal' mode so digits can be displayed
+
+    // Hold 'test' mode for a little while
+    vTaskDelay(DelayBetweenUpdates);
+
+    // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
     ESP_LOGI(TAG, "Set Normal mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
+    vTaskDelay(DelayBetweenUpdates);
 
-
-    const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
 
     // Display '8' sequentially on all digits of all devices
     for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
-        for (uint8_t digitId = 1; digitId <= 8; digitId++) {
+        for (uint8_t digitId = MAXIM7219_MIN_DIGIT; digitId <= MAXIM7219_MAX_DIGIT; digitId++) {
             ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAXIM7219_CODE_B_FONT_8'", chainId, digitId);
             ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_maxim7219_handle, chainId, digitId, MAXIM7219_CODE_B_FONT_8));
             vTaskDelay(DelayBetweenUpdates);
