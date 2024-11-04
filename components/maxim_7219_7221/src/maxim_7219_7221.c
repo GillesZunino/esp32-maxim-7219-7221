@@ -330,6 +330,49 @@ esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uin
 // }
 
 
+esp_err_t led_driver_max7219_set_chain(led_driver_maxim7219_handle_t handle, uint8_t digitCode) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+
+    maxim7219_command_t* buffer = heap_caps_calloc(handle->hw_config.chain_length, sizeof(maxim7219_command_t), MALLOC_CAP_DMA);
+    if (buffer == NULL) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "Not enough memory to allocate command buffer [chain length (%d) * 8 digits]", handle->hw_config.chain_length);
+#endif
+        return ESP_ERR_NO_MEM;
+    }
+
+    // Take exclusive access of the SPI bus
+    esp_err_t ret = ESP_OK;
+    ESP_GOTO_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMaxim7219LogTag, "Unable to acquire SPI bus");
+
+        // Send |MAXIM7219_DIGIT<digit>_ADDRESS|<digitCode>| to all devices
+        // NOTE: We first clear digit 1 on all devices, then digit 2 on all devices and so on
+        for (uint8_t digit = MAXIM7219_MIN_DIGIT; digit <= MAXIM7219_MAX_DIGIT; digit++) {
+            maxim7219_command_t command = { .address = digit, .data = digitCode };
+            for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
+                buffer[deviceIndex] = command;
+            }
+
+            // Transmit commands to the chain
+            ret = led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length);
+            if (ret != ESP_OK) {
+#if CONFIG_MAXIM_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGE(LedDriverMaxim7219LogTag, "Failed to send commands to chain (%d)", ret);
+#endif
+                break;
+            }
+        }
+
+    // Release access to the SPI bus
+    spi_device_release_bus(handle->spi_device_handle);
+
+cleanup:
+    if (buffer != NULL) {
+        heap_caps_free(buffer);
+    }
+
+    return ret;
+}
 
 static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle, uint8_t chainId, const maxim7219_command_t* const pCmd) {
     maxim7219_command_t* buffer = heap_caps_calloc(handle->hw_config.chain_length, sizeof(maxim7219_command_t), MALLOC_CAP_DMA);

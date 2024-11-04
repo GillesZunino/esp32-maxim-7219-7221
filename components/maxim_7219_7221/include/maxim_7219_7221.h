@@ -341,6 +341,21 @@ esp_err_t led_driver_max7219_set_chain_intensity(led_driver_maxim7219_handle_t h
  */
 esp_err_t led_driver_max7219_set_intensity(led_driver_maxim7219_handle_t handle, uint8_t chainId, maxim7219_intensity_t intensity);
 
+
+
+/**
+ * @brief Set the given digit code on all digits of all MAXIM 7219 / 7221 devices on the chain.
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  digitCode The digit code to set. A `maxim7219_code_b_font_t` value for digits in Code B decode mode or a combination of `maxim7219_segment_t` values for devices in no decode mode
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
+esp_err_t led_driver_max7219_set_chain(led_driver_maxim7219_handle_t handle, uint8_t digitCode);
+
 /**
  * @brief Set the given digit code on a MAXIM 7219 / 7221 device on the chain.
  * 
