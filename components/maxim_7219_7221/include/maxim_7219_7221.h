@@ -105,7 +105,7 @@ typedef enum {
  * @brief MAXIM 7219 / 7221 code B digit decode.
  */
 typedef enum {
-    MAXIM7219_CODE_B_NO_DECODE = 0x00,          ///< Code B font decode disabled
+    MAXIM7219_CODE_B_DECODE_NONE = 0x00,        ///< Code B font decode disabled
 
     MAXIM7219_CODE_B_DECODE_DIGIT_1 = 0x01,     ///< Code B font decode for the first digit
     MAXIM7219_CODE_B_DECODE_DIGIT_2 = 0x02,     ///< Code B font decode for the second digit
