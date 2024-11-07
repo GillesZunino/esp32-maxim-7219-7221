@@ -82,10 +82,10 @@ typedef enum {
     MAXIM7219_CUSTOM_1 = MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                                                                 ///< Digit 1
     MAXIM7219_CUSTOM_2 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D,                                               ///< Digit 2
     MAXIM7219_CUSTOM_3 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D,                                               ///< Digit 3
-    MAXIM7219_CUSTOM_4 = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C,                                                                                           ///< Digit 4
+    MAXIM7219_CUSTOM_4 = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                                           ///< Digit 4
     MAXIM7219_CUSTOM_5 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D,                                               ///< Digit 5
     MAXIM7219_CUSTOM_6 = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E,                                               ///< Digit 6
-    MAXIM7219_CUSTOM_7 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_G,                                                                     ///< Digit 7
+    MAXIM7219_CUSTOM_7 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                     ///< Digit 7
     MAXIM7219_CUSTOM_8 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G,   ///< Digit 8
     MAXIM7219_CUSTOM_9 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G,                         ///< Digit 9
     MAXIM7219_CUSTOM_A = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G,                         ///< Letter A
