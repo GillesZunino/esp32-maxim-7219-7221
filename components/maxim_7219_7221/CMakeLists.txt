@@ -5,8 +5,7 @@ set(srcs
 idf_component_register(
     SRCS ${srcs}
     INCLUDE_DIRS "include"
-    REQUIRES "driver"
-    REQUIRES esp_driver_spi
+    REQUIRES esp_driver_spi esp_driver_gpio
     PRIV_REQUIRES 
 )
 
