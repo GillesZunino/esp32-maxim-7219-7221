@@ -5,6 +5,12 @@
 		},
 		{
 			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_basic"
+		},
+		{
+			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_intensity"
+		},
+		{
+			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_testmode"
 		}
 	],
 	"settings": {
