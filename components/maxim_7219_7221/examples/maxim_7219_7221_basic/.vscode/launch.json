@@ -10,8 +10,8 @@
       "type": "gdbtarget",
       "request": "attach",
 
-      "cwd": "${workspaceFolder}",
       "preLaunchTask": "Monitor: Start the monitor (RESET)",
+      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic",
 
       "initCommands": [
         "set mem inaccessible-by-default off",
@@ -25,25 +25,25 @@
       "type": "cppdbg",
       "request": "launch",
 
-      "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
+      "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic/build/${command:espIdf.getProjectName}.elf",
 
       "linux": {
         "MIMode": "gdb",
         "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
-        "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf"
+        "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic/build/${command:espIdf.getProjectName}.elf"
       },
       "osx": {
         "MIMode": "gdb",
         "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
-        "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf"
+        "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic/build/${command:espIdf.getProjectName}.elf"
       },
       "windows": {
         "MIMode": "gdb",
         "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
-        "program": "${workspaceFolder}\\build\\${command:espIdf.getProjectName}.elf"
+        "program": "${workspaceFolder}\\components\\maxim_7219_7221\\examples\\maxim_7219_7221_basic\\build\\${command:espIdf.getProjectName}.elf"
       },
 
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic",
       "environment": [
         { "name": "PATH", "value": "${config:idf.customExtraPaths}" }
       ],
