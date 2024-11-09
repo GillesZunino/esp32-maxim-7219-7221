@@ -60,7 +60,7 @@ static void on_momentatory_button_pressed(void) {
     if (newMode != currentMode) {
         currentMode = newMode;
         ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, currentMode));
-        ESP_LOGI(TAG, "on_momentatory_button_pressed() Switching to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
+        ESP_LOGI(TAG, "on_momentatory_button_pressed() Switched to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
     }
 }
 
@@ -138,7 +138,7 @@ void app_main(void) {
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
 
     do {
-        gpio_events_queue_dispatch();
+        ESP_ERROR_CHECK(gpio_events_queue_dispatch());
     } while (true);
 
     // Shutdown MAXIM 7219 / 7221 driver and SPI bus
