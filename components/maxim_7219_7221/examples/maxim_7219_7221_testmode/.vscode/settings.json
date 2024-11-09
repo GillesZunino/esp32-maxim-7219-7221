@@ -36,7 +36,7 @@
     "idf.enableSizeTaskAfterBuildTask": true,
 
     // SVD files from https://github.com/espressif/svd/tree/main/svd
-    "idf.svdFilePath": "${workspaceFolder}/svd/${config:idf.adapterTargetName}.svd",
+    "idf.svdFilePath": "${workspaceFolder}/../../../../svd/${config:idf.adapterTargetName}.svd",
 
     "idf.portWin": "COM3",
     "idf.flashType": "UART"
