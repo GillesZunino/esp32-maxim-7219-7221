@@ -33,7 +33,7 @@ const gpio_num_t CS_LOAD_PIN = GPIO_NUM_10;
 const gpio_num_t CLK_PIN = GPIO_NUM_12;
 const gpio_num_t DIN_PIN = GPIO_NUM_11;
 
-const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_17;
+const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_38;
 #endif
 #endif
 
@@ -51,9 +51,17 @@ led_driver_maxim7219_handle_t led_maxim7219_handle = NULL;
 
 static maxim7219_mode_t currentMode = MAXIM7219_NORMAL_MODE;
 static void on_momentatory_button_pressed(void) {
-    //ESP_LOGI(MainTag, "on_momentatory_button_pressed() Button pressed");
-    currentMode = currentMode == MAXIM7219_NORMAL_MODE ? MAXIM7219_TEST_MODE : MAXIM7219_NORMAL_MODE;
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, currentMode));
+    int buttontState = gpio_get_level(GPIO_NUM_38);
+    bool isButtonPressed = buttontState == 1;
+
+    ESP_LOGI(TAG, "on_momentatory_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
+
+    maxim7219_mode_t newMode = isButtonPressed ? MAXIM7219_TEST_MODE : MAXIM7219_NORMAL_MODE;
+    if (newMode != currentMode) {
+        currentMode = newMode;
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, currentMode));
+        ESP_LOGI(TAG, "on_momentatory_button_pressed() Switching to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
+    }
 }
 
 void app_main(void) {
@@ -63,8 +71,8 @@ void app_main(void) {
         .pin_bit_mask = (1ULL << TESTMODE_PUSH_BUTTON_PIN),
 		.mode = GPIO_MODE_INPUT,
 		.pull_up_en = GPIO_PULLDOWN_DISABLE,
-		.pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_NEGEDGE
+		.pull_down_en = GPIO_PULLDOWN_ENABLE,
+        .intr_type = GPIO_INTR_ANYEDGE
     };
     ESP_ERROR_CHECK(gpio_config(&buttonPinConfiguration));
     ESP_ERROR_CHECK(ht_gpio_isr_handler_add(TESTMODE_PUSH_BUTTON_PIN, &on_momentatory_button_pressed));
@@ -107,6 +115,9 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_maxim7219_handle, 8));
 
+    // Set digit intensity to a dim value
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_2));
+
 
     const uint8_t DeviceChainId = 1;
 
@@ -135,5 +146,6 @@ void app_main(void) {
     ESP_ERROR_CHECK(spi_bus_free(SPI_HOSTID));
 
     // Shutdown GPIO ISR dispatcher
+    ESP_ERROR_CHECK(ht_gpio_isr_handler_delete(TESTMODE_PUSH_BUTTON_PIN));
     ESP_ERROR_CHECK(shutdown_gpio_isr_dispatcher());
 }
