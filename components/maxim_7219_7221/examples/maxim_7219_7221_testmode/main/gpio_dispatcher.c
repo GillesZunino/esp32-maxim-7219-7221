@@ -35,7 +35,7 @@ static void gpio_isr_handler(void* arg) {
     isr_handler_fn_ptr handlerFn = (isr_handler_fn_ptr) arg;
     BaseType_t enqueuOutcome = xQueueGenericSendFromISR(s_gpio_isr_dispatch_queue, &handlerFn, NULL, queueSEND_TO_BACK);
     if (enqueuOutcome != pdPASS) {
-        ESP_LOGE(GpioIsrTag, "xQueueGenericSendFromISR() failed (0x%x) - ISR will be dropped", enqueuOutcome);
+        ESP_DRAM_LOGE(GpioIsrTag, "xQueueGenericSendFromISR() failed (0x%x) - ISR will be dropped", enqueuOutcome);
     }
 }
 
