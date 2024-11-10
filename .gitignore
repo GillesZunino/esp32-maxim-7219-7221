@@ -1,5 +1,5 @@
 # Peripherial states
-.vscode/.espidf.peripherals.state.json
+**/.vscode/.espidf.peripherals.state.json
 
 # ESP-IDF menuconfig output
 sdkconfig
