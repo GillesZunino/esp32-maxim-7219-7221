@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_testmode"
+		},
+		{
+			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_scanlimit"
 		}
 	],
 	"settings": {
