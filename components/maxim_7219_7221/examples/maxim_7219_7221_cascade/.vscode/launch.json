@@ -11,7 +11,7 @@
       "request": "attach",
 
       "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_cascade",
-      //"preLaunchTask": "Monitor: Start the monitor (RESET)",
+      "preLaunchTask": "Monitor: Start the monitor (RESET)",
 
       "initCommands": [
         "set mem inaccessible-by-default off",
@@ -48,7 +48,7 @@
         { "name": "PATH", "value": "${config:idf.customExtraPaths}" }
       ],
 
-      //"preLaunchTask": "Monitor: Start the monitor (RESET)",
+      "preLaunchTask": "Monitor: Start the monitor (RESET)",
 
       "setupCommands": [
         { "text": "target extended-remote :3333" },
