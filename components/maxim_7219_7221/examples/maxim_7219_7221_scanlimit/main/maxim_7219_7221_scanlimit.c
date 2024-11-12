@@ -83,6 +83,10 @@ void app_main(void) {
     ESP_LOGI(TAG, "Set intensity to 'MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_1' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_maxim7219_handle, MAXIM7219_INTENSITY_DUTY_CYCLE_STEP_1));
 
+    // Configure decode mode to 'decode for all digits'
+    ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
+    ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
+
 
     const uint8_t DeviceChainId = 1;
     const uint8_t MinScanLimit = 4;
