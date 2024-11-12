@@ -83,10 +83,100 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_maxim7219_handle, 8));
 
-
-
     do {
-        vTaskDelay(DelayBetweenUpdates);
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_SHUTDOWN_MODE));
+
+        // Configure decode mode to 'decode for all digits'
+        ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
+        ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_ALL));
+
+        // Reset all digits to 'blank' for a clean visual effect - We use MAXIM7219_CODE_B_FONT_BLANK since we configured Code B decode
+        // When the MAXIM 7219 / 7221 is put in test mode, it preserves whatever digits were programmed before
+        // If no digits were programmed before entering test mode, the MAXIM 7219 / 7221 will load '8' in all digits
+        ESP_LOGI(TAG, "Set all digits to blank");
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_maxim7219_handle, MAXIM7219_CODE_B_FONT_BLANK));
+
+        // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
+        ESP_LOGI(TAG, "Set Normal mode");
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
+
+        // Populate every digit of every device in the chain with a different symbol from Code B font
+        {
+            maxim7219_code_b_font_t symbol = MAXIM7219_CODE_B_FONT_0;
+            for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
+                for (uint8_t digitId = MAXIM7219_MIN_DIGIT; digitId <= MAXIM7219_MAX_DIGIT; digitId++) {
+                    // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
+                    bool decimalOn = symbol % 2 == 0;
+                    maxim7219_code_b_font_t symbolWithDecimal = decimalOn ? symbol | MAXIM7219_CODE_B_DP_MASK : symbol;
+                    ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", chainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+                    ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_maxim7219_handle, chainId, digitId, symbolWithDecimal));
+
+                    symbol++;
+                    if (symbol > MAXIM7219_CODE_B_FONT_BLANK) { symbol = MAXIM7219_CODE_B_FONT_0; }
+
+                    vTaskDelay(DelayBetweenUpdates);
+                }
+            }
+        }
+
+        vTaskDelay(2 * DelayBetweenUpdates);
+
+        // Configure decode mode to 'no decode for all digits' - We disable all digits (shutdown mode) before changing configuration
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_SHUTDOWN_MODE));
+
+        ESP_LOGI(TAG, "Configure decode to 'no decode' for all digits in the chain and blank the chain");
+        ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_maxim7219_handle, MAXIM7219_CODE_B_DECODE_NONE));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_maxim7219_handle, MAXIM7219_CUSTOM_BLANK));
+
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_maxim7219_handle, MAXIM7219_NORMAL_MODE));
+
+        // Make all custom symbols accessible via indexing in an array
+        const maxim7219_custom_font_t AllCustomSymbols[] = {
+            MAXIM7219_CUSTOM_0,
+            MAXIM7219_CUSTOM_1,
+            MAXIM7219_CUSTOM_2,
+            MAXIM7219_CUSTOM_3,
+            MAXIM7219_CUSTOM_4,
+            MAXIM7219_CUSTOM_5,
+            MAXIM7219_CUSTOM_6,
+            MAXIM7219_CUSTOM_7,
+            MAXIM7219_CUSTOM_8,
+            MAXIM7219_CUSTOM_9,
+            MAXIM7219_CUSTOM_A,
+            MAXIM7219_CUSTOM_C,
+            MAXIM7219_CUSTOM_E,
+            MAXIM7219_CUSTOM_F,
+            MAXIM7219_CUSTOM_H,
+            MAXIM7219_CUSTOM_J,
+            MAXIM7219_CUSTOM_L,
+            MAXIM7219_CUSTOM_P,
+            MAXIM7219_CUSTOM_U,
+            MAXIM7219_CUSTOM_MINUS,
+            MAXIM7219_CUSTOM_BLANK
+        };
+
+        // Populate every digit of every device in the chain with a different symbol from custom font
+        {
+            uint8_t symbolIndex = 0;
+            maxim7219_code_b_font_t symbol = AllCustomSymbols[0];
+            for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
+                for (uint8_t digitId = MAXIM7219_MIN_DIGIT; digitId <= MAXIM7219_MAX_DIGIT; digitId++) {
+                    // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go - BLANK has also decimal point off
+                    maxim7219_custom_font_t symbol = AllCustomSymbols[symbolIndex];
+                    bool decimalOn = ((symbolIndex % 2) == 0) && (symbol != MAXIM7219_CUSTOM_BLANK);
+                    maxim7219_custom_font_t symbolWithDecimal = decimalOn ? symbol | MAXIM7219_SEGMENT_DP : symbol;
+                    ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", chainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+                    ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_maxim7219_handle, chainId, digitId, symbolWithDecimal));
+
+                    symbolIndex++;
+                    if (symbolIndex >= sizeof(AllCustomSymbols) / sizeof(AllCustomSymbols[0])) { symbolIndex = 0; }
+
+                    vTaskDelay(DelayBetweenUpdates);
+                }
+            }
+        }
+
+        vTaskDelay(2 * DelayBetweenUpdates);
     } while (true);
 
     // Shutdown MAXIM 7219 / 7221 driver and SPI bus
