@@ -457,6 +457,7 @@ static esp_err_t send_chain_command_private(led_driver_maxim7219_handle_t handle
             // The array is initialized to 0 which means .address is already set to MAXIM7219_NOOP_ADDRESS and .data is already set to 0
             // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
             uint8_t deviceIndex = handle->hw_config.chain_length - chainId;
+            memset(buffer, MAXIM7219_NOOP_ADDRESS, handle->hw_config.chain_length * sizeof(maxim7219_command_t));
             buffer[deviceIndex] = cmd;
         }
 
