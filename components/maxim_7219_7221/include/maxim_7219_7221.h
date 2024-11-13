@@ -375,6 +375,8 @@ esp_err_t led_driver_max7219_set_chain(led_driver_maxim7219_handle_t handle, uin
  */
 esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode);
 
+esp_err_t led_driver_max7219_set_digits(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount);
+
 
 
 #ifdef __cplusplus

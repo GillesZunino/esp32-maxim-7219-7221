@@ -360,38 +360,53 @@ esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uin
 }
 
 
-// esp_err_t led_driver_max7219_set_digits(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount) {
-//     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "%s() Invalid handle", __func__);
-//     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, startChainId), LedDriverMaxim7219LogTag, "%s() Invalid chain ID", __func__);
+esp_err_t led_driver_max7219_set_digits(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount) {
+    ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, startChainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
+    ESP_RETURN_ON_ERROR(check_maxim_digit_private(handle, startDigitId), LedDriverMaxim7219LogTag, "Invalid start digit");
 
-//     // Start digit must be between 1 and 8
-//     if ((startDigitId < 1) || (startDigitId > 8)) {
-//         return ESP_ERR_INVALID_ARG;
-//     }
 
-//     // Number of digits must not push us past the end of the chain
-//     // TODO: validate
+    // TODO: Number of digits must not push us past the end of the chain
+    // TODO: Validate startChain, startDigit, digitCodesCount, digitCodes
 
-//     // TODO: validate startChain, startDigit, digitCodesCount, digitCodes
 
-//     // TODO: Allocate the right size for the buffer
-//     uint16_t length = 1 * handle->hw_config.chain_length * sizeof(maxim7219_command_t);
-//     maxim7219_command_t* buffer = heap_caps_calloc(1, length, MALLOC_CAP_DEFAULT);
-//     if (buffer != NULL) {
-//         // TODO
-//     } else {
-//         return ESP_ERR_NO_MEM;
-//     }
+    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMaxim7219LogTag, "Could not aquire mutex");
 
-//     // Transmit to the device - There is no data to read back
-//     esp_err_t err =  led_driver_max7219_send_private(handle, buffer, length);
+    maxim7219_command_t* buffer = get_command_buffer_private(handle);
+    uint8_t dstDigitIndex = startDigitId;
+    uint8_t deviceIndex = handle->hw_config.chain_length - startChainId;
 
-//     if (buffer != NULL) {
-//         heap_caps_free(buffer);
-//     }
+    // Take exclusive access of the SPI bus
+    esp_err_t ret = ESP_OK;
+    ESP_GOTO_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMaxim7219LogTag, "Unable to acquire SPI bus");
 
-//     return err;
-// }
+        for (uint8_t srcDigitIndex = 0; srcDigitIndex < digitCodesCount; srcDigitIndex++) {
+            // Send |MAXIM7219_DIGIT<digit>_ADDRESS|<digitCode>| to the correct device in the chain 
+            memset(buffer, MAXIM7219_NOOP_ADDRESS, handle->hw_config.chain_length * sizeof(maxim7219_command_t));
+            maxim7219_command_t command = { .address = dstDigitIndex, .data = digitCodes[srcDigitIndex] };
+            buffer[deviceIndex] = command;
+
+            ESP_GOTO_ON_ERROR(led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMaxim7219LogTag, "Failed to send commands to chain");
+
+            dstDigitIndex++;
+            if (dstDigitIndex > MAXIM7219_MAX_DIGIT) {
+                dstDigitIndex = MAXIM7219_MIN_DIGIT;
+                deviceIndex--;
+            }
+        }
+
+releasebus:
+    // Release access to the SPI bus
+    spi_device_release_bus(handle->spi_device_handle);
+
+cleanup:
+    // Release mutex
+    if (xSemaphoreGive(handle->mutex) != pdTRUE) {
+        ESP_LOGE(LedDriverMaxim7219LogTag, "Could not release mutex - Exiting without releasing mutex which may cause a deadlock later");
+    }
+
+    return ret;
+}
 
 
 esp_err_t led_driver_max7219_set_chain(led_driver_maxim7219_handle_t handle, uint8_t digitCode) {
