@@ -121,7 +121,31 @@ void app_main(void) {
         }
     }
     
+    vTaskDelay(2 * DelayBetweenUpdates);
+
+    uint8_t digits[] = {
+        MAXIM7219_CODE_B_FONT_2,
+        MAXIM7219_CODE_B_FONT_3,
+        MAXIM7219_CODE_B_FONT_MINUS,
+        MAXIM7219_CODE_B_FONT_H,
+        MAXIM7219_CODE_B_FONT_P
+    };
+    const uint8_t digitCount = sizeof(digits) / sizeof(digits[0]);
+
+
+    uint8_t startDevice = 1;
+    uint8_t startDigit = 3;
+
     do {
+        ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_maxim7219_handle, startDevice, startDigit, digits, digitCount));
+
+        for (uint8_t digit = 0; digit < digitCount; digit++) {
+            digits[digit]++;
+            if (digits[digit] > MAXIM7219_CODE_B_FONT_BLANK) {
+                digits[digit] = MAXIM7219_CODE_B_FONT_0;
+            }
+        }
+
         vTaskDelay(DelayBetweenUpdates);
     } while (true);
 
