@@ -375,6 +375,24 @@ esp_err_t led_driver_max7219_set_chain(led_driver_maxim7219_handle_t handle, uin
  */
 esp_err_t led_driver_max7219_set_digit(led_driver_maxim7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode);
 
+/**
+ * @brief Set the given digit codes to MAXIM 7219 / 7221 device on the chain, starting at the given device and digit.
+ * 
+ * @note The chain is organized as follows:
+ *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
+ *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
+ * 
+ * @param[in]  handle Handle to the MAXIM 7219 / 7221 driver
+ * @param[in]  startChainId Index of the MAXIM device where codes should start being sent to
+ * @param[in]  startDigitId The digit to start sending codes from (1 to 8)
+ * @param[in]  digitCodes An array of digit codes to send. A `maxim7219_code_b_font_t` value for digits in Code B decode mode or a combination of `maxim7219_segment_t` values for devices in no decode mode
+ * @param[in]  digitCodesCount NUmber of digit codes in array 'digitCodes'
+ *
+ * @return
+ *      - ESP_OK: Success
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
+ */
 esp_err_t led_driver_max7219_set_digits(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount);
 
 
