@@ -63,6 +63,7 @@ static esp_err_t check_driver_configuration_private(const maxim7219_config_t* co
 static esp_err_t check_maxim_handle_private(led_driver_maxim7219_handle_t handle);
 static esp_err_t check_maxim_chain_id_private(led_driver_maxim7219_handle_t handle, uint8_t chainId);
 static esp_err_t check_maxim_digit_private(led_driver_maxim7219_handle_t handle, uint8_t digit);
+static esp_err_t check_bulk_symbols_array_length(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount);
 
 
 esp_err_t led_driver_max7219_init(const maxim7219_config_t* config, led_driver_maxim7219_handle_t* handle) {
@@ -364,11 +365,7 @@ esp_err_t led_driver_max7219_set_digits(led_driver_maxim7219_handle_t handle, ui
     ESP_RETURN_ON_ERROR(check_maxim_handle_private(handle), LedDriverMaxim7219LogTag, "Invalid handle");
     ESP_RETURN_ON_ERROR(check_maxim_chain_id_private(handle, startChainId), LedDriverMaxim7219LogTag, "Invalid chain ID");
     ESP_RETURN_ON_ERROR(check_maxim_digit_private(handle, startDigitId), LedDriverMaxim7219LogTag, "Invalid start digit");
-
-
-    // TODO: Number of digits must not push us past the end of the chain
-    // TODO: Validate startChain, startDigit, digitCodesCount, digitCodes
-
+    ESP_RETURN_ON_ERROR(check_bulk_symbols_array_length(handle, startChainId, startDigitId, digitCodesCount), LedDriverMaxim7219LogTag, "Invalid number of digit codes provideds");
 
     ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMaxim7219LogTag, "Could not aquire mutex");
 
@@ -577,4 +574,11 @@ static esp_err_t check_maxim_chain_id_private(led_driver_maxim7219_handle_t hand
 
 static esp_err_t check_maxim_digit_private(led_driver_maxim7219_handle_t handle, uint8_t digit) {
     return (digit >= MAXIM7219_MIN_DIGIT) && (digit <= MAXIM7219_MAX_DIGIT) ? ESP_OK : ESP_ERR_INVALID_ARG;
+}
+
+static esp_err_t check_bulk_symbols_array_length(led_driver_maxim7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount) {
+    // Number of remaining digits starting at device 'startChainId' and at digit 'stratDigitId's
+    const uint8_t availableDigits = (((handle->hw_config.chain_length - startChainId) + 1) * MAXIM7219_MAX_DIGIT) - (MAXIM7219_MAX_DIGIT - startDigitId);
+    return (digitCodesCount > 0) && (digitCodesCount <= availableDigits) ? ESP_OK : ESP_ERR_INVALID_ARG;
+
 }
