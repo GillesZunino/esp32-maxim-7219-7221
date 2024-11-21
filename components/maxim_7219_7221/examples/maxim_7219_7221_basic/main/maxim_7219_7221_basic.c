@@ -141,6 +141,7 @@ void app_main(void) {
             MAXIM7219_CUSTOM_7,
             MAXIM7219_CUSTOM_8,
             MAXIM7219_CUSTOM_9,
+            
             MAXIM7219_CUSTOM_A,
             MAXIM7219_CUSTOM_C,
             MAXIM7219_CUSTOM_E,
@@ -150,6 +151,18 @@ void app_main(void) {
             MAXIM7219_CUSTOM_L,
             MAXIM7219_CUSTOM_P,
             MAXIM7219_CUSTOM_U,
+
+            MAXIM7219_CUSTOM_b,
+            MAXIM7219_CUSTOM_d,
+            MAXIM7219_CUSTOM_e,
+            MAXIM7219_CUSTOM_g,
+            MAXIM7219_CUSTOM_h,
+            MAXIM7219_CUSTOM_o,
+            MAXIM7219_CUSTOM_r,
+            MAXIM7219_CUSTOM_t,
+            MAXIM7219_CUSTOM_u,
+            MAXIM7219_CUSTOM_y,
+
             MAXIM7219_CUSTOM_MINUS,
             MAXIM7219_CUSTOM_BLANK
         };
