@@ -82,12 +82,13 @@ typedef enum {
     MAXIM7219_CUSTOM_1 = MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                                                                 ///< Digit 1
     MAXIM7219_CUSTOM_2 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D,                                               ///< Digit 2
     MAXIM7219_CUSTOM_3 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D,                                               ///< Digit 3
-    MAXIM7219_CUSTOM_4 = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                                           ///< Digit 4
+    MAXIM7219_CUSTOM_4 = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                     ///< Digit 4
     MAXIM7219_CUSTOM_5 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D,                                               ///< Digit 5
     MAXIM7219_CUSTOM_6 = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E,                                               ///< Digit 6
-    MAXIM7219_CUSTOM_7 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                     ///< Digit 7
+    MAXIM7219_CUSTOM_7 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C,                                                                                           ///< Digit 7
     MAXIM7219_CUSTOM_8 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G,   ///< Digit 8
     MAXIM7219_CUSTOM_9 = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G,                         ///< Digit 9
+    
     MAXIM7219_CUSTOM_A = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G,                         ///< Letter A
     MAXIM7219_CUSTOM_C = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D,                                                                     ///< Letter C
     MAXIM7219_CUSTOM_E = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_G,                                               ///< Letter E
@@ -97,6 +98,18 @@ typedef enum {
     MAXIM7219_CUSTOM_L = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D,                                                                                           ///< Letter L
     MAXIM7219_CUSTOM_P = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_E,                                               ///< Letter P
     MAXIM7219_CUSTOM_U = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_B,                                               ///< Letter U
+    
+    MAXIM7219_CUSTOM_b = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E,                                               ///< Letter b
+    MAXIM7219_CUSTOM_d = MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E,                                               ///< Letter d
+    MAXIM7219_CUSTOM_e = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D,                         ///< Letter e
+    MAXIM7219_CUSTOM_g = MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D,                         ///< Letter g
+    MAXIM7219_CUSTOM_h = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C,                                                                     ///< Letter h
+    MAXIM7219_CUSTOM_o = MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D | MAXIM7219_SEGMENT_E,                                                                     ///< Letter o
+    MAXIM7219_CUSTOM_r = MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_G,                                                                                                                 ///< Letter r
+    MAXIM7219_CUSTOM_t = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_E | MAXIM7219_SEGMENT_D,                                                                     ///< Letter t
+    MAXIM7219_CUSTOM_u = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_E,                                                                                           ///< Letter u
+    MAXIM7219_CUSTOM_y = MAXIM7219_SEGMENT_F | MAXIM7219_SEGMENT_G | MAXIM7219_SEGMENT_B | MAXIM7219_SEGMENT_C | MAXIM7219_SEGMENT_D,                                               ///< Letter y 
+
     MAXIM7219_CUSTOM_MINUS = MAXIM7219_SEGMENT_G,                                                                                                                                   ///< Minus sign
     MAXIM7219_CUSTOM_BLANK = 0                                                                                                                                                      ///< Blank
 } maxim7219_custom_font_t;
