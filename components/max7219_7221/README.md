@@ -198,6 +198,8 @@ ESP_ERROR_CHECK(led_driver_max7219_set_intensity(led_max7219_handle,2,  MAX7219_
 ### Configuring scan limit
 MAX7219 / MAX72221 devices allow to configure how many digits are displayed from 1 to 8. If the scan limit is set for three digits or less, individual digit drivers will dissipate excessive amounts of power. Consequently, the value of the RSET resistor must be adjusted according to the number of digits displayed, to limit individual digit driver power dissipation. Scan limit should not be used for leading '0' suppression. Refer to the data sheet for additional information.
 
+It is possible to configure scan limit per device on a chain. However, the data sheet recommends configuring all MAX7219 / MAX72221 devices with the same scan limit.
+
 Scan limit can be configured as follows:
 ```c
 // Configure scan limit to 4 digits for all MAX72221 devices in the chain
