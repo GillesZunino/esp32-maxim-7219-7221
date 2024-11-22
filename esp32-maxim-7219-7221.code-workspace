@@ -4,19 +4,19 @@
 			"path": "."
 		},
 		{
-			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_basic"
+			"path": "components/max7219_7221/examples/max7219_7221_basic"
 		},
 		{
-			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_intensity"
+			"path": "components/max7219_7221/examples/max7219_7221_intensity"
 		},
 		{
-			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_testmode"
+			"path": "components/max7219_7221/examples/max7219_7221_testmode"
 		},
 		{
-			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_scanlimit"
+			"path": "components/max7219_7221/examples/max7219_7221_scanlimit"
 		},
 		{
-			"path": "components/maxim_7219_7221/examples/maxim_7219_7221_cascade"
+			"path": "components/max7219_7221/examples/max7219_7221_cascade"
 		}
 	],
 	"settings": {

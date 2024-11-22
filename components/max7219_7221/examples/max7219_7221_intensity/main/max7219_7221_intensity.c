@@ -9,11 +9,10 @@
 
 #include "max7219_7221.h"
 
-const char* TAG = "max72[19|21]_main";
+const char* TAG = "max72[19|21]_intensity";
 
 //
 // NOTE: For maximum performance, prefer IO MUX over GPIO Matrix routing
-//  * See https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/spi_master.html#gpio-matrix-routing
 //
 
 // SPI Host ID
@@ -29,24 +28,18 @@ const gpio_num_t DIN_PIN = GPIO_NUM_16;
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_10;
 const gpio_num_t CLK_PIN = GPIO_NUM_12;
 const gpio_num_t DIN_PIN = GPIO_NUM_11;
-#else
-#if CONFIG_IDF_TARGET_ESP32C3
-const gpio_num_t CS_LOAD_PIN = GPIO_NUM_1;
-const gpio_num_t CLK_PIN = GPIO_NUM_2;
-const gpio_num_t DIN_PIN = GPIO_NUM_3;
-#endif
 #endif
 #endif
 
 // Number of devices MAX7219 / MAX7221 in the chain
-const uint8_t ChainLength = 3;
+const uint8_t ChainLength = 1;
 
 // Time between two display update
 const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
 
 
 
-// Handle to the  MAX7219 / MAX7221 driver
+// Handle to the MAX7219 / MAX7221 driver
 led_driver_max7219_handle_t led_max7219_handle = NULL;
 
 
@@ -86,10 +79,6 @@ void app_main(void) {
     ESP_ERROR_CHECK(led_driver_max7219_init(&max7219InitConfig, &led_max7219_handle));
     // NOTE: On power on, the MAX7219 / MAX7221 starts in shutdown mode - All blank, scan mode is 1 digit, no CODE B decode, intensity is minimum
 
-    // Switch to 'test' mode - This turns all segments on all displays ON at maximum intensity
-    ESP_LOGI(TAG, "Set Test mode");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_TEST_MODE));
-
     // Configure scan limit on all devices
     ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_max7219_handle, 8));
@@ -98,60 +87,39 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
 
-    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_2 is dim
-    ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_2));
+    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimest
+    ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_1' on all devices in the chain");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_1));
 
-    // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_FONT_BLANK since we configured Code B decode
-    // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
-    // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
-    ESP_LOGI(TAG, "Set all digits to blank");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_FONT_BLANK));
+    const uint8_t DeviceChainId = 1;
 
+    // Populate every digit with a different symbol
+    max7219_code_b_font_t symbol = MAX7219_CODE_B_FONT_0;
+    for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
+        // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
+        bool decimalOn = symbol % 2 == 0;
+        max7219_code_b_font_t symbolWithDecimal = decimalOn ? symbol | MAX7219_CODE_B_DP_MASK : symbol;
+        ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+        ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, digitId, symbolWithDecimal));
 
-    // Hold 'test' mode for a little while
-    vTaskDelay(DelayBetweenUpdates);
+        symbol++;
+    }
 
-    // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
+    // Switch to 'normal' mode so digits can be displayed
     ESP_LOGI(TAG, "Set Normal mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
-    vTaskDelay(DelayBetweenUpdates);
 
-
-    // Display '8' sequentially on all digits of all devices
-    for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
-        for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
-            ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAX7219_CODE_B_FONT_8'", chainId, digitId);
-            ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, chainId, digitId, MAX7219_CODE_B_FONT_8));
-            vTaskDelay(DelayBetweenUpdates);
-        }
-    }
     
-    vTaskDelay(2 * DelayBetweenUpdates);
-
-    uint8_t digits[] = {
-        MAX7219_CODE_B_FONT_2,
-        MAX7219_CODE_B_FONT_3,
-        MAX7219_CODE_B_FONT_MINUS,
-        MAX7219_CODE_B_FONT_H,
-        MAX7219_CODE_B_FONT_P
-    };
-    const uint8_t digitCount = sizeof(digits) / sizeof(digits[0]);
-
-
-    uint8_t startDevice = 1;
-    uint8_t startDigit = 3;
-
+    // Cycle through all intensities
+    max7219_intensity_t intensity = MAX7219_INTENSITY_DUTY_CYCLE_STEP_1;
     do {
-        ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_max7219_handle, startDevice, startDigit, digits, digitCount));
-
-        for (uint8_t digit = 0; digit < digitCount; digit++) {
-            digits[digit]++;
-            if (digits[digit] > MAX7219_CODE_B_FONT_BLANK) {
-                digits[digit] = MAX7219_CODE_B_FONT_0;
-            }
+        // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimest
+        ESP_LOGI(TAG, "Set intensity to '%d' on all devices in the chain", intensity);
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, intensity));
+        intensity = intensity + 1;
+        if (intensity > MAX7219_INTENSITY_DUTY_CYCLE_STEP_16) {
+            intensity = MAX7219_INTENSITY_DUTY_CYCLE_STEP_1;
         }
-
         vTaskDelay(DelayBetweenUpdates);
     } while (true);
 

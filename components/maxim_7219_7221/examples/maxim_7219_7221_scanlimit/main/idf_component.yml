@@ -1,8 +1,0 @@
-version: "1.0.0"
-description: "Scan limit usage of MAXIM 7219 / 7221 LED display driver for ESP32"
-tags:
-  - LED
-dependencies:
-  espressif/maxim_7219_7221:
-    version: '~1'
-    override_path: '../../../'
