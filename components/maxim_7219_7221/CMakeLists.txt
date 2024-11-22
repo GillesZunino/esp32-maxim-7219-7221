@@ -9,6 +9,6 @@ idf_component_register(
     PRIV_REQUIRES 
 )
 
-if(CONFIG_MAXIM7219_7221_SANITIZER)
+if(CONFIG_MAX7219_7221_SANITIZER)
     target_compile_options(${COMPONENT_LIB} PRIVATE "-fsanitize=undefined" "-fno-sanitize=shift-base")
 endif()

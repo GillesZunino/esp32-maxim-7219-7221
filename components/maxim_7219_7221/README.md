@@ -146,12 +146,12 @@ The driver header file offers convenient constants for both Code-B symbols and d
 Once a decode mode has been chosen, symbol codes can be sent to the chain as follows:
 ```c
 // Assume Code-B decode for all digits and set digit 1 to 'E' on all on all MAX7219 / MAX72221 devices in the chain
-ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAXIM7219_CODE_B_FONT_E));
+ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_CODE_B_FONT_E));
 
 ...
 
 // Assume Code-B decode for all digits and set digit 1 to 'E' on the second (2) MAX7219 / MAX72221 device
-ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, 2, 1, MAXIM7219_CODE_B_FONT_E));
+ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, 2, 1, MAX7219_CODE_B_FONT_E));
 
 ...
 
@@ -176,7 +176,7 @@ ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_max7219_handle, 2, 3, symbols 
 Finally, a specific segment / LED can be turned on as follows:
 ```c
 // Assume direct addressing for all digits and turn on segment 'A' and decimal point on all MAX7219 / MAX72221 devices in the chain
-ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAXIM7219_SEGMENT_A | MAXIM7219_SEGMENT_DP));
+ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_SEGMENT_A | MAX7219_SEGMENT_DP));
 ```
 
 ### Configuring display intensity
