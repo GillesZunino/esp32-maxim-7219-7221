@@ -149,14 +149,14 @@ esp_err_t led_driver_max7219_free(led_driver_maxim7219_handle_t handle) {
     esp_err_t err = led_driver_max7219_set_chain_mode(handle, MAXIM7219_SHUTDOWN_MODE);
     if (err != ESP_OK) {
         firstError = firstError == ESP_OK ? err : firstError;
-        ESP_LOGW(LedDriverMaxim7219LogTag, "%s() Failed to set MAXIM 7219/7221 in shutdown mode (%d)", __func__, err);
+        ESP_LOGW(LedDriverMaxim7219LogTag, "Failed to set MAXIM 7219/7221 in shutdown mode (%d)", err);
     }
 
     // Remove the device from the bus
     err = spi_bus_remove_device(handle->spi_device_handle);
     if (err != ESP_OK) {
         firstError = firstError == ESP_OK ? err : firstError;
-        ESP_LOGW(LedDriverMaxim7219LogTag, "%s() Failed to remove MAXIM 7219/7221 from SPI bus (%d)", __func__, err);
+        ESP_LOGW(LedDriverMaxim7219LogTag, "Failed to remove MAXIM 7219/7221 from SPI bus (%d)", err);
     }
 
     // Release memory
