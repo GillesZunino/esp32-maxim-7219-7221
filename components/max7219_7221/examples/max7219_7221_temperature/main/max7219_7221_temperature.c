@@ -3,6 +3,7 @@
 // -----------------------------------------------------------------------------------
 
 #include <float.h>
+#include <string.h>
 
 #include "sdkconfig.h"
 
@@ -56,7 +57,7 @@ static void string_to_max7219_symbols(char str[8], uint8_t startDigit, uint8_t s
 
 void app_main(void) {
     // Initialize and enable the temperature sensor
-    temperature_sensor_config_t tempSensorConfig = TEMPERATURE_SENSOR_CONFIG_DEFAULT(-40.0f, 125.0f);
+    temperature_sensor_config_t tempSensorConfig = TEMPERATURE_SENSOR_CONFIG_DEFAULT(-10.0f, 80.0f);
     ESP_ERROR_CHECK(temperature_sensor_install(&tempSensorConfig, &temperatureSensor_handle));
     ESP_ERROR_CHECK(temperature_sensor_enable(temperatureSensor_handle));
 
@@ -116,7 +117,7 @@ void app_main(void) {
 
     // TODO: These are not the right constants for this application
     float minTemp = FLT_MAX;
-    float maxTemp = FLT_MIN;
+    float maxTemp = -FLT_MAX;
 
     do {
         float currentTemp = 0.0f;
@@ -156,26 +157,131 @@ static esp_err_t display_temp_min_max(float currentTemp, float minTemp, float ma
     const uint8_t MinimumTempChainId = 2;
     const uint8_t MaximumTempChainId = 3;
 
-    char temp_str[8];
-    sprintf(temp_str, "%.01f", currentTemp);
+    {
+        char temp_str[8];
+        sprintf(temp_str, "%.01f", currentTemp);
 
-    uint8_t symbols[MAX7219_MAX_DIGIT] = { MAX7219_DIRECT_ADDRESSING_BLANK }; // TODO: Configure fixed symbols
-    string_to_max7219_symbols(temp_str, 6, symbols);
-    ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, CurrentTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update current temperature");
+        uint8_t symbols[MAX7219_MAX_DIGIT] = {
+            MAX7219_DIRECT_ADDRESSING_C,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK
+        };
+        string_to_max7219_symbols(temp_str, 3, symbols);
+        ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, CurrentTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update current temperature");
+    }
 
-    sprintf(temp_str, "%.02f", minTemp);
-    // TODO: Reset 'symbols' and configure fixed symbols
-    string_to_max7219_symbols(temp_str, 6, symbols);
-    ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, MinimumTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update minimum temperature");
+    {
+        char temp_str[8];
+        sprintf(temp_str, "%.01f", minTemp);
 
-    sprintf(temp_str, "%.02f", maxTemp);
-    // TODO: Reset 'symbols' and configure fixed symbols
-    string_to_max7219_symbols(temp_str, 6, symbols);
-    ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, MaximumTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update maximum temperature");
+        uint8_t symbols[MAX7219_MAX_DIGIT] = {
+            MAX7219_DIRECT_ADDRESSING_C,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_0,
+            MAX7219_DIRECT_ADDRESSING_L
+        };
+        sprintf(temp_str, "%.01f", minTemp);
+        string_to_max7219_symbols(temp_str, 3, symbols);
+        ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, MinimumTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update minimum temperature");
+    }
 
+    {
+        char temp_str[8];
+        sprintf(temp_str, "%.01f", maxTemp);
+
+        uint8_t symbols[MAX7219_MAX_DIGIT] = {
+            MAX7219_DIRECT_ADDRESSING_C,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_BLANK,
+            MAX7219_DIRECT_ADDRESSING_1,
+            MAX7219_DIRECT_ADDRESSING_H
+        };
+        sprintf(temp_str, "%.01f", maxTemp);
+        string_to_max7219_symbols(temp_str, 3, symbols);
+        ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, MaximumTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update maximum temperature");
+    }
+    
     return ESP_OK;
 }
 
 static void string_to_max7219_symbols(char str[8], uint8_t startDigit, uint8_t symbols[MAX7219_MAX_DIGIT]) {
-    // TODO: Implement
-}
+    size_t length = strlen(str);
+    uint8_t digitIndex = startDigit - 1;
+    bool decimalPoint = false;
+
+    for (int8_t strIndex = length - 1; strIndex >= 0; strIndex--) {
+        switch (str[strIndex]) {
+            case '.':
+                decimalPoint = true;
+                continue;
+                break;
+
+            case '-':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_MINUS;
+                break;
+
+            case ' ':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_BLANK;
+                break;
+
+            case '0':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_0;
+                break;
+
+            case '1':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_1;
+                break;
+
+            case '2':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_2;
+                break;
+
+            case '3':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_3;
+                break;
+
+            case '4':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_4;
+                break;
+
+            case '5':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_5;
+                break;
+            
+            case '6':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_6;
+                break;
+
+            case '7':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_7;
+                break;
+
+            case '8':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_8;
+                break;
+
+            case '9':
+                symbols[digitIndex] = MAX7219_DIRECT_ADDRESSING_9;
+                break;
+        }
+
+        if (decimalPoint == true) {
+            symbols[digitIndex] |= MAX7219_SEGMENT_DP;
+            decimalPoint = false;
+        }
+
+        digitIndex++;
+    }
+}       

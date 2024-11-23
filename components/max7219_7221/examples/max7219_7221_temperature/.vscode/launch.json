@@ -11,7 +11,7 @@
       "request": "attach",
 
       "preLaunchTask": "Monitor: Start the monitor (RESET)",
-      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic",
+      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_temperature",
 
       "initCommands": [
         "set mem inaccessible-by-default off",
@@ -25,25 +25,25 @@
       "type": "cppdbg",
       "request": "launch",
 
-      "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic/build/${command:espIdf.getProjectName}.elf",
+      "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_temperature/build/${command:espIdf.getProjectName}.elf",
 
       "linux": {
         "MIMode": "gdb",
         "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
-        "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic/build/${command:espIdf.getProjectName}.elf"
+        "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_temperature/build/${command:espIdf.getProjectName}.elf"
       },
       "osx": {
         "MIMode": "gdb",
         "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
-        "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic/build/${command:espIdf.getProjectName}.elf"
+        "program": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_temperature/build/${command:espIdf.getProjectName}.elf"
       },
       "windows": {
         "MIMode": "gdb",
         "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
-        "program": "${workspaceFolder}\\components\\maxim_7219_7221\\examples\\maxim_7219_7221_basic\\build\\${command:espIdf.getProjectName}.elf"
+        "program": "${workspaceFolder}\\components\\maxim_7219_7221\\examples\\maxim_7219_7221_temperature\\build\\${command:espIdf.getProjectName}.elf"
       },
 
-      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_basic",
+      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_temperature",
       "environment": [
         { "name": "PATH", "value": "${config:idf.customExtraPaths}" }
       ],
