@@ -133,10 +133,10 @@ void app_main(void) {
 
             err = display_temp_min_max(currentTemp, minTemp, maxTemp);
             if (err != ESP_OK) {
-                ESP_LOGE(TAG, "Failed to update temperature display %d", err);
+                ESP_LOGE(TAG, "Failed to update temperature display '%d'", err);
             }
         } else {
-            // TODO: Display an indication that an error occured
+            ESP_LOGE(TAG, "Unable to read ESP temperature sensor '%d'", err);
         }
 
         vTaskDelay(DelayBetweenUpdates);
