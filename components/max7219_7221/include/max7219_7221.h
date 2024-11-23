@@ -27,27 +27,27 @@ typedef struct led_driver_max7219* led_driver_max7219_handle_t; ///< Handle to a
 
 
 /**
- * @brief MAX7219 / MAX7221 Code-B font symbols.
+ * @brief MAX7219 / MAX7221 Code-B symbols.
  */
 typedef enum {
-    MAX7219_CODE_B_FONT_0 = 0,        ///< Digit 0
-    MAX7219_CODE_B_FONT_1 = 1,        ///< Digit 1
-    MAX7219_CODE_B_FONT_2 = 2,        ///< Digit 2
-    MAX7219_CODE_B_FONT_3 = 3,        ///< Digit 3
-    MAX7219_CODE_B_FONT_4 = 4,        ///< Digit 4
-    MAX7219_CODE_B_FONT_5 = 5,        ///< Digit 5
-    MAX7219_CODE_B_FONT_6 = 6,        ///< Digit 6
-    MAX7219_CODE_B_FONT_7 = 7,        ///< Digit 7
-    MAX7219_CODE_B_FONT_8 = 8,        ///< Digit 8
-    MAX7219_CODE_B_FONT_9 = 9,        ///< Digit 9
-    MAX7219_CODE_B_FONT_MINUS = 10,   ///< Minus sign
-    MAX7219_CODE_B_FONT_E = 11,       ///< Letter E
-    MAX7219_CODE_B_FONT_H = 12,       ///< Letter H
-    MAX7219_CODE_B_FONT_L = 13,       ///< Letter L
-    MAX7219_CODE_B_FONT_P = 14,       ///< Letter P
-    MAX7219_CODE_B_FONT_BLANK = 15,   ///< Blank
+    MAX7219_CODE_B_0 = 0,         ///< Digit 0
+    MAX7219_CODE_B_1 = 1,         ///< Digit 1
+    MAX7219_CODE_B_2 = 2,         ///< Digit 2
+    MAX7219_CODE_B_3 = 3,         ///< Digit 3
+    MAX7219_CODE_B_4 = 4,         ///< Digit 4
+    MAX7219_CODE_B_5 = 5,         ///< Digit 5
+    MAX7219_CODE_B_6 = 6,         ///< Digit 6
+    MAX7219_CODE_B_7 = 7,         ///< Digit 7
+    MAX7219_CODE_B_8 = 8,         ///< Digit 8
+    MAX7219_CODE_B_9 = 9,         ///< Digit 9
+    MAX7219_CODE_B_MINUS = 10,    ///< Minus sign
+    MAX7219_CODE_B_E = 11,        ///< Letter E
+    MAX7219_CODE_B_H = 12,        ///< Letter H
+    MAX7219_CODE_B_L = 13,        ///< Letter L
+    MAX7219_CODE_B_P = 14,        ///< Letter P
+    MAX7219_CODE_B_BLANK = 15,    ///< Blank
 
-    MAX7219_CODE_B_DP_MASK = 0x80     ///< Decimal Point mask - Combine with other symbols to add a decimal point as `MAX7219_CODE_B_FONT_0 | MAX7219_CODE_B_DP_MASK`
+    MAX7219_CODE_B_DP_MASK = 0x80 ///< Decimal Point mask - Combine with other symbols to add a decimal point as `MAX7219_CODE_B_0 | MAX7219_CODE_B_DP_MASK`
 } max7219_code_b_font_t;
 
 /**

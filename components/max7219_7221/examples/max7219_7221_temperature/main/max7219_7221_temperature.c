@@ -114,12 +114,12 @@ void app_main(void) {
     ESP_LOGI(TAG, "Set Normal mode");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
 
-    float currentTemp = 0.0f;
     // TODO: These are not the right constants for this application
     float minTemp = FLT_MAX;
     float maxTemp = FLT_MIN;
 
     do {
+        float currentTemp = 0.0f;
         esp_err_t err = temperature_sensor_get_celsius(temperatureSensor_handle, &currentTemp);
         if (err == ESP_OK) {
             if (currentTemp < minTemp) {
@@ -157,7 +157,7 @@ static esp_err_t display_temp_min_max(float currentTemp, float minTemp, float ma
     const uint8_t MaximumTempChainId = 3;
 
     char temp_str[8];
-    sprintf(temp_str, "%.02f", currentTemp);
+    sprintf(temp_str, "%.01f", currentTemp);
 
     uint8_t symbols[MAX7219_MAX_DIGIT] = { MAX7219_DIRECT_ADDRESSING_BLANK }; // TODO: Configure fixed symbols
     string_to_max7219_symbols(temp_str, 6, symbols);

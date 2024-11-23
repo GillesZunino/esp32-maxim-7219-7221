@@ -102,11 +102,11 @@ void app_main(void) {
     ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_2));
 
-    // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_FONT_BLANK since we configured Code B decode
+    // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_BLANK since we configured Code B decode
     // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
     // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
     ESP_LOGI(TAG, "Set all digits to blank");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_FONT_BLANK));
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
 
     // Hold 'test' mode for a little while
@@ -121,8 +121,8 @@ void app_main(void) {
     // Display '8' sequentially on all digits of all devices
     for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
         for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
-            ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAX7219_CODE_B_FONT_8'", chainId, digitId);
-            ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, chainId, digitId, MAX7219_CODE_B_FONT_8));
+            ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAX7219_CODE_B_8'", chainId, digitId);
+            ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, chainId, digitId, MAX7219_CODE_B_8));
             vTaskDelay(DelayBetweenUpdates);
         }
     }
@@ -130,11 +130,11 @@ void app_main(void) {
     vTaskDelay(2 * DelayBetweenUpdates);
 
     uint8_t digits[] = {
-        MAX7219_CODE_B_FONT_2,
-        MAX7219_CODE_B_FONT_3,
-        MAX7219_CODE_B_FONT_MINUS,
-        MAX7219_CODE_B_FONT_H,
-        MAX7219_CODE_B_FONT_P
+        MAX7219_CODE_B_2,
+        MAX7219_CODE_B_3,
+        MAX7219_CODE_B_MINUS,
+        MAX7219_CODE_B_H,
+        MAX7219_CODE_B_P
     };
     const uint8_t digitCount = sizeof(digits) / sizeof(digits[0]);
 
@@ -147,8 +147,8 @@ void app_main(void) {
 
         for (uint8_t digit = 0; digit < digitCount; digit++) {
             digits[digit]++;
-            if (digits[digit] > MAX7219_CODE_B_FONT_BLANK) {
-                digits[digit] = MAX7219_CODE_B_FONT_0;
+            if (digits[digit] > MAX7219_CODE_B_BLANK) {
+                digits[digit] = MAX7219_CODE_B_0;
             }
         }
 

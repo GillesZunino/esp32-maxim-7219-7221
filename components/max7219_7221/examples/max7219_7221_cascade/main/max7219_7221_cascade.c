@@ -90,11 +90,11 @@ void app_main(void) {
         ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
         ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
 
-        // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_FONT_BLANK since we configured Code B decode
+        // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_BLANK since we configured Code B decode
         // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
         // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
         ESP_LOGI(TAG, "Set all digits to blank");
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_FONT_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
         // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
         ESP_LOGI(TAG, "Set Normal mode");
@@ -102,7 +102,7 @@ void app_main(void) {
 
         // Populate every digit of every device in the chain with a different symbol from Code B font
         {
-            max7219_code_b_font_t symbol = MAX7219_CODE_B_FONT_0;
+            max7219_code_b_font_t symbol = MAX7219_CODE_B_0;
             for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
                 for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
                     // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
@@ -112,7 +112,7 @@ void app_main(void) {
                     ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, chainId, digitId, symbolWithDecimal));
 
                     symbol++;
-                    if (symbol > MAX7219_CODE_B_FONT_BLANK) { symbol = MAX7219_CODE_B_FONT_0; }
+                    if (symbol > MAX7219_CODE_B_BLANK) { symbol = MAX7219_CODE_B_0; }
 
                     vTaskDelay(DelayBetweenUpdates);
                 }

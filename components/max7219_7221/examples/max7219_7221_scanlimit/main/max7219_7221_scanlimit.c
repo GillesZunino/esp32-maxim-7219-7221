@@ -98,7 +98,7 @@ void app_main(void) {
         ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_max7219_handle, scanLimit));
 
         // Populate every digit with a different symbol
-        max7219_code_b_font_t symbol = MAX7219_CODE_B_FONT_0;
+        max7219_code_b_font_t symbol = MAX7219_CODE_B_0;
         for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
             // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
             bool decimalOn = symbol % 2 == 0;
@@ -117,7 +117,7 @@ void app_main(void) {
         vTaskDelay(2 * DelayBetweenUpdates);
 
         ESP_LOGI(TAG, "Reset all digits");
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_FONT_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
         vTaskDelay(DelayBetweenUpdates);
     } while (true);

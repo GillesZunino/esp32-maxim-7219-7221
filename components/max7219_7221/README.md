@@ -137,7 +137,7 @@ ESP_ERROR_CHECK(led_driver_max7219_configure_decode(led_max7219_handle, 2, MAX72
 ##### Symbol codes for Code-B and Direct Addressing
 The driver header file offers convenient constants for both Code-B symbols and direct addressing symbols:
 
-* Code-B: `MAX7219_CODE_B_FONT_0` to `MAX7219_CODE_B_FONT_BLANK`. To enable the decimal point, combine a character with `MAX7219_CODE_B_DP_MASK` as in `MAX7219_CODE_B_FONT_0 | MAX7219_CODE_B_DP_MASK`
+* Code-B: `MAX7219_CODE_B_0` to `MAX7219_CODE_BLANK`. To enable the decimal point, combine a character with `MAX7219_CODE_B_DP_MASK` as in `MAX7219_CODE_B_0 | MAX7219_CODE_B_DP_MASK`
 * Direct Addressing: There are two sets of constants:
     * Individual LEDs: `MAX7219_SEGMENT_A` to `MAX7219_SEGMENT_G` with `MAX7219_SEGMENT_DP` as the mask for the decimal point,
     * Predefined letters, numbers and symbols: `MAX7219_CUSTOM_0` to `MAX7219_CUSTOM_BLANK` with `MAX7219_SEGMENT_DP` as the mask for the decimal point.
@@ -146,12 +146,12 @@ The driver header file offers convenient constants for both Code-B symbols and d
 Once a decode mode has been chosen, symbol codes can be sent to the chain as follows:
 ```c
 // Assume Code-B decode for all digits and set digit 1 to 'E' on all on all MAX7219 / MAX72221 devices in the chain
-ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_CODE_B_FONT_E));
+ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_CODE_B_E));
 
 ...
 
 // Assume Code-B decode for all digits and set digit 1 to 'E' on the second (2) MAX7219 / MAX72221 device
-ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, 2, 1, MAX7219_CODE_B_FONT_E));
+ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, 2, 1, MAX7219_CODE_B_E));
 
 ...
 

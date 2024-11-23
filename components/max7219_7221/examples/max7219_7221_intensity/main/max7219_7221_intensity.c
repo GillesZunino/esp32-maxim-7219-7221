@@ -94,7 +94,7 @@ void app_main(void) {
     const uint8_t DeviceChainId = 1;
 
     // Populate every digit with a different symbol
-    max7219_code_b_font_t symbol = MAX7219_CODE_B_FONT_0;
+    max7219_code_b_font_t symbol = MAX7219_CODE_B_0;
     for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
         // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
         bool decimalOn = symbol % 2 == 0;
