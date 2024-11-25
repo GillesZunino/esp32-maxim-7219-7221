@@ -578,7 +578,7 @@ static esp_err_t check_max_digit_private(led_driver_max7219_handle_t handle, uin
 
 static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount) {
     // Number of remaining digits starting at device 'startChainId' and at digit 'stratDigitId's
-    const uint8_t availableDigits = (((handle->hw_config.chain_length - startChainId) + 1) * MAX7219_MAX_DIGIT) - (MAX7219_MAX_DIGIT - startDigitId);
+    const uint8_t availableDigits = ((handle->hw_config.chain_length - startChainId) * MAX7219_MAX_DIGIT) + (MAX7219_MAX_DIGIT - startDigitId) + 1;
     return (digitCodesCount > 0) && (digitCodesCount <= availableDigits) ? ESP_OK : ESP_ERR_INVALID_ARG;
 
 }
