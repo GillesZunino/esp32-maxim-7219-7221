@@ -101,13 +101,11 @@ typedef enum {
     
     MAX7219_DIRECT_ADDRESSING_b = MAX7219_SEGMENT_F | MAX7219_SEGMENT_G | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D | MAX7219_SEGMENT_E,                                           ///< Letter b
     MAX7219_DIRECT_ADDRESSING_d = MAX7219_SEGMENT_B | MAX7219_SEGMENT_G | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D | MAX7219_SEGMENT_E,                                           ///< Letter d
-    MAX7219_DIRECT_ADDRESSING_e = MAX7219_SEGMENT_A | MAX7219_SEGMENT_B | MAX7219_SEGMENT_G | MAX7219_SEGMENT_F | MAX7219_SEGMENT_E | MAX7219_SEGMENT_D,                       ///< Letter e
-    MAX7219_DIRECT_ADDRESSING_g = MAX7219_SEGMENT_A | MAX7219_SEGMENT_B | MAX7219_SEGMENT_G | MAX7219_SEGMENT_F | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D,                       ///< Letter g
     MAX7219_DIRECT_ADDRESSING_h = MAX7219_SEGMENT_F | MAX7219_SEGMENT_E | MAX7219_SEGMENT_G | MAX7219_SEGMENT_C,                                                               ///< Letter h
     MAX7219_DIRECT_ADDRESSING_o = MAX7219_SEGMENT_G | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D | MAX7219_SEGMENT_E,                                                               ///< Letter o
     MAX7219_DIRECT_ADDRESSING_r = MAX7219_SEGMENT_E | MAX7219_SEGMENT_G,                                                                                                       ///< Letter r
     MAX7219_DIRECT_ADDRESSING_t = MAX7219_SEGMENT_F | MAX7219_SEGMENT_G | MAX7219_SEGMENT_E | MAX7219_SEGMENT_D,                                                               ///< Letter t
-    MAX7219_DIRECT_ADDRESSING_u = MAX7219_SEGMENT_F | MAX7219_SEGMENT_G | MAX7219_SEGMENT_E,                                                                                   ///< Letter u
+    MAX7219_DIRECT_ADDRESSING_u = MAX7219_SEGMENT_E | MAX7219_SEGMENT_D | MAX7219_SEGMENT_C,                                                                                   ///< Letter u
     MAX7219_DIRECT_ADDRESSING_y = MAX7219_SEGMENT_F | MAX7219_SEGMENT_G | MAX7219_SEGMENT_B | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D,                                           ///< Letter y 
 
     MAX7219_DIRECT_ADDRESSING_MINUS = MAX7219_SEGMENT_G,                                                                                                                       ///< Minus sign
