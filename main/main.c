@@ -67,95 +67,99 @@ void app_main(void) {
     };
     ESP_ERROR_CHECK(spi_bus_initialize(SPI_HOSTID, &spiBusConfig, SPI_DMA_CH_AUTO));
 
-    // Initialize the MAX7219 / MAX7221 driver
-    max7219_config_t max7219InitConfig = {
-        .spi_cfg = {
-            .host_id = SPI_HOSTID,
-
-            .clock_source = SPI_CLK_SRC_DEFAULT,
-            .clock_speed_hz = 10 * 1000000,
-
-            .spics_io_num = CS_LOAD_PIN,
-            .queue_size = 8
-        },
-        .hw_config = {
-            .chain_length = ChainLength
-        }
-    };
-    ESP_LOGI(TAG, "Initialize MAX 7219 / 7221 driver");
-    ESP_ERROR_CHECK(led_driver_max7219_init(&max7219InitConfig, &led_max7219_handle));
-    // NOTE: On power on, the MAX7219 / MAX7221 starts in shutdown mode - All blank, scan mode is 1 digit, no CODE B decode, intensity is minimum
-
-    // Switch to 'test' mode - This turns all segments on all displays ON at maximum intensity
-    ESP_LOGI(TAG, "Set Test mode");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_TEST_MODE));
-
-    // Configure scan limit on all devices
-    ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
-    ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_max7219_handle, 8));
-
-    // Configure decode mode to 'decode for all digits'
-    ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
-    ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
-
-    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_2 is dim
-    ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_2));
-
-    // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_BLANK since we configured Code B decode
-    // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
-    // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
-    ESP_LOGI(TAG, "Set all digits to blank");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
-
-
-    // Hold 'test' mode for a little while
-    vTaskDelay(DelayBetweenUpdates);
-
-    // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
-    ESP_LOGI(TAG, "Set Normal mode");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
-    vTaskDelay(DelayBetweenUpdates);
-
-
-    // Display '8' sequentially on all digits of all devices
-    for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
-        for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
-            ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAX7219_CODE_B_8'", chainId, digitId);
-            ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, chainId, digitId, MAX7219_CODE_B_8));
-            vTaskDelay(DelayBetweenUpdates);
-        }
-    }
-    
-    vTaskDelay(2 * DelayBetweenUpdates);
-
-    uint8_t digits[] = {
-        MAX7219_CODE_B_2,
-        MAX7219_CODE_B_3,
-        MAX7219_CODE_B_MINUS,
-        MAX7219_CODE_B_H,
-        MAX7219_CODE_B_P
-    };
-    const uint8_t digitCount = sizeof(digits) / sizeof(digits[0]);
-
-
-    uint8_t startDevice = 1;
-    uint8_t startDigit = 3;
-
     do {
-        ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_max7219_handle, startDevice, startDigit, digits, digitCount));
+        // Initialize the MAX7219 / MAX7221 driver
+        max7219_config_t max7219InitConfig = {
+            .spi_cfg = {
+                .host_id = SPI_HOSTID,
 
-        for (uint8_t digit = 0; digit < digitCount; digit++) {
-            digits[digit]++;
-            if (digits[digit] > MAX7219_CODE_B_BLANK) {
-                digits[digit] = MAX7219_CODE_B_0;
+                .clock_source = SPI_CLK_SRC_DEFAULT,
+                .clock_speed_hz = 10 * 1000000,
+
+                .spics_io_num = CS_LOAD_PIN,
+                .queue_size = 8
+            },
+            .hw_config = {
+                .chain_length = ChainLength
+            }
+        };
+        ESP_LOGI(TAG, "Initialize MAX 7219 / 7221 driver");
+        ESP_ERROR_CHECK(led_driver_max7219_init(&max7219InitConfig, &led_max7219_handle));
+        // NOTE: On power on, the MAX7219 / MAX7221 starts in shutdown mode - All blank, scan mode is 1 digit, no CODE B decode, intensity is minimum
+
+        // Switch to 'test' mode - This turns all segments on all displays ON at maximum intensity
+        ESP_LOGI(TAG, "Set Test mode");
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_TEST_MODE));
+
+        // Configure scan limit on all devices
+        ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
+        ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_max7219_handle, 8));
+
+        // Configure decode mode to 'decode for all digits'
+        ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
+        ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
+
+        // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_2 is dim
+        ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_2' on all devices in the chain");
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_2));
+
+        // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_BLANK since we configured Code B decode
+        // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
+        // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
+        ESP_LOGI(TAG, "Set all digits to blank");
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
+
+
+        // Hold 'test' mode for a little while
+        vTaskDelay(DelayBetweenUpdates);
+
+        // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
+        ESP_LOGI(TAG, "Set Normal mode");
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
+        vTaskDelay(DelayBetweenUpdates);
+
+
+        // Display '8' sequentially on all digits of all devices
+        for (uint8_t chainId = 1; chainId <= ChainLength; chainId++) {
+            for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
+                ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAX7219_CODE_B_8'", chainId, digitId);
+                ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, chainId, digitId, MAX7219_CODE_B_8));
+                vTaskDelay(DelayBetweenUpdates);
             }
         }
+        
+        vTaskDelay(2 * DelayBetweenUpdates);
 
-        vTaskDelay(DelayBetweenUpdates);
+        // Configure decode mode to 'direct addressing'
+        ESP_LOGI(TAG, "Configure decode for Direct Addressing on all digits in the chain");
+        ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_NONE));
+
+        // Blank all digits on the chain
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
+
+        // Show lower case direct addressing symbols
+        uint8_t digits[] = {
+            MAX7219_DIRECT_ADDRESSING_b,
+            MAX7219_DIRECT_ADDRESSING_d,
+            MAX7219_DIRECT_ADDRESSING_h,
+            MAX7219_DIRECT_ADDRESSING_o,
+            MAX7219_DIRECT_ADDRESSING_r,
+            MAX7219_DIRECT_ADDRESSING_t,
+            MAX7219_DIRECT_ADDRESSING_u,
+            MAX7219_DIRECT_ADDRESSING_y
+        };
+        const uint8_t digitCount = sizeof(digits) / sizeof(digits[0]);
+        ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_max7219_handle, 1, 1, digits, digitCount));
+
+         vTaskDelay(2 * DelayBetweenUpdates);
+
+        // Blank all digits on the chain
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
+
+        // Shutdown MAX7219 / MAX7221 driver and SPI bus
+        ESP_ERROR_CHECK(led_driver_max7219_free(led_max7219_handle));
+        led_max7219_handle = NULL;
     } while (true);
 
-    // Shutdown MAX7219 / MAX7221 driver and SPI bus
-    ESP_ERROR_CHECK(led_driver_max7219_free(led_max7219_handle));
     ESP_ERROR_CHECK(spi_bus_free(SPI_HOSTID));
 }
