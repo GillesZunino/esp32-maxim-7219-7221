@@ -38,7 +38,10 @@ registers = {
     0x0F: ['Display test', lambda v: 'on' if v else 'off']
 }
 
-ann_reg, ann_digit, ann_device_index = range(3)
+ann_reg = 0
+ann_digit = 1
+ann_invalid = 2
+ann_device_index = 3
 
 class Decoder(srd.Decoder):
     api_version = 3
@@ -57,10 +60,11 @@ class Decoder(srd.Decoder):
     annotations = (
         ('4', 'register', 'Registers written to the device'),
         ('11', 'digit', 'Digits displayed on the device'),
+        ('0', 'invalid', 'Invalid register'),
         ('14', 'device', 'Device index')
     )
     annotation_rows = (
-        ('commands', 'Commands', (ann_reg, ann_digit)),
+        ('commands', 'Commands', (ann_reg, ann_digit, ann_invalid)),
         ('device', 'Device', (ann_device_index,)),
     )
 
@@ -80,6 +84,9 @@ class Decoder(srd.Decoder):
 
     def putdigit(self, ss, es, digit, value):
         self.put(ss, es, self.out_ann, [ann_digit, ['Digit %d: {$}' % digit, '@%02X' % value]])
+    
+    def putinvalid(self, ss, es, value):
+        self.put(ss, es, self.out_ann, [ann_invalid, ['%s' % value]])
 
     def putdevice_index(self, ss, es, index):
         self.put(ss, es, self.out_ann, [ann_device_index, ['Device %d' % index]])
@@ -116,11 +123,11 @@ class Decoder(srd.Decoder):
                         else:
                             name, decoder = registers[sanitized_address]
                             annotation = '%s: %s' % (name, decoder(mosi))
-                    else:
-                        annotation = 'Bad Cmd / Digit'
 
-                    self.putreg(self.addr_start, es, annotation)
-                    
+                        self.putreg(self.addr_start, es, annotation)
+                    else:
+                        self.putinvalid(self.addr_start, es, 'INVALID REGISTER 0xX%01X' % sanitized_address)
+
                 self.putdevice_index(self.addr_start, es, self.device_index)
 
                 self.pos = 0
