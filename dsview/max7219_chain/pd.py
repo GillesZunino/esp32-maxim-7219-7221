@@ -94,10 +94,21 @@ class Decoder(srd.Decoder):
     def decode_intensity(self, intensity):
         masked_intensity = intensity & 0x0f
         if self.options['device_type'] == 'MAX7219':
-            return '%d/32' % (2 * masked_intensity + 1)
+            masked_intensity = 2 * masked_intensity + 1
+            if masked_intensity == 1:
+                return '1/32 (min on)'
+            elif masked_intensity == 16:
+                return '31/32 (max on)'
+            else:
+                return '%d/32' % masked_intensity
         else:
             masked_intensity += 1
-            return '%d/16' % masked_intensity if masked_intensity != 16 else '15/16 max on'
+            if masked_intensity == 1:
+                return '1/16 (min on)'
+            elif masked_intensity == 16:
+                return '15/16 (max on)'
+            else:
+                return '%d/16' % masked_intensity
         
     def decode(self, ss, es, data):
         ptype, mosi, _ = data
