@@ -33,9 +33,9 @@ registers = {
     0x00: ['No-op'],
     0x09: ['Decode', lambda v: '0b{:08b}'.format(v)],
     0x0A: ['Intensity'],
-    0x0B: ['Scan limit', lambda v: 1 + v],
-    0x0C: ['Shutdown', lambda v: 'off' if v else 'on'],
-    0x0F: ['Display test', lambda v: 'on' if v else 'off']
+    0x0B: ['Scan limit', lambda v: (v & 0x07) + 1],
+    0x0C: ['Shutdown', lambda v: 'Normal' if (v & 0x01) == 1 else 'Shutdown'],
+    0x0F: ['Display test', lambda v: 'On' if (v & 0x01) == 1 else 'Off']
 }
 
 ann_reg = 0
