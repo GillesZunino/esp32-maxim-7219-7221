@@ -38,6 +38,25 @@ registers = {
     0x0F: ['Display test', lambda v: 'On' if (v & 0x01) == 1 else 'Off']
 }
 
+code_b_digits = {
+    0x00: '0',
+    0x01: '1',
+    0x02: '2',
+    0x03: '3',
+    0x04: '4',
+    0x05: '5',
+    0x06: '6',
+    0x07: '7',
+    0x08: '8',
+    0x09: '9',
+    0x0A: '-',
+    0x0B: 'E',
+    0x0C: 'H',
+    0x0D: 'L',
+    0x0E: 'P',
+    0x0F: ''
+}
+
 ann_reg = 0
 ann_digit = 1
 ann_invalid = 2
@@ -82,8 +101,8 @@ class Decoder(srd.Decoder):
     def putreg(self, ss, es, value):
         self.put(ss, es, self.out_ann, [ann_reg, ['%s' % value]])
 
-    def putdigit(self, ss, es, digit, value):
-        self.put(ss, es, self.out_ann, [ann_digit, ['Digit %d: {$}' % digit, '@%02X' % value]])
+    def putdigit(self, ss, es, digit, value, code_b, has_decimal):
+        self.put(ss, es, self.out_ann, [ann_digit, ["""Digit %d: ['%s'%s - 0x%02X]""" % ( digit, code_b, '. ' if has_decimal else '', value)]])
     
     def putinvalid(self, ss, es, value):
         self.put(ss, es, self.out_ann, [ann_invalid, ['%s' % value]])
@@ -124,7 +143,14 @@ class Decoder(srd.Decoder):
             elif self.pos == 1:
                 sanitized_address = self.addr & 0x0f
                 if sanitized_address >= 1 and sanitized_address <= 8:
-                    self.putdigit(self.addr_start, es, sanitized_address, mosi)
+                    has_decimal = mosi & 0x80 == 0x80
+                    digit_no_decimal = mosi & 0x7F
+                    if digit_no_decimal in code_b_digits:
+                        code_b = code_b_digits[digit_no_decimal]
+                    else:
+                        code_b = '?'
+
+                    self.putdigit(self.addr_start, es, sanitized_address, mosi, code_b, has_decimal)
                 else:
                     if sanitized_address in registers:
                         if sanitized_address == 0x00:
