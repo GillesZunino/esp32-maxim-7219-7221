@@ -78,7 +78,7 @@ class Decoder(srd.Decoder):
     )
     annotations = (
         ('4', 'register', 'Registers written to the device'),
-        ('11', 'digit', 'Digits displayed on the device'),
+        ('10', 'digit', 'Digits displayed on the device'),
         ('0', 'invalid', 'Invalid register'),
         ('14', 'device', 'Device index')
     )
