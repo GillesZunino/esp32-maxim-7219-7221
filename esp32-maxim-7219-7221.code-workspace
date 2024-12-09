@@ -20,6 +20,9 @@
 		},
 		{
 			"path": "components/max7219_7221/examples/max7219_7221_temperature"
+		},
+		{
+			"path": "components/max7219_7221/examples/max7219_7221_decode"
 		}
 	],
 	"settings": {
