@@ -110,7 +110,7 @@ MAX7219 / MAX72221 devices support two different decoding modes:
 
 Each MAX7219 / MAX72221 device controls up to eight groups of eight LEDs. These LEDs are typically arranged as eight digits each composed of seven segments and a decimal point as shown in the picture below:
 
-![A custom board with a MAX7219 / MAX72221 serially interfaced, 8-Digit, LED Display Driver](./media/Eight Seven Segments.png)
+![A custom board with a MAX7219 / MAX72221 serially interfaced, 8-Digit, LED Display Driver](./media/Eight-Seven-Segments.png)
 
 However, LEDs can be arranged in any shape or form. Other popular arrangements include a matrix of 64 LEDs or [Sixteen-segment displays](https://en.wikipedia.org/wiki/Sixteen-segment_display). Each digit (a group of nine LEDs) can be configured for either Code-B or Direct Addressing.
 
