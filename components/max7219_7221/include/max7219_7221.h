@@ -118,14 +118,14 @@ typedef enum {
 typedef enum {
     MAX7219_CODE_B_DECODE_NONE = 0x00,        ///< Code B font decode disabled
 
-    MAX7219_CODE_B_DECODE_DIGIT_1 = 0x01,     ///< Code B font decode up to and including the first digit
-    MAX7219_CODE_B_DECODE_DIGIT_2 = 0x02,     ///< Code B font decode up to and including the the second digit
-    MAX7219_CODE_B_DECODE_DIGIT_3 = 0x04,     ///< Code B font decode up to and including the the third digit
-    MAX7219_CODE_B_DECODE_DIGIT_4 = 0x08,     ///< Code B font decode up to and including the the fourth digit
-    MAX7219_CODE_B_DECODE_DIGIT_5 = 0x10,     ///< Code B font decode up to and including the the fitfh digit
-    MAX7219_CODE_B_DECODE_DIGIT_6 = 0x20,     ///< Code B font decode up to and including the the sixth digit
-    MAX7219_CODE_B_DECODE_DIGIT_7 = 0x40,     ///< Code B font decode up to and including the the seventh digit
-    MAX7219_CODE_B_DECODE_DIGIT_8 = 0x80,     ///< Code B font decode up toand including the the eighth digit
+    MAX7219_CODE_B_DECODE_DIGIT_1 = 0x01,     ///< Code B font decode the first digit
+    MAX7219_CODE_B_DECODE_DIGIT_2 = 0x02,     ///< Code B font decode the second digit
+    MAX7219_CODE_B_DECODE_DIGIT_3 = 0x04,     ///< Code B font decode the third digit
+    MAX7219_CODE_B_DECODE_DIGIT_4 = 0x08,     ///< Code B font decode the fourth digit
+    MAX7219_CODE_B_DECODE_DIGIT_5 = 0x10,     ///< Code B font decode the fitfh digit
+    MAX7219_CODE_B_DECODE_DIGIT_6 = 0x20,     ///< Code B font decode the sixth digit
+    MAX7219_CODE_B_DECODE_DIGIT_7 = 0x40,     ///< Code B font decode the seventh digit
+    MAX7219_CODE_B_DECODE_DIGIT_8 = 0x80,     ///< Code B font decode the eighth digit
 
     MAX7219_CODE_B_DECODE_ALL = MAX7219_CODE_B_DECODE_DIGIT_1 | MAX7219_CODE_B_DECODE_DIGIT_2 | MAX7219_CODE_B_DECODE_DIGIT_3 |
                                 MAX7219_CODE_B_DECODE_DIGIT_4 | MAX7219_CODE_B_DECODE_DIGIT_5 | MAX7219_CODE_B_DECODE_DIGIT_6 |

@@ -108,15 +108,11 @@ MAX7219 / MAX72221 devices support two different decoding modes:
 * **Code-B** (Code-B decode): LEDs to be turned on are expressed as BCD code B values (0-9, E, H, L, P, and -). This is useful for applications keeping data to display in BCD,
 * **Direct Addressing** (no decode): LEDs are controlled via direct adressing. In direct addressing, each individual LED is assigned a mask and various masks are combined (or'ed toegether) to produce a symbol code. See 'Symbols codes' below or the MAX7219 / MAX72221 data sheet for more details. This is the default mode on MAX7219 / MAX72221 power on.
 
-Each MAX7219 / MAX72221 device controls up to eight groups of eight LEDs. These LEDs are typically arranged as eight digits each composed of seven segments and a decimal point. However, LEDs can be arranged in any shape or form. Other popular arrangements include a matrix of 64 LEDs or [Sixteen-segment displays](https://en.wikipedia.org/wiki/Sixteen-segment_display).
+Each MAX7219 / MAX72221 device controls up to eight groups of eight LEDs. These LEDs are typically arranged as eight digits each composed of seven segments and a decimal point. However, LEDs can be arranged in any shape or form. Other popular arrangements include a matrix of 64 LEDs or [Sixteen-segment displays](https://en.wikipedia.org/wiki/Sixteen-segment_display). Each digit (a group of nine LEDs) can be configured for either Code-B or Direct Addressing.
 
-The desired decode mode is configured on a continous range of digits as follows:
-1. Digits 1 to 8 are configured as direct addressing (`MAX7219_CODE_B_DECODE_NONE`),
-2. Digit 1 configured as Code-B and digits 2 to 8 as direct addressing (`MAX7219_CODE_B_DECODE_UP_TO_1`),
-3. Digits 1, 2 configured as Code-B and digits 3 to 8 as direct addressing (`MAX7219_CODE_B_DECODE_UP_TO_2`),
-4. ...
-5. Digits 1 to 7 configured as Code-B and digit 8 as direct addressing (`MAX7219_CODE_B_DECODE_UP_TO_7`),
-6. Digits 1 to 8 configured as Code-B (`MAX7219_CODE_B_DECODE_ALL`).
+The desired decode mode is set by combining (or'ing toegether) one or more `MAX7219_CODE_B_DECODE_DIGIT_x` constant. For instance configure digit 1 and digit 3 for Code-B and all other digits for direct addressing with `MAX7219_CODE_B_DECODE_DIGIT_1 | MAX7219_CODE_B_DECODE_DIGIT_3`. The following constants make it easier to configure all digits for Code-B or direct addressing:
+1. `MAX7219_CODE_B_DECODE_ALL` configures all digits as Code-B,
+2. `MAX7219_CODE_B_DECODE_NONE` configures all digits as direct addressing.
 
 The code to configure decode mode is as follows:
 ```c
@@ -125,13 +121,13 @@ led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DEC
 
 ...
 
-// Configure Code-B decode for digits 1, 2, 3, 4, 5 on all MAX7219 / MAX72221 devices in the chain 
-led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_UP_TO_5)
+// Configure Code-B decode for digits 1, 2 and 5 on all MAX7219 / MAX72221 devices in the chain 
+led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_DIGIT_1 | MAX7219_CODE_B_DECODE_DIGIT_2 | MAX7219_CODE_B_DECODE_DIGIT_5)
 
 ...
 
-// Configure Code-B decode for digits 1, 2, 3, 4, 5 on the second (2) MAX7219 / MAX72221 device on the chain
-ESP_ERROR_CHECK(led_driver_max7219_configure_decode(led_max7219_handle, 2, MAX7219_CODE_B_DECODE_UP_TO_5));
+// Configure Code-B decode for digits 1, 2 and 5 on the second (2) MAX7219 / MAX72221 device on the chain
+ESP_ERROR_CHECK(led_driver_max7219_configure_decode(led_max7219_handle, 2, MAX7219_CODE_B_DECODE_DIGIT_1 | MAX7219_CODE_B_DECODE_DIGIT_2 | MAX7219_CODE_B_DECODE_DIGIT_5));
 ```
 
 ##### Symbol codes for Code-B and Direct Addressing
