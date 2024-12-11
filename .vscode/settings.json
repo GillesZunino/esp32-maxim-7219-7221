@@ -4,14 +4,15 @@
   "cmake.configureOnEdit": false,
   "cmake.configureOnOpen": false,
 
-  
-
+  // Windows specific ESP IDF paths and tools
   "idf.espIdfPathWin": "D:\\espressif\\v5.3.1\\esp-idf",
   "idf.toolsPathWin": "D:\\espressif\\v5.3.1\\tools",
 
-  // When running on a Docker image, comment out the following two lines to accept the ambient Espressif image configuration
+  // Linux / MacOS specific ESP IDF paths and tools 
+  // NOTE: FOr Espressif Docker images, comment out the following two lines to accept the ambient image configuration
   "idf.espIdfPath": "/Users/gzunino/Documents/Espressif/v5.3.1/esp-idf",
   "idf.toolsPath": "/Users/gzunino/Documents/Espressif/v5.3.1/tools",
+
   "idf.customExtraVars": {
     // TODO: DO we still need this hardcoded path?
     "OPENOCD_SCRIPTS": "D:\\espressif\\v5.3.1\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20240318/openocd-esp32/share/openocd/scripts", // <- can I derive from tools ?
@@ -35,7 +36,7 @@
 
   "idf.deleteComponentsOnFullClean": false,
   "idf.monitorNoReset": false,
-  "idf.launchMonitorOnDebugSession": true,
+  "idf.launchMonitorOnDebugSession": false,
   "idf.enableSizeTaskAfterBuildTask": true,
 
   // SVD files from https://github.com/espressif/svd/tree/main/svd
