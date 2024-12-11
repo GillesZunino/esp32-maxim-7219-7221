@@ -36,8 +36,6 @@
 
   // SVD files from https://github.com/espressif/svd/tree/main/svd
   "idf.svdFilePath": "${workspaceFolder}/svd/${config:idf.adapterTargetName}.svd",
-  // TODO: ${config:CONFIG_IDF_TARGET}.svd or ${env:CONFIG_IDF_TARGET}
-
 
   "idf.portWin": "COM4",
   "idf.flashType": "JTAG"
