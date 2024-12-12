@@ -1,4 +1,4 @@
-# MAX7219 / MAX7221 Driver [![Component Registry](https://components.espressif.com/components/espressif/led_strip/badge.svg)](https://components.espressif.com/components/espressif/led_strip)
+# MAX7219 / MAX7221 Driver [![Component Registry](https://components.espressif.com/components/gilleszunino/max7219_7221/badge.svg)](https://components.espressif.com/components/gilleszunino/max7219_7221)
 
 A driver to control one or more [MAX7219 / MAX72221](https://www.analog.com/en/products/MAX7219.html) serially interfaced, 8-Digit, LED Display Drivers.
 
