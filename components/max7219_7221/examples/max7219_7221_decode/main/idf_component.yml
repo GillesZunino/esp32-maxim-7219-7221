@@ -3,6 +3,6 @@ description: "Decode options for MAX7219 / MAX7221 serially interfaced, 8-digit,
 tags:
   - LED
 dependencies:
-  espressif/max7219_7221:
+  GillesZunino/max7219_7221:
     version: '~1'
     override_path: '../../../'
