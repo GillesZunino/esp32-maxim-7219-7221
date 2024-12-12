@@ -224,7 +224,7 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_max7219_handle_t handle, 
     switch (mode) {
         case MAX7219_SHUTDOWN_MODE:
         case MAX7219_NORMAL_MODE: {
-            ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not aquire mutex");
+            ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
             // Take exclusive access of the SPI bus
             esp_err_t ret = ESP_OK;
@@ -281,7 +281,7 @@ esp_err_t led_driver_max7219_set_mode(led_driver_max7219_handle_t handle, uint8_
     switch (mode) {
         case MAX7219_SHUTDOWN_MODE:
         case MAX7219_NORMAL_MODE: {
-            ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not aquire mutex");
+            ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
             // Take exclusive access of the SPI bus
             esp_err_t ret = ESP_OK;
@@ -336,7 +336,7 @@ cleanup:
 esp_err_t led_driver_max7219_set_chain_intensity(led_driver_max7219_handle_t handle, max7219_intensity_t intensity) {
     ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
 
-    // Send |MAX7219_SCAN_LIMIT_ADDRESS|<intensity| to all devices
+    // Send |MAX7219_INTENSITY_ADDRESS|<intensity>| to all devices
     max7219_command_t command = { .address = MAX7219_INTENSITY_ADDRESS, .data = intensity };
     return send_chain_command_private(handle, 0, command);
 }
@@ -365,9 +365,9 @@ esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint
     ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
     ESP_RETURN_ON_ERROR(check_max_chain_id_private(handle, startChainId), LedDriverMax7219LogTag, "Invalid chain ID");
     ESP_RETURN_ON_ERROR(check_max_digit_private(handle, startDigitId), LedDriverMax7219LogTag, "Invalid start digit");
-    ESP_RETURN_ON_ERROR(check_bulk_symbols_array_length(handle, startChainId, startDigitId, digitCodesCount), LedDriverMax7219LogTag, "Invalid number of digit codes provideds");
+    ESP_RETURN_ON_ERROR(check_bulk_symbols_array_length(handle, startChainId, startDigitId, digitCodesCount), LedDriverMax7219LogTag, "Invalid number of digit codes provided");
 
-    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not aquire mutex");
+    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
     max7219_command_t* buffer = get_command_buffer_private(handle);
     uint8_t dstDigitIndex = startDigitId;
@@ -409,7 +409,7 @@ cleanup:
 esp_err_t led_driver_max7219_set_chain(led_driver_max7219_handle_t handle, uint8_t digitCode) {
     ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
 
-    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not aquire mutex");
+    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
     // Take exclusive access of the SPI bus
     esp_err_t ret = ESP_OK;
@@ -446,7 +446,7 @@ static inline __attribute__((always_inline)) max7219_command_t* get_command_buff
 }
 
 static esp_err_t send_chain_command_private(led_driver_max7219_handle_t handle, uint8_t chainId, const max7219_command_t cmd) {
-    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not aquire mutex");
+    ESP_RETURN_ON_FALSE(xSemaphoreTake(handle->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
     // Take exclusive access of the SPI bus
     esp_err_t ret = ESP_OK;
@@ -577,7 +577,7 @@ static esp_err_t check_max_digit_private(led_driver_max7219_handle_t handle, uin
 }
 
 static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount) {
-    // Number of remaining digits starting at device 'startChainId' and at digit 'stratDigitId's
+    // Number of remaining digits starting at device 'startChainId' and at digit 'startDigitId'
     const uint8_t availableDigits = ((handle->hw_config.chain_length - startChainId) * MAX7219_MAX_DIGIT) + (MAX7219_MAX_DIGIT - startDigitId) + 1;
     return (digitCodesCount > 0) && (digitCodesCount <= availableDigits) ? ESP_OK : ESP_ERR_INVALID_ARG;
 }
