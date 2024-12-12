@@ -12,6 +12,7 @@ esp-idf-vscode-generated.gdb
 # ESP-IDF build intermediates and output
 **/managed_components/**
 **/build/**
+**/dist/**
 
 # ESP-IDF component manager lock file
 **/dependencies.lock
