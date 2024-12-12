@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 
-#define MAX7219_MIN_DIGIT 1   ///< A MAX7219 / MAX7221 can drive a minimum of 1 digits
+#define MAX7219_MIN_DIGIT 1   ///< A MAX7219 / MAX7221 can drive a minimum of 1 digit
 #define MAX7219_MAX_DIGIT 8   ///< A MAX7219 / MAX7221 can drive a maximum of 8 digits
 
 
@@ -122,7 +122,7 @@ typedef enum {
     MAX7219_CODE_B_DECODE_DIGIT_2 = 0x02,     ///< Code B font decode the second digit
     MAX7219_CODE_B_DECODE_DIGIT_3 = 0x04,     ///< Code B font decode the third digit
     MAX7219_CODE_B_DECODE_DIGIT_4 = 0x08,     ///< Code B font decode the fourth digit
-    MAX7219_CODE_B_DECODE_DIGIT_5 = 0x10,     ///< Code B font decode the fitfh digit
+    MAX7219_CODE_B_DECODE_DIGIT_5 = 0x10,     ///< Code B font decode the fifth digit
     MAX7219_CODE_B_DECODE_DIGIT_6 = 0x20,     ///< Code B font decode the sixth digit
     MAX7219_CODE_B_DECODE_DIGIT_7 = 0x40,     ///< Code B font decode the seventh digit
     MAX7219_CODE_B_DECODE_DIGIT_8 = 0x80,     ///< Code B font decode the eighth digit
@@ -211,7 +211,7 @@ typedef struct max7219_config {
 esp_err_t led_driver_max7219_init(const max7219_config_t* config, led_driver_max7219_handle_t* handle);
 
 /**
- * @brief Free the MAX219 / MAX7221 driver.
+ * @brief Free the MAX7219 / MAX7221 driver.
  * 
  * @return
  *      - ESP_OK: Successfully uninstalled the driver
@@ -253,7 +253,7 @@ esp_err_t led_driver_max7219_configure_chain_decode(led_driver_max7219_handle_t 
 esp_err_t led_driver_max7219_configure_decode(led_driver_max7219_handle_t handle, uint8_t chainId, max7219_decode_mode_t decodeMode);
 
 /**
- * @brief Configure scan limits all MAX7219 / MAX7221 devices on the chain.
+ * @brief Configure scan limits on all MAX7219 / MAX7221 devices on the chain.
  * 
  * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
  * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
@@ -290,9 +290,9 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_max7219_handle_t ha
 
 
 /**
- * @brief Set the operation mode on all MAX219 / MAX7221 devices on the chain.
+ * @brief Set the operation mode on all MAX7219 / MAX7221 devices on the chain.
  *
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
  * @param[in]  mode The mode to configure. See `max7219_mode_t` for possible values
  *
  * @return
@@ -322,9 +322,9 @@ esp_err_t led_driver_max7219_set_mode(led_driver_max7219_handle_t handle, uint8_
 
 
 /**
- * @brief Configure intensity on all MAX219 / MAX7221 devices on the chain.
+ * @brief Configure intensity on all MAX7219 / MAX7221 devices on the chain.
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
  * @param[in]  intensity The duty cycle to set. See `max7219_intensity_t` for possible values
  *
  * @return
@@ -355,9 +355,9 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_max7219_handle_t handle, u
 
 
 /**
- * @brief Set the given digit code on all digits of all MAX219 / MAX7221 devices on the chain.
+ * @brief Set the given digit code on all digits of all MAX7219 / MAX7221 devices on the chain.
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
  * @param[in]  digitCode The digit code to set. A `max7219_code_b_font_t` value for digits in Code B decode mode or a combination of `max7219_segment_t` values for devices in no decode mode
  *
  * @return
@@ -397,7 +397,7 @@ esp_err_t led_driver_max7219_set_digit(led_driver_max7219_handle_t handle, uint8
  * @param[in]  startChainId Index of the MAX219 / MAX7221 device where codes should start being sent to
  * @param[in]  startDigitId The digit to start sending codes from (1 to 8)
  * @param[in]  digitCodes An array of digit codes to send. A `max7219_code_b_font_t` value for digits in Code B decode mode or a combination of `max7219_segment_t` values for devices in no decode mode
- * @param[in]  digitCodesCount NUmber of digit codes in array 'digitCodes'
+ * @param[in]  digitCodesCount Number of digit codes in array 'digitCodes'
  *
  * @return
  *      - ESP_OK: Success
