@@ -110,7 +110,7 @@ MAX7219 / MAX72221 devices support two different decoding modes:
 
 Each MAX7219 / MAX72221 device controls up to eight groups of eight LEDs. These LEDs are typically arranged as eight digits each composed of seven segments and a decimal point as shown in the picture below:
 
-![A custom board with a MAX7219 / MAX72221 serially interfaced, 8-Digit, LED Display Driver](https://raw.githubusercontent.com/GillesZunino/esp32-maxim-7219-7221/main/components/max7219_7221/media/Eight-Seven-Segments.png)
+![A custom board with a MAX7219 / MAX72221 serially interfaced, 8-Digit, LED Display Driver](./media/Eight-Seven-Segments.png)
 
 However, LEDs can be arranged in any shape or form. Other popular arrangements include a matrix of 64 LEDs or [Sixteen-segment displays](https://en.wikipedia.org/wiki/Sixteen-segment_display). Each digit (a group of nine LEDs) can be configured for either Code-B or Direct Addressing.
 
@@ -232,9 +232,10 @@ The driver supports multiple instances of `led_driver_max7219_handle_t`. Current
 
 ## Samples
 Several samples are located under `examples`. This section lists samples and capabilities demonstrated. Refer to a sample `README.md` file for more details.
-* `max_7219_7221_basic` demonstrates how to initialize, configure a single MAX7219 / MAX72221 device and display digits. This is the sample to start from,
-* `max_7219_7221_cascade` demonstrates how to initialize, configure a chain of three MAX7219 / MAX72221 devices and display digits,
-* `max_7219_7221_decode` demonstrates how to initialize, configure a single MAX7219 / MAX72221 devices and set per digit decode mode,
-* `max_7219_7221_intensity` demonstrates how to control display intensity,
-* `max_7219_7221_scanlimit` demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX72221 device),
-* `max_7219_7221_testmode` demonstrates how to control test mode.
+* [`max_7219_7221_basic`](./examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX72221 device and display digits. This is the sample to start from,
+* [`max_7219_7221_cascade`](./examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX72221 devices and display digits,
+* [`max_7219_7221_decode`](./examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX72221 devices and set per digit decode mode,
+* [`max_7219_7221_intensity`](./examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
+* [`max_7219_7221_scanlimit`](./examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX72221 device),
+* [`max_7219_7221_temperature`](./examples/max7219_7221_temperature/README.md) demonstrates how to display the current ESP32 device temperature, minimum and maximum,
+* [`max_7219_7221_testmode`](./examples/max7219_7221_testmode/README.md) demonstrates how to control test mode.
