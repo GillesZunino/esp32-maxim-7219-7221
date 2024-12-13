@@ -17,4 +17,5 @@ kramdown:
 include:
   - README.md
   - LICENSE.md
-  - CONTRIBUTING.md
+exclude:
+  - dsview/max7219_chain/
