@@ -18,4 +18,4 @@ include:
   - README.md
   - LICENSE.md
 exclude:
-  - dsview/max7219_chain/
+  - dsview
