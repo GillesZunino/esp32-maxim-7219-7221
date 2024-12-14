@@ -361,7 +361,7 @@ esp_err_t led_driver_max7219_set_digit(led_driver_max7219_handle_t handle, uint8
 }
 
 
-esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount) {
+esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, const uint8_t digitCodes[], uint8_t digitCodesCount) {
     ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
     ESP_RETURN_ON_ERROR(check_max_chain_id_private(handle, startChainId), LedDriverMax7219LogTag, "Invalid chain ID");
     ESP_RETURN_ON_ERROR(check_max_digit_private(handle, startDigitId), LedDriverMax7219LogTag, "Invalid start digit");

@@ -404,7 +404,7 @@ esp_err_t led_driver_max7219_set_digit(led_driver_max7219_handle_t handle, uint8
  *      - ESP_ERR_INVALID_ARG: Invalid argument
  *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
  */
-esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodes[], uint8_t digitCodesCount);
+esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, const uint8_t digitCodes[], uint8_t digitCodesCount);
 
 
 
