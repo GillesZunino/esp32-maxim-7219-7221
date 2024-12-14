@@ -32,5 +32,3 @@ const gpio_num_t DIN_PIN = GPIO_NUM_16;
 ```
 
 Build and flash an ESP32 device. Ensure you have a working connection to UART as the sample emits various information via ESP_LOGxxx.
-
-## Sample log output

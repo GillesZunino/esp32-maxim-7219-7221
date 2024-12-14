@@ -154,8 +154,6 @@ void app_main(void) {
 
             MAX7219_DIRECT_ADDRESSING_b,
             MAX7219_DIRECT_ADDRESSING_d,
-            MAX7219_DIRECT_ADDRESSING_e,
-            MAX7219_DIRECT_ADDRESSING_g,
             MAX7219_DIRECT_ADDRESSING_h,
             MAX7219_DIRECT_ADDRESSING_o,
             MAX7219_DIRECT_ADDRESSING_r,
