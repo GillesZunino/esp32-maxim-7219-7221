@@ -1,5 +1,5 @@
 version: "1.0.0"
-description: "Intensity settings usage ofAX7219 / MAX7221 serially interfaced, 8-digit, LED display drivers for ESP32."
+description: "Intensity settings usage of AX7219 / MAX7221 serially interfaced, 8-digit, LED display drivers for ESP32."
 tags:
   - LED
 dependencies:
