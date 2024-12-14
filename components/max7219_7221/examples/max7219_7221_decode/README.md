@@ -1,15 +1,15 @@
-# MAX7219 / MAX7221 Driver - Decode sample
+# MAX7219 / MAX7221 Driver - Decode Mode
 
-This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device to decode digits with either Code-B or DIrect Addressing and display symbols.The sample demonstrates how to decode a digit with COde-B and another digit with Direct Addressing.
+This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device to decode digits with a mix of Code-B and Direct Addressing and display symbols.
 
 # Sample walk through
 This sample demonstrates the following capabilities:
 1. Initialize an SPI host in master mode using ESP-IDF `spi_bus_initialize()`,
 2. Initialize the MAX7219 / MAX7221 driver via `led_driver_max7219_init()`,
 3. Configure scan limit to eight digits with `led_driver_max7219_configure_chain_scan_limit()`,
-4. Configure "Code-B" and "Direct Addressing" decoding using `led_driver_max7219_configure_chain_decode()`. This sample configures even digits as 'COde-B' deocde and odd digits as 'Direct Addressing',
+4. Configure "Code-B" and "Direct Addressing" decoding using `led_driver_max7219_configure_chain_decode()`. This sample configures even digits as 'Code-B' and odd digits as 'Direct Addressing',
 5. Display an array of symbols using `led_driver_max7219_set_digits()`,
-6. Display symbols using `led_driver_max7219_set_digit()`,
+6. Display symbols using `led_driver_max7219_set_digits()`,
 7. Switch to normal mode with `led_driver_max7219_set_chain_mode()`,
 8. Shutdown the MAX7219 / MAX7221 driver and free up resources it allocated via `led_driver_max7219_free()`.
 
@@ -33,5 +33,3 @@ const gpio_num_t DIN_PIN = GPIO_NUM_16;
 ```
 
 Build and flash an ESP32 device. Ensure you have a working connection to UART as the sample emits various information via ESP_LOGxxx.
-
-## Sample log output
