@@ -51,7 +51,7 @@ led_driver_max7219_handle_t led_max7219_handle = NULL;
 
 static max7219_mode_t currentMode = MAX7219_NORMAL_MODE;
 static void on_momentatory_button_pressed(void) {
-    int buttontState = gpio_get_level(GPIO_NUM_38);
+    int buttontState = gpio_get_level(TESTMODE_PUSH_BUTTON_PIN);
     bool isButtonPressed = buttontState == 1;
 
     ESP_LOGI(TAG, "on_momentatory_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
