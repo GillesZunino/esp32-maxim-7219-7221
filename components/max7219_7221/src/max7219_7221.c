@@ -346,7 +346,7 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_max7219_handle_t handle, u
     ESP_RETURN_ON_ERROR(check_max_chain_id_private(handle, chainId), LedDriverMax7219LogTag, "Invalid chain ID");
 
     // Send |MAX7219_INTENSITY_ADDRESS|<intensity>| to the requested device
-    max7219_command_t command = { .address = MAX7219_SCAN_LIMIT_ADDRESS, .data = intensity };
+    max7219_command_t command = { .address = MAX7219_INTENSITY_ADDRESS, .data = intensity };
     return send_chain_command_private(handle, chainId, command);
 }
 
