@@ -1,6 +1,6 @@
-# Sample: Enable Test Mode when a Button is Pressed
+# Sample: Using Test Mode
 
-This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device, display some symbols and turn test mode on when a push button is pressed.
+This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, display symbols and turn test mode on when a push button is pressed.
 
 ## Walk through
 This sample demonstrates the following capabilities:
@@ -9,7 +9,7 @@ This sample demonstrates the following capabilities:
 2. Initialize the MAX7219 / MAX7221 driver via `led_driver_max7219_init()`,
 3. Configure scan limit to eight digits with `led_driver_max7219_configure_chain_scan_limit()`,
 4. Set LEDs intensity to `MAX7219_INTENSITY_DUTY_CYCLE_STEP_2` with `led_driver_max7219_set_chain_intensity()`,
-5. Display "Code-B" symbols using `led_driver_max7219_set_digit()`,
+5. Display 'Code-B' symbols using `led_driver_max7219_set_digit()`,
 6. Switch between shutdown mode, normal mode and test mode with `led_driver_max7219_set_chain_mode()`,
 7. Shutdown the MAX7219 / MAX7221 driver and free up resources it allocated via `led_driver_max7219_free()`,
 8. Remove a GPIO handler via `gpio_isr_handler_remove()` and `gpio_uninstall_isr_service()`.
@@ -24,7 +24,7 @@ To make the most out of the sample, the following hardware setup is recommended:
     * Connect the ESP32 SPI lines (CLK, MOSI, /CS) to the MAX7219 / MAX7221 via a logic level shifter (for instance a TXS0108E),
     * Connect the ESP32 SPI lines (CLK, MOSI, /CS) to the MAX7219 / MAX7221 via a 3.3V compatible logic buffer (for instance a 74HCT125 / 74AHCT125),
     * Microchip [3V Tips ‘n Tricks](https://ww1.microchip.com/downloads/en/DeviceDoc/41285A.pdf) offers a few alternatives including connection via discrete N-Channel Logic Level Enhancement Mode FET circuitry (for instance BSS138), diode clamps, ...
-5. A momentary single pole single throw button. Connect one side of the button to `GPIO 38` (ESP32S3) or `GPIO 17` (ESP32) and to +3.3V on the other side.
+5. A momentary single pole, single throw switch. Connect one side of the switch to `GPIO 38` (ESP32S3) or `GPIO 17` (ESP32) and the other side to to +3.3V.
 
 ## Firmware
 In `max7219_7221_basic.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:

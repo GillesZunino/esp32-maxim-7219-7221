@@ -1,13 +1,13 @@
-# Sample: Configure Scan Limit
+# Sample: Working with Scan Limit
 
-This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device with scan limit and display Code-B symbols.
+This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, set scan limit and display Code-B symbols.
 
 ## Walk through
 This sample demonstrates the following capabilities:
 1. Initialize an SPI host in master mode using ESP-IDF `spi_bus_initialize()`,
 2. Initialize the MAX7219 / MAX7221 driver via `led_driver_max7219_init()`,
 3. Set LED intensity to `MAX7219_INTENSITY_DUTY_CYCLE_STEP_1` using `led_driver_max7219_set_chain_intensity()`,
-4. Specify "Code-B" decoding using `led_driver_max7219_configure_chain_decode()`,
+4. Specify 'Code-B' decoding using `led_driver_max7219_configure_chain_decode()`,
 5. Configure scan limit from four to eight digits with `led_driver_max7219_configure_chain_scan_limit()`,
 6. Display symbols using `led_driver_max7219_set_digit()` and `led_driver_max7219_set_chain()`,
 7. Shutdown the MAX7219 / MAX7221 driver and free up resources it allocated via `led_driver_max7219_free()`.

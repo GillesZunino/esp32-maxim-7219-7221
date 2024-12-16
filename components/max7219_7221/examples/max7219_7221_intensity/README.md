@@ -1,6 +1,6 @@
 # Sample: Configure LED Intensity
 
-This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device, set LED intensity, enable and display various symbols.
+This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, set LED intensity and display various symbols.
 
 ## Walk through
 This sample demonstrates the following capabilities:
@@ -8,7 +8,7 @@ This sample demonstrates the following capabilities:
 2. Initialize the MAX7219 / MAX7221 driver via `led_driver_max7219_init()`,
 3. Configure scan limit to eight digits with `led_driver_max7219_configure_chain_scan_limit()`,
 4. Switch between shutdown mode and normal mode with `led_driver_max7219_set_chain_mode()`,
-5. Switch between "Code-B" using `led_driver_max7219_configure_chain_decode()`,
+5. Configure "Code-B" decoding using `led_driver_max7219_configure_chain_decode()`,
 6. Configure LED intensity using `led_driver_max7219_set_chain_intensity()`,
 7. Display symbols using `led_driver_max7219_set_digit()`,
 8. Cycle through all intensities from `MAX7219_INTENSITY_DUTY_CYCLE_STEP_1` to `MAX7219_INTENSITY_DUTY_CYCLE_STEP_16` using `led_driver_max7219_set_chain_intensity()`,
