@@ -1,7 +1,4 @@
----
-title: MAX7219 / MAX7221 Driver - Basic Usage
----
-
+# Sample - Basic Usage
 This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device and display Code-B or Direct Addressing symbols.
 
 # Sample walk through
