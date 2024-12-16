@@ -3,8 +3,8 @@ A driver to control one or more [MAX7219 / MAX7221](https://www.analog.com/en/pr
 
 ## Usage
 MAX7219 / MAX7221 devices are controlled via Serial Peripheral Interface (SPI) and can be cascaded. Follow these steps to use the driver:
-1. Initialize an SPI master via `spi_bus_initialize()`. Most applications choose `SPI2_HOST` however most hosts should work,
-2. Initialize the MAX7219 / MAX7221 driver by calling `led_driver_max7219_init()` passing the number of devices, desired SPI frequency ... ,
+1. Initialize an SPI master via `spi_bus_initialize()`. Most applications choose `SPI2_HOST` however other hosts should work,
+2. Initialize the MAX7219 / MAX7221 driver by calling `led_driver_max7219_init()` and providing the number of devices, desired SPI frequency ... ,
 3. Configure MAX7219 / MAX7221 device(s) for a specific application by calling one or more `led_driver_max7219_set_xxx` or `led_driver_max7219_configure_xxx` functions:
     * `led_driver_max7219_set_chain_mode()` / `led_driver_max7219_set_mode()` to configure the device mode,
     * `led_driver_max7219_configure_chain_decode()` / `led_driver_max7219_configure_decode()` to configure decode mode,
@@ -83,9 +83,9 @@ A MAX7219 / MAX7221 device can operate in three distinct modes:
 * **Normal** mode: Digits are displayed, the device is programmable and any change is visible immediately,
 * **Test** mode: All segments on all digits are lit to maximum intensity. The device retains its configuration.
 
-At power on, all MAX7219 / MAX7221 devices enter **shutdown** mode. The chain is typically configured (set scan limit, intensity, decode ...) in shutdown mode. When one-time configuration is complete, MAX7219 / MAX7221 devices are then put in **normal** mode to display digits. It is also common to set MAX7219 / MAX7221 devices in test mode until there is data ready to display.
+At power on, all MAX7219 / MAX7221 devices enter **shutdown** mode. The chain is typically configured (set scan limit, intensity, decode ...) in shutdown mode. When one-time configuration is complete, MAX7219 / MAX7221 devices are then put in **normal** mode to display digits. Alternatively, MAX7219 / MAX7221 devices can be switched to test mode until there is data ready to display.
 
-The mode is configured as follows:
+The mode of operation is configured as follows:
 ```c
 // Configure Normal mode for all MAX7219 / MAX7221 devices in the chain
 ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
@@ -136,7 +136,7 @@ ESP_ERROR_CHECK(led_driver_max7219_configure_decode(led_max7219_handle, 2, MAX72
 The driver header file offers convenient constants for both Code-B symbols and direct addressing symbols:
 
 * Code-B: `MAX7219_CODE_B_0` to `MAX7219_CODE_BLANK`. To enable the decimal point, combine a character with `MAX7219_CODE_B_DP_MASK` as in `MAX7219_CODE_B_0 | MAX7219_CODE_B_DP_MASK`
-* Direct Addressing: There are two sets of constants:
+* Direct Addressing offers two sets of constants:
     * Individual LEDs: `MAX7219_SEGMENT_A` to `MAX7219_SEGMENT_G` with `MAX7219_SEGMENT_DP` as the mask for the decimal point,
     * Predefined letters, numbers and symbols: `MAX7219_CUSTOM_0` to `MAX7219_CUSTOM_BLANK` with `MAX7219_SEGMENT_DP` as the mask for the decimal point.
 
@@ -230,8 +230,8 @@ The driver supports multiple instances of `led_driver_max7219_handle_t`. Current
 
 ## Samples
 Several samples are located under `examples`. This section lists samples and capabilities demonstrated. Refer to a sample `README.md` file for more details.
-* [`max_7219_7221_basic`](./examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display digits. This is the sample to start from,
-* [`max_7219_7221_cascade`](./examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 devices and display digits,
+* [`max_7219_7221_basic`](./examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display symbols. This is a good starting point for new users,
+* [`max_7219_7221_cascade`](./examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 cascaded devices and display symbols,
 * [`max_7219_7221_decode`](./examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and set per digit decode mode,
 * [`max_7219_7221_intensity`](./examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
 * [`max_7219_7221_scanlimit`](./examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX7221 device),
