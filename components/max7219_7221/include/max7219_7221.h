@@ -201,7 +201,7 @@ typedef struct max7219_config {
  * @brief Initialize the MAX7219 / MAX7221 driver.
  * 
  * @param[in]  config Pointer to a configuration structure for the MAX7219 / MAX7221 driver
- * @param[out]  handle Pointer to a memory location which received the handle to the MAX7219 / MAX7221 driver
+ * @param[out] handle Pointer to a memory location which receives the handle to the MAX7219 / MAX7221 driver
  * 
  * @return
  *      - ESP_OK: Successfully installed driver
@@ -212,6 +212,8 @@ esp_err_t led_driver_max7219_init(const max7219_config_t* config, led_driver_max
 
 /**
  * @brief Free the MAX7219 / MAX7221 driver.
+ * 
+ * @param[in] handle Handle to the MAX7219 / MAX7221 driver
  * 
  * @return
  *      - ESP_OK: Successfully uninstalled the driver
@@ -224,8 +226,8 @@ esp_err_t led_driver_max7219_free(led_driver_max7219_handle_t handle);
 /**
  * @brief Configure digit decoding on all MAX7219 / MAX7221 devices on the chain.
  * 
- * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
- * @param[in]  decodeMode The decode mode to configure. See `max7219_decode_mode_t` for possible values
+ * @param[in] handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in] decodeMode The decode mode to configure. See `max7219_decode_mode_t` for possible values
  *
  * @return
  *      - ESP_OK: Success
@@ -255,8 +257,8 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_max7219_handle_t handle
 /**
  * @brief Configure scan limits on all MAX7219 / MAX7221 devices on the chain.
  * 
- * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
- * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
+ * @param[in] handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in] digits The number of digits to limit scan to. Must be between 1 and 8
  *
  * @return
  *      - ESP_OK: Success
@@ -272,14 +274,14 @@ esp_err_t led_driver_max7219_configure_chain_scan_limit(led_driver_max7219_handl
  *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
- * @param[in]  chainId Index of the MAX219 / MAX7221 device to configure starting at 1 for the first device
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in]  chainId Index of the MAX7219 / MAX7221 device to configure starting at 1 for the first device
  * @param[in]  digits The number of digits to limit scan to. Must be between 1 and 8
  *
  * @attention It is recommended to set the same scan limit on all devices otherwise a display might appear brighter than others.
  *            For example:
- *              * If twelve digits are required, set the scan limit to six on two MAX219 / MAX7221 devices.
- *              * If eleven digits are required, set the scan limit to six on two MAX219 / MAX7221 devices and leave one digit driver unconnected.
+ *              * If twelve digits are required, set the scan limit to six on two MAX7219 / MAX7221 devices.
+ *              * If eleven digits are required, set the scan limit to six on two MAX7219 / MAX7221 devices and leave one digit driver unconnected.
  * @return
  *      - ESP_OK: Success
  *      - ESP_ERR_INVALID_ARG: Invalid argument
@@ -292,8 +294,8 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_max7219_handle_t ha
 /**
  * @brief Set the operation mode on all MAX7219 / MAX7221 devices on the chain.
  *
- * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
- * @param[in]  mode The mode to configure. See `max7219_mode_t` for possible values
+ * @param[in] handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in] mode The mode to configure. See `max7219_mode_t` for possible values
  *
  * @return
  *      - ESP_OK: Success
@@ -303,14 +305,14 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_max7219_handle_t ha
 esp_err_t led_driver_max7219_set_chain_mode(led_driver_max7219_handle_t handle, max7219_mode_t mode);
 
 /**
- * @brief Set the operation mode on a specific MAX219 / MAX7221 device on the chain.
+ * @brief Set the operation mode on a specific MAX7219 / MAX7221 device on the chain.
  * 
  * @note The chain is organized as follows:
  *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
- * @param[in]  chainId Index of the MAX219 / MAX7221 device to configure starting at 1 for the first device
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in]  chainId Index of the MAX7219 / MAX7221 device to configure starting at 1 for the first device
  * @param[in]  mode The mode to configure. See `max7219_mode_t` for possible values 
  *
  * @return
@@ -324,8 +326,8 @@ esp_err_t led_driver_max7219_set_mode(led_driver_max7219_handle_t handle, uint8_
 /**
  * @brief Configure intensity on all MAX7219 / MAX7221 devices on the chain.
  * 
- * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
- * @param[in]  intensity The duty cycle to set. See `max7219_intensity_t` for possible values
+ * @param[in] handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in] intensity The duty cycle to set. See `max7219_intensity_t` for possible values
  *
  * @return
  *      - ESP_OK: Success
@@ -335,14 +337,14 @@ esp_err_t led_driver_max7219_set_mode(led_driver_max7219_handle_t handle, uint8_
 esp_err_t led_driver_max7219_set_chain_intensity(led_driver_max7219_handle_t handle, max7219_intensity_t intensity);
 
 /**
- * @brief Set intensity on a specific MAX219 / MAX7221 devices on the chain.
+ * @brief Set intensity on a specific MAX7219 / MAX7221 devices on the chain.
  * 
  * @note The chain is organized as follows:
  *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
- * @param[in]  chainId Index of the MAX219 / MAX7221 device to configure starting at 1 for the first device
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in]  chainId Index of the MAX7219 / MAX7221 device to configure starting at 1 for the first device
  * @param[in]  intensity The duty cycle to set. See `max7219_intensity_t` for possible values
  *
  * @return
@@ -357,8 +359,8 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_max7219_handle_t handle, u
 /**
  * @brief Set the given digit code on all digits of all MAX7219 / MAX7221 devices on the chain.
  * 
- * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
- * @param[in]  digitCode The digit code to set. A `max7219_code_b_font_t` value for digits in Code B decode mode or a combination of `max7219_segment_t` values for devices in no decode mode
+ * @param[in] handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in] digitCode The digit code to set. A `max7219_code_b_font_t` value for digits in Code B decode mode or a combination of `max7219_segment_t` values for devices in no decode mode
  *
  * @return
  *      - ESP_OK: Success
@@ -368,14 +370,14 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_max7219_handle_t handle, u
 esp_err_t led_driver_max7219_set_chain(led_driver_max7219_handle_t handle, uint8_t digitCode);
 
 /**
- * @brief Set the given digit code on a MAX219 / MAX7221 device on the chain.
+ * @brief Set the given digit code on a MAX7219 / MAX7221 device on the chain.
  * 
  * @note The chain is organized as follows:
  *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
- * @param[in]  chainId Index of the MAX219 / MAX7221 device to configure starting at 1 for the first device
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in]  chainId Index of the MAX7219 / MAX7221 device to configure starting at 1 for the first device
  * @param[in]  digit The digit to set (1 to 8)
  * @param[in]  digitCode The digit code to set. A `max7219_code_b_font_t` value for digits in Code B decode mode or a combination of `max7219_segment_t` values for devices in no decode mode
  *
@@ -387,14 +389,14 @@ esp_err_t led_driver_max7219_set_chain(led_driver_max7219_handle_t handle, uint8
 esp_err_t led_driver_max7219_set_digit(led_driver_max7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode);
 
 /**
- * @brief Set the given digit codes to MAX219 / MAX7221 device on the chain, starting at the given device and digit.
+ * @brief Set the given digit codes to MAX7219 / MAX7221 device on the chain, starting at the given device and digit.
  * 
  * @note The chain is organized as follows:
  *          |  Device 1  |  |  Device 2  |  |  Device 3  | ... |  Device N  |
  *            Chain Id 1      Chain Id 2      Chain Id 3         Chain Id N
  * 
- * @param[in]  handle Handle to the MAX219 / MAX7221 driver
- * @param[in]  startChainId Index of the MAX219 / MAX7221 device where codes should start being sent to
+ * @param[in]  handle Handle to the MAX7219 / MAX7221 driver
+ * @param[in]  startChainId Index of the MAX7219 / MAX7221 device where codes should start being sent to
  * @param[in]  startDigitId The digit to start sending codes from (1 to 8)
  * @param[in]  digitCodes An array of digit codes to send. A `max7219_code_b_font_t` value for digits in Code B decode mode or a combination of `max7219_segment_t` values for devices in no decode mode
  * @param[in]  digitCodesCount Number of digit codes in array 'digitCodes'
