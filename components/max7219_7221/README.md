@@ -1,3 +1,4 @@
+# Introduction
 A driver to control one or more [MAX7219 / MAX7221](https://www.analog.com/en/products/MAX7219.html) serially interfaced, 8-Digit, LED Display Drivers [![Component Registry](https://components.espressif.com/components/gilleszunino/max7219_7221/badge.svg)](https://components.espressif.com/components/gilleszunino/max7219_7221)
 
 ## Usage
@@ -222,7 +223,7 @@ ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_TE
 ESP_ERROR_CHECK(led_driver_max7219_set_mode(led_max7219_handle, 2, MAX7219_TEST_MODE));
 ```
 
-# Thread Safety
+## Thread Safety
 All driver functions are thread safe with the exception of `led_driver_max7219_init()` and `led_driver_max7219_free()`. Internally, each instance of the driver has a global semaphore which is acquired after validating arguments and before accessing any SPI function. 
 
 The driver supports multiple instances of `led_driver_max7219_handle_t`. Currently, all `led_driver_max7219_handle_t` instances must be accessed by the same FreeRTOS task.  
