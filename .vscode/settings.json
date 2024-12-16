@@ -14,13 +14,7 @@
   "idf.toolsPath": "/Users/gzunino/Documents/Espressif/v5.3.1/tools",
 
   "idf.customExtraVars": {
-    // TODO: DO we still need this hardcoded path?
-    "OPENOCD_SCRIPTS": "D:\\espressif\\v5.3.1\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20240318/openocd-esp32/share/openocd/scripts", // <- can I derive from tools ?
-    "IDF_CCACHE_ENABLE": "1", // TODO <- still neded ?
-    "ESP_ROM_ELF_DIR": "D:\\espressif\\v5.3.1\\tools\\tools\\esp-rom-elfs\\20240305/" // TODO: Can be construct based on "idf.toolsPathWin" or can we remove
   },
-
-  // Can use a special ${TOOL_PATH} to "D:\\espressif\\v5.3.1\\tools\\tools\\"
 
   "idf.openOcdDebugLevel": 2,
   "idf.openOcdConfigs": [
