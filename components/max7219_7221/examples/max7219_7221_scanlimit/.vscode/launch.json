@@ -10,7 +10,7 @@
       "type": "gdbtarget",
       "request": "attach",
 
-      "cwd": "${workspaceFolder}/components/maxim_7219_7221/examples/maxim_7219_7221_scanlimit",
+      "cwd": "${workspaceFolder}/components/max7219_7221/examples/max7219_7221_scanlimit",
 
       "initCommands": [
         "set remotetimeout 30",

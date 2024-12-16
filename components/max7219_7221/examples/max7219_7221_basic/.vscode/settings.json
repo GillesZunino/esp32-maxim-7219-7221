@@ -4,21 +4,17 @@
     "cmake.configureOnEdit": false,
     "cmake.configureOnOpen": false,
   
-    "idf.telemetry": false,
-    "idf.showOnboardingOnInit": false,
-
+    // Windows specific ESP IDF paths and tools
     "idf.espIdfPathWin": "D:\\espressif\\v5.3.1\\esp-idf",
-    "idf.pythonBinPathWin": "D:\\espressif\\v5.3.1\\tools\\python_env\\idf5.3_py3.11_env\\Scripts\\python.exe",
     "idf.toolsPathWin": "D:\\espressif\\v5.3.1\\tools",
-    "idf.customExtraPaths": "D:\\espressif\\v5.3.1\\tools\\tools\\xtensa-esp-elf-gdb\\14.2_20240403\\xtensa-esp-elf-gdb\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\riscv32-esp-elf-gdb\\14.2_20240403\\riscv32-esp-elf-gdb\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\xtensa-esp-elf\\esp-13.2.0_20240530\\xtensa-esp-elf\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\riscv32-esp-elf\\esp-13.2.0_20240530\\riscv32-esp-elf\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\esp32ulp-elf\\2.38_20240113\\esp32ulp-elf\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\cmake\\3.24.0\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20240318\\openocd-esp32\\bin;D:\\espressif\\v5.3.1\\tools\\tools\\ninja\\1.11.1;D:\\espressif\\v5.3.1\\tools\\tools\\idf-exe\\1.0.3;D:\\espressif\\v5.3.1\\tools\\tools\\ccache\\4.8\\ccache-4.8-windows-x86_64;D:\\espressif\\v5.3.1\\tools\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;D:\\espressif\\v5.3.1\\tools\\tools\\esp-rom-elfs\\20240305",
-    "idf.customExtraVars": {
-        "OPENOCD_SCRIPTS": "D:\\espressif\\v5.3.1\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20240318/openocd-esp32/share/openocd/scripts",
-        "IDF_CCACHE_ENABLE": "1",
-        "ESP_ROM_ELF_DIR": "D:\\espressif\\v5.3.1\\tools\\tools\\esp-rom-elfs\\20240305/"
-    },
-    "idf.gitPathWin": "D:\\espressif\\v5.3.1\\tools\\tools\\idf-git\\2.39.2\\cmd\\git.exe",
 
-    "idf.adapterTargetName": "esp32",
+    // Linux / MacOS specific ESP IDF paths and tools
+    // NOTE: For Espressif Docker images, comment out the following two lines to accept the ambient image configuration
+    "idf.espIdfPath": "/Users/gzunino/Documents/Espressif/v5.3.1/esp-idf",
+    "idf.toolsPath": "/Users/gzunino/Documents/Espressif/v5.3.1/tools",
+
+    "idf.customExtraVars": {
+    },
 
     "idf.openOcdDebugLevel": 2,
     "idf.openOcdConfigs": [
@@ -27,17 +23,21 @@
         // * "openocd/esp32-ft2232hl-to-jtag.cfg" for ESP32 JTAG via USB to FT2232HL (2 channels)
         // * "openocd/esp32-s3-builtin-usb-to-jtag.cfg" for ESP32-S3 built-in JTAG via USB to dev board
         //
-        "../../../../openocd/esp32-ft2232hl-to-jtag.cfg"
-        //"../../../../openocd/esp32-s3-builtin-usb-to-jtag.cfg"
+        //"../../../../openocd/esp32-ft2232hl-to-jtag.cfg"
+        "../../../../openocd/esp32-s3-builtin-usb-to-jtag.cfg"
     ],
     "idf.openOcdLaunchArgs": [],
 
+    "idf.deleteComponentsOnFullClean": false,
+    "idf.monitorNoReset": false,
     "idf.launchMonitorOnDebugSession": true,
     "idf.enableSizeTaskAfterBuildTask": true,
 
     // SVD files from https://github.com/espressif/svd/tree/main/svd
     "idf.svdFilePath": "${workspaceFolder}/../../../../svd/${config:idf.adapterTargetName}.svd",
 
-    "idf.portWin": "COM3",
-    "idf.flashType": "JTAG"
+    "idf.flashType": "JTAG",
+
+    "idf.portWin": "COM5",
+    "idf.port": "/dev/tty.usbmodem1411101"
 }
