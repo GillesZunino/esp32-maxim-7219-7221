@@ -1,8 +1,8 @@
-# MAX7219 / MAX7221 Driver - Display ESP32 Temperature on Several Drivers
+# Sample: Display ESP32 Temperature on Several Drivers
 
 This sample demonstrates how to initialize the driver with three cascaded MAX7219 / MAX7221 devices, configure the chain and display the current temperature, minimum temperature and maximum temperature.
 
-# Sample walk through
+## Walk through
 This sample demonstrates the following capabilities:
 0. Initialize the ESP temperature sensor via `temperature_sensor_install()` and `temperature_sensor_enable()`,
 1. Initialize an SPI host in master mode using ESP-IDF `spi_bus_initialize()`,
@@ -15,7 +15,7 @@ This sample demonstrates the following capabilities:
 8. Display the current, minimum and maximum temperature with `led_driver_max7219_set_digits()`,
 9. Shutdown the MAX7219 / MAX7221 driver and free up resources it allocated via `led_driver_max7219_free()`.
 
-# Hardware
+## Hardware
 To make the most out of the sample, the following hardware setup is recommended:
 
 1. An ESP32 family device equipped with a temperature sensor. This sample has been tested with ESP32, ESP32-S3 and ESP32-C3. Other members of the ESP32 family should also work,
@@ -28,7 +28,7 @@ To make the most out of the sample, the following hardware setup is recommended:
     * Connect the ESP32 SPI lines (CLK, MOSI, /CS) to the first MAX7219 / MAX7221 in the chain via a 3.3V compatible logic buffer (for instance a 74HCT125 / 74AHCT125),
     * Microchip [3V Tips ‘n Tricks](https://ww1.microchip.com/downloads/en/DeviceDoc/41285A.pdf) offers a few alternatives including connection via discrete N-Channel Logic Level Enhancement Mode FET circuitry (for instance BSS138), diode clamps, ...
 
-### Firmware
+## Firmware
 In `max7219_7221_cascade.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
 ```c
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;

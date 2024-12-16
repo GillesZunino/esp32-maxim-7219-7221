@@ -1,8 +1,8 @@
-# MAX7219 / MAX7221 Driver - Decode Mode
+# Sample: Decode Mode
 
 This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device to decode digits with a mix of Code-B and Direct Addressing and display symbols.
 
-# Sample walk through
+## Walk through
 This sample demonstrates the following capabilities:
 1. Initialize an SPI host in master mode using ESP-IDF `spi_bus_initialize()`,
 2. Initialize the MAX7219 / MAX7221 driver via `led_driver_max7219_init()`,
@@ -13,7 +13,7 @@ This sample demonstrates the following capabilities:
 7. Switch to normal mode with `led_driver_max7219_set_chain_mode()`,
 8. Shutdown the MAX7219 / MAX7221 driver and free up resources it allocated via `led_driver_max7219_free()`.
 
-# Hardware
+## Hardware
 To make the most out of the sample, the following hardware setup is recommended:
 
 1. An ESP32 family device. This sample has been tested with ESP32, ESP32-S3 and ESP32-C3. Other members of the ESP32 family should also work,
@@ -24,7 +24,7 @@ To make the most out of the sample, the following hardware setup is recommended:
     * Connect the ESP32 SPI lines (CLK, MOSI, /CS) to the MAX7219 / MAX7221 via a 3.3V compatible logic buffer (for instance a 74HCT125 / 74AHCT125),
     * Microchip [3V Tips ‘n Tricks](https://ww1.microchip.com/downloads/en/DeviceDoc/41285A.pdf) offers a few alternatives including connection via discrete N-Channel Logic Level Enhancement Mode FET circuitry (for instance BSS138), diode clamps, ...
 
-### Firmware
+## Firmware
 In `max7219_7221_decode.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
 ```c
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;

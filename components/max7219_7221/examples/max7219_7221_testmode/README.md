@@ -1,8 +1,8 @@
-# MAX7219 / MAX7221 Driver - Enable Test Mode when a Button is Pressed
+# Sample: Enable Test Mode when a Button is Pressed
 
 This sample demonstrates how to initialize the driver with one MAX7219 / MAX7221 device, configure one MAX7219 / MAX7221 device, display some symbols and turn test mode on when a push button is pressed.
 
-# Sample walk through
+## Walk through
 This sample demonstrates the following capabilities:
 0. Install a GPIO handler using `gpio_install_isr_service()` and `gpio_isr_handler_add()`,
 1. Initialize an SPI host in master mode using ESP-IDF `spi_bus_initialize()`,
@@ -14,7 +14,7 @@ This sample demonstrates the following capabilities:
 7. Shutdown the MAX7219 / MAX7221 driver and free up resources it allocated via `led_driver_max7219_free()`,
 8. Remove a GPIO handler via `gpio_isr_handler_remove()` and `gpio_uninstall_isr_service()`.
 
-# Hardware
+## Hardware
 To make the most out of the sample, the following hardware setup is recommended:
 
 1. An ESP32 family device. This sample has been tested with ESP32, ESP32-S3 and ESP32-C3. Other members of the ESP32 family should also work,
@@ -26,7 +26,7 @@ To make the most out of the sample, the following hardware setup is recommended:
     * Microchip [3V Tips ‘n Tricks](https://ww1.microchip.com/downloads/en/DeviceDoc/41285A.pdf) offers a few alternatives including connection via discrete N-Channel Logic Level Enhancement Mode FET circuitry (for instance BSS138), diode clamps, ...
 5. A momentary single pole single throw button. Connect one side of the button to `GPIO 38` (ESP32S3) or `GPIO 17` (ESP32) and to +3.3V on the other side.
 
-### Firmware
+## Firmware
 In `max7219_7221_basic.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
 ```c
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
