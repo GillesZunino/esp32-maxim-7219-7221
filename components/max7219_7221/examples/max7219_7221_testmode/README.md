@@ -24,6 +24,7 @@ To make the most out of the sample, the following hardware setup is recommended:
     * Connect the ESP32 SPI lines (CLK, MOSI, /CS) to the MAX7219 / MAX7221 via a logic level shifter (for instance a TXS0108E),
     * Connect the ESP32 SPI lines (CLK, MOSI, /CS) to the MAX7219 / MAX7221 via a 3.3V compatible logic buffer (for instance a 74HCT125 / 74AHCT125),
     * Microchip [3V Tips ‘n Tricks](https://ww1.microchip.com/downloads/en/DeviceDoc/41285A.pdf) offers a few alternatives including connection via discrete N-Channel Logic Level Enhancement Mode FET circuitery (for instance BSS138), diode clamps, ...
+5. A momentary single pole single throw button. Connect one side of the button to `GPIO 38` (ESP32S3) or `GPIO 17` (ESP32) and to +3.3V on the other side.
 
 ### Firmware
 In `max7219_7221_basic.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
