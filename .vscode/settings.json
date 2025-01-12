@@ -20,10 +20,12 @@
   "idf.openOcdConfigs": [
     //
     // Use one of the configurations below:
-    // * "openocd/esp32-ft2232hl-to-jtag.cfg" for ESP32 JTAG via USB to FT2232HL (2 channels)
+    // * "openocd/esp32-ft2232hl-to-jtag.cfg" for ESP32 JTAG via USB to FT2232HL (2 channels) - Configured for Interface 1 (Channel B)
+    // * "openocd/esp32-ft4232hl-to-jtag.cfg" for ESP32 JTAG via USB to FT4232HL (4 channels) - Configured for Interface 1 (Channel B)
     // * "openocd/esp32-s3-builtin-usb-to-jtag.cfg" for ESP32-S3 built-in JTAG via USB to dev board
     //
     //"openocd/esp32-ft2232hl-to-jtag.cfg"
+    //"openocd/esp32-ft4232hl-to-jtag.cfg"
     "openocd/esp32-s3-builtin-usb-to-jtag.cfg"
   ],
   "idf.openOcdLaunchArgs": [],
@@ -34,7 +36,7 @@
   "idf.enableSizeTaskAfterBuildTask": true,
 
   // SVD files from https://github.com/espressif/svd/tree/main/svd
-  "idf.svdFilePath": "${workspaceFolder}/svd/${config:idf.adapterTargetName}.svd",
+  "idf.svdFilePath": "${workspaceFolder}/svd/${env:IDF_TARGET}.svd",
 
   "idf.flashType": "JTAG",
   
