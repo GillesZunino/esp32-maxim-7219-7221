@@ -31,7 +31,7 @@ import sigrokdecode as srd
 
 registers = {
     0x00: ['No-op'],
-    0x09: ['Decode', lambda v: '0b{:08b}'.format(v)],
+    0x09: ['Decode'],
     0x0A: ['Intensity'],
     0x0B: ['Scan limit', lambda v: (v & 0x07) + 1],
     0x0C: ['Shutdown', lambda v: 'Normal' if (v & 0x01) == 1 else 'Shutdown'],
@@ -110,8 +110,21 @@ class Decoder(srd.Decoder):
     def putdevice_index(self, ss, es, index):
         self.put(ss, es, self.out_ann, [ann_device_index, ['Device %d' % index]])
 
+    def decode_mode(self, mode):
+        decode_mode = mode & 0xFF
+        if decode_mode == 0x00:
+            return 'No Decode'
+        elif decode_mode == 0xFF:
+            return 'CODE B Decode'
+        else:
+            binary_mode = bin(decode_mode)[2:].zfill(8)
+            annotation = ''
+            for bit in binary_mode:
+                annotation += '|B' if bit == '1' else '|x'
+            return annotation + '| [0x%02X]' % (decode_mode)
+
     def decode_intensity(self, intensity):
-        masked_intensity = intensity & 0x0f
+        masked_intensity = intensity & 0x0F
         if self.options['device_type'] == 'MAX7219':
             masked_intensity = 2 * masked_intensity + 1
             if masked_intensity == 1:
@@ -155,6 +168,8 @@ class Decoder(srd.Decoder):
                     if sanitized_address in registers:
                         if sanitized_address == 0x00:
                             annotation = registers[sanitized_address][0]
+                        elif sanitized_address == 0x09:
+                            annotation = '%s: %s' % (registers[sanitized_address][0], self.decode_mode(mosi))
                         elif sanitized_address == 0x0A:
                             annotation = '%s: %s' % (registers[sanitized_address][0], self.decode_intensity(mosi))
                         else:
