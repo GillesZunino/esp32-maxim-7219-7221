@@ -101,8 +101,17 @@ class Decoder(srd.Decoder):
     def putreg(self, ss, es, value):
         self.put(ss, es, self.out_ann, [ann_reg, ['%s' % value]])
 
-    def putdigit(self, ss, es, digit, value, code_b, has_decimal):
-        self.put(ss, es, self.out_ann, [ann_digit, ["""Digit %d: ['%s'%s - 0x%02X]""" % ( digit, code_b, '. ' if has_decimal else '', value)]])
+    def putdigit(self, ss, es, digit, value):
+        has_decimal = value & 0x80 == 0x80
+        digit_no_decimal = value & 0x7F
+
+        if digit_no_decimal in code_b_digits:
+            code_b = code_b_digits[digit_no_decimal]
+            decoded_digit = """Digit %d: ['%s'%s - 0x%02X]""" % ( digit, code_b, '. ' if has_decimal else '', value)
+        else:
+            decoded_digit = """Digit %d: [0x%02X]""" % ( digit, value)
+
+        self.put(ss, es, self.out_ann, [ann_digit, [decoded_digit]])
     
     def putinvalid(self, ss, es, value):
         self.put(ss, es, self.out_ann, [ann_invalid, ['%s' % value]])
@@ -154,16 +163,9 @@ class Decoder(srd.Decoder):
                 self.addr_start = ss
                 self.pos = 1
             elif self.pos == 1:
-                sanitized_address = self.addr & 0x0f
+                sanitized_address = self.addr & 0x0F
                 if sanitized_address >= 1 and sanitized_address <= 8:
-                    has_decimal = mosi & 0x80 == 0x80
-                    digit_no_decimal = mosi & 0x7F
-                    if digit_no_decimal in code_b_digits:
-                        code_b = code_b_digits[digit_no_decimal]
-                    else:
-                        code_b = '?'
-
-                    self.putdigit(self.addr_start, es, sanitized_address, mosi, code_b, has_decimal)
+                    self.putdigit(self.addr_start, es, sanitized_address, mosi)
                 else:
                     if sanitized_address in registers:
                         if sanitized_address == 0x00:
