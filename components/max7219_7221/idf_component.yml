@@ -1,4 +1,4 @@
-version: "1.0.1"
+version: "1.0.2"
 description: "ESP32 driver for MAX7219 / MAX7221 serially interfaced, 8-digit, LED display drivers."
 url: "https://gilleszunino.github.io/esp32-maxim-7219-7221/README.html"
 repository: "https://github.com/GillesZunino/esp32-maxim-7219-7221"
