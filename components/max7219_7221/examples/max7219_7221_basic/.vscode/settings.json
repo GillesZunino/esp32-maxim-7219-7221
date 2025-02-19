@@ -14,6 +14,7 @@
     "idf.toolsPath": "/Users/gzunino/Documents/Espressif/v5.3.1/tools",
 
     "idf.customExtraVars": {
+        "IDF_TARGET": "esp32s3"
     },
 
     "idf.openOcdDebugLevel": 2,
