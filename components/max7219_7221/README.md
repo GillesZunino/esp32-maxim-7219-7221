@@ -106,7 +106,7 @@ MAX7219 / MAX7221 devices support two different decoding modes:
 * **Code-B** (Code-B decode): LEDs to be turned on are expressed as BCD code B values (0-9, E, H, L, P, and -). This is useful for applications keeping data to display in BCD,
 * **Direct Addressing** (no decode): LEDs are controlled via direct addressing. In direct addressing, each individual LED is assigned a mask and various masks are combined (or'ed together) to produce a symbol code. See 'Symbols codes' below or the MAX7219 / MAX7221 data sheet for more details. This is the default mode on MAX7219 / MAX7221 power on.
 
-Each MAX7219 / MAX7221 device controls up to eight groups of eight LEDs. These LEDs are typically arranged as eight digits each composed of seven segments and a decimal point as shown in the picture below:
+Each MAX7219 / MAX7221 device controls up to eight groups of eight LEDs. These LEDs are typically arranged as eight digits each composed of seven-segments and a decimal point as shown in the picture below:
 
 ![A custom board with a MAX7219 / MAX7221 serially interfaced, 8-Digit, LED Display Driver](./media/Eight-Seven-Segments.png)
 

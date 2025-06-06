@@ -75,7 +75,7 @@ typedef enum {
 } max7219_segment_t;
 
 /**
- * @brief Custom seven Segment Display symbols.
+ * @brief Custom seven-segment display symbols.
  */
 typedef enum {
     MAX7219_DIRECT_ADDRESSING_0 = MAX7219_SEGMENT_A | MAX7219_SEGMENT_B | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D | MAX7219_SEGMENT_E | MAX7219_SEGMENT_F,                       ///< Digit 0
