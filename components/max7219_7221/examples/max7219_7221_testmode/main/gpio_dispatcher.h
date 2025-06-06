@@ -8,7 +8,7 @@
 #include <driver/gpio.h>
 
 
-typedef void (*isr_handler_fn_ptr)();
+typedef void (*isr_handler_fn_ptr)(void);
 
 esp_err_t ht_gpio_isr_handler_add(gpio_num_t gpioNum, isr_handler_fn_ptr fn);
 esp_err_t ht_gpio_isr_handler_delete(gpio_num_t gpioNum);

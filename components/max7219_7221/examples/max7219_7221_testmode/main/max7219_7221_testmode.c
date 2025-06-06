@@ -50,17 +50,17 @@ led_driver_max7219_handle_t led_max7219_handle = NULL;
 
 
 static max7219_mode_t currentMode = MAX7219_NORMAL_MODE;
-static void on_momentatory_button_pressed(void) {
-    int buttontState = gpio_get_level(TESTMODE_PUSH_BUTTON_PIN);
-    bool isButtonPressed = buttontState == 1;
+static void on_momentary_button_pressed(void) {
+    int buttonState = gpio_get_level(TESTMODE_PUSH_BUTTON_PIN);
+    bool isButtonPressed = buttonState == 1;
 
-    ESP_LOGI(TAG, "on_momentatory_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
+    ESP_LOGI(TAG, "on_momentary_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
 
     max7219_mode_t newMode = isButtonPressed ? MAX7219_TEST_MODE : MAX7219_NORMAL_MODE;
     if (newMode != currentMode) {
         currentMode = newMode;
         ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, currentMode));
-        ESP_LOGI(TAG, "on_momentatory_button_pressed() Switched to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
+        ESP_LOGI(TAG, "on_momentary_button_pressed() Switched to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
     }
 }
 
@@ -75,7 +75,7 @@ void app_main(void) {
         .intr_type = GPIO_INTR_ANYEDGE
     };
     ESP_ERROR_CHECK(gpio_config(&buttonPinConfiguration));
-    ESP_ERROR_CHECK(ht_gpio_isr_handler_add(TESTMODE_PUSH_BUTTON_PIN, &on_momentatory_button_pressed));
+    ESP_ERROR_CHECK(ht_gpio_isr_handler_add(TESTMODE_PUSH_BUTTON_PIN, &on_momentary_button_pressed));
 
     // Configure SPI bus to communicate with MAX7219 / MAX7221
     spi_bus_config_t spiBusConfig = {

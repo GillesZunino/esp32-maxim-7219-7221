@@ -79,7 +79,7 @@ void app_main(void) {
     ESP_ERROR_CHECK(led_driver_max7219_init(&max7219InitConfig, &led_max7219_handle));
     // NOTE: On power on, the MAX7219 / MAX7221 starts in shutdown mode - All blank, scan mode is 1 digit, no CODE B decode, intensity is minimum
 
-    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimest
+    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimmest
     ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_1' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_1));
 
@@ -110,7 +110,7 @@ void app_main(void) {
         }
 
         // Increase scan limit for the next round until we wrap around back to 4 digits
-        // NOTE: The datasheet recommends to not go below a scanlitmit of 4
+        // NOTE: The datasheet recommends to not go below a scanlimit of 4
         scanLimit++;
         if (scanLimit >= 9) { scanLimit = MinScanLimit; }
 

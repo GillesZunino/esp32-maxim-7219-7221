@@ -99,7 +99,7 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure scan limit to all digits (8)");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_scan_limit(led_max7219_handle, 8));
 
-    // Configure decode mode to 'direct adressing' for all digits
+    // Configure decode mode to 'direct addressing' for all digits
     ESP_LOGI(TAG, "Configure direct addressing on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_NONE));
 
@@ -284,4 +284,4 @@ static void string_to_max7219_symbols(char str[8], uint8_t startDigit, uint8_t s
 
         digitIndex++;
     }
-}       
+}

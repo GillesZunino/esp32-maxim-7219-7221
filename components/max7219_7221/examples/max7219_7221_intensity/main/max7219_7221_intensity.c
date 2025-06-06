@@ -87,7 +87,7 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
 
-    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimest
+    // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimmest
     ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_1' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_1));
 
@@ -113,7 +113,7 @@ void app_main(void) {
     // Cycle through all intensities
     max7219_intensity_t intensity = MAX7219_INTENSITY_DUTY_CYCLE_STEP_1;
     do {
-        // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimest
+        // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimmest
         ESP_LOGI(TAG, "Set intensity to '%d' on all devices in the chain", intensity);
         ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, intensity));
         intensity = intensity + 1;
