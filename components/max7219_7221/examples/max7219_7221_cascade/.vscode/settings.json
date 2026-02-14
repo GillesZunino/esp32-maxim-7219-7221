@@ -4,18 +4,26 @@
     "cmake.configureOnEdit": false,
     "cmake.configureOnOpen": false,
   
-    // Windows specific ESP IDF paths and tools
-    "idf.espIdfPathWin": "D:\\espressif\\v5.3.1\\esp-idf",
-    "idf.toolsPathWin": "D:\\espressif\\v5.3.1\\tools",
-
-    // Linux / MacOS specific ESP IDF paths and tools
-    // NOTE: For Espressif Docker images, comment out the following two lines to accept the ambient image configuration
-    "idf.espIdfPath": "/Users/gzunino/Documents/Espressif/v5.3.1/esp-idf",
-    "idf.toolsPath": "/Users/gzunino/Documents/Espressif/v5.3.1/tools",
+    //
+    // ESP-IDF - Extension wide settings for the configuration [EIM v0.7.1]
+    //
+    //  * "idf.eimIdfJsonPath": "C:\\Tools\\esp-eim\\eim_idf.json"
+    //  * "idf.eimExecutableArgs": [
+    //      "gui",
+    //      "-c", "C:\\Tools\\esp-eim\\Configuration\\esp-idf-config.toml",
+    //      "--esp-idf-json-path", "C:\\Tools\\esp-eim\\eim_idf.json"
+    //    ]
+    //
+    //  ESP-IDF Per project (settings.json) configurations [EIM v0.7.1]
+    //  * "idf.currentSetup": Path to the selected ESP-IDF version to use (aka C:\\Tools\\esp-eim\\v5.5.2\\esp-idf)
+    //
+    "idf.currentSetup": "C:\\Tools\\esp-eim\\v5.3.4\\esp-idf",
 
     "idf.customExtraVars": {
         "IDF_TARGET": "esp32s3"
     },
+
+    "idf.extraCleanPaths": [ "sdkconfig", "sdkconfig.old", "managed_components" ],
 
     "idf.openOcdDebugLevel": 2,
     "idf.openOcdConfigs": [
@@ -33,7 +41,6 @@
         "--search", "./../../../../"
     ],
 
-    "idf.deleteComponentsOnFullClean": false,
     "idf.monitorNoReset": false,
     "idf.launchMonitorOnDebugSession": true,
     "idf.enableSizeTaskAfterBuildTask": true,
