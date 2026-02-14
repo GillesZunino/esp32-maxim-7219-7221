@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+#include <freertos/FreeRTOS.h>
 #include <esp_attr.h>
 #include <esp_check.h>
 
