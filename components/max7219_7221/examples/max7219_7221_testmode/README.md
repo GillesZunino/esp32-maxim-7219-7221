@@ -27,7 +27,7 @@ To make the most out of the sample, the following hardware setup is recommended:
 5. A momentary single pole, single throw switch. Connect one side of the switch to `GPIO 38` (ESP32S3) or `GPIO 17` (ESP32) and the other side to +3.3V.
 
 ## Firmware
-In `max7219_7221_basic.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
+In `max7219_7221_testmode.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
 ```c
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
 const gpio_num_t CLK_PIN = GPIO_NUM_18;

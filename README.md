@@ -6,10 +6,10 @@ Read the [documentation](./components/max7219_7221/README.md).
 
 ## Samples
 Several samples are located under `examples`. This section lists samples and capabilities demonstrated. Refer to a sample `README.md` file for more details.
-* [`max_7219_7221_basic`](./components/max7219_7221/examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display symbols. This is a good starting point for new users,
-* [`max_7219_7221_cascade`](./components/max7219_7221/examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 cascaded devices and display symbols,
-* [`max_7219_7221_decode`](./components/max7219_7221/examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and set per digit decode mode,
-* [`max_7219_7221_intensity`](./components/max7219_7221/examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
-* [`max_7219_7221_scanlimit`](./components/max7219_7221/examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX7221 device),
-* [`max_7219_7221_temperature`](./components/max7219_7221/examples/max7219_7221_temperature/README.md) demonstrates how to display the current ESP32 device temperature, minimum and maximum,
-* [`max_7219_7221_testmode`](./components/max7219_7221/examples/max7219_7221_testmode/README.md) demonstrates how to control test mode.
+* [`max7219_7221_basic`](./components/max7219_7221/examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display symbols. This is a good starting point for new users,
+* [`max7219_7221_cascade`](./components/max7219_7221/examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 cascaded devices and display symbols,
+* [`max7219_7221_decode`](./components/max7219_7221/examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and set per digit decode mode,
+* [`max7219_7221_intensity`](./components/max7219_7221/examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
+* [`max7219_7221_scanlimit`](./components/max7219_7221/examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX7221 device),
+* [`max7219_7221_temperature`](./components/max7219_7221/examples/max7219_7221_temperature/README.md) demonstrates how to display the current ESP32 device temperature, minimum and maximum,
+* [`max7219_7221_testmode`](./components/max7219_7221/examples/max7219_7221_testmode/README.md) demonstrates how to control test mode.

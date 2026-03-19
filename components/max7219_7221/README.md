@@ -143,7 +143,7 @@ The driver header file offers convenient constants for both Code-B symbols and d
 #### Turning LEDs on or off
 Once a decode mode has been chosen, symbol codes can be sent to the chain as follows:
 ```c
-// Assume Code-B decode for all digits and set digit 1 to 'E' on all on all MAX7219 / MAX7221 devices in the chain
+// Assume Code-B decode for all digits and set digit 1 to 'E' on all MAX7219 / MAX7221 devices in the chain
 ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_CODE_B_E));
 
 ...
@@ -153,7 +153,7 @@ ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, 2, 1, MAX7219_C
 
 ...
 
-// Assume direct addressing for all digits and set digit 1 to 'E' on all on all MAX7219 / MAX7221 devices in the chain
+// Assume direct addressing for all digits and set digit 1 to 'E' on all MAX7219 / MAX7221 devices in the chain
 ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_DIRECT_ADDRESSING_E));
 
 ...
@@ -230,10 +230,10 @@ The driver supports multiple instances of `led_driver_max7219_handle_t`. Current
 
 ## Samples
 Several samples are located under `examples`. This section lists samples and capabilities demonstrated. Refer to a sample `README.md` file for more details.
-* [`max_7219_7221_basic`](./examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display symbols. This is a good starting point for new users,
-* [`max_7219_7221_cascade`](./examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 cascaded devices and display symbols,
-* [`max_7219_7221_decode`](./examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and set per digit decode mode,
-* [`max_7219_7221_intensity`](./examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
-* [`max_7219_7221_scanlimit`](./examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX7221 device),
-* [`max_7219_7221_temperature`](./examples/max7219_7221_temperature/README.md) demonstrates how to display the current ESP32 device temperature, minimum and maximum,
-* [`max_7219_7221_testmode`](./examples/max7219_7221_testmode/README.md) demonstrates how to control test mode.
+* [`max7219_7221_basic`](./examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display symbols. This is a good starting point for new users,
+* [`max7219_7221_cascade`](./examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 cascaded devices and display symbols,
+* [`max7219_7221_decode`](./examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and set per digit decode mode,
+* [`max7219_7221_intensity`](./examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
+* [`max7219_7221_scanlimit`](./examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX7221 device),
+* [`max7219_7221_temperature`](./examples/max7219_7221_temperature/README.md) demonstrates how to display the current ESP32 device temperature, minimum and maximum,
+* [`max7219_7221_testmode`](./examples/max7219_7221_testmode/README.md) demonstrates how to control test mode.

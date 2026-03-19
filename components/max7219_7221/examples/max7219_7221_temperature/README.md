@@ -29,7 +29,7 @@ To make the most out of the sample, the following hardware setup is recommended:
     * Microchip [3V Tips ‘n Tricks](https://ww1.microchip.com/downloads/en/DeviceDoc/41285A.pdf) offers a few alternatives including connection via discrete N-Channel Logic Level Enhancement Mode FET circuitry (for instance BSS138), diode clamps, ...
 
 ## Firmware
-In `max7219_7221_cascade.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
+In `max7219_7221_temperature.c`, configure `CS_LOAD_PIN` (`/CS`), `CLK_PIN` (`CLK`) and `DIN_PIN` (`MOSI`) adequately for your hardware setup:
 ```c
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
 const gpio_num_t CLK_PIN = GPIO_NUM_18;
