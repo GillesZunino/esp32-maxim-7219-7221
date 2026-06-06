@@ -189,7 +189,6 @@ static esp_err_t display_temp_min_max(float currentTemp, float minTemp, float ma
             MAX7219_DIRECT_ADDRESSING_0,
             MAX7219_DIRECT_ADDRESSING_L
         };
-        sprintf(temp_str, "%.01f", minTemp);
         string_to_max7219_symbols(temp_str, 3, symbols);
         ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, MinimumTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update minimum temperature");
     }
@@ -208,7 +207,6 @@ static esp_err_t display_temp_min_max(float currentTemp, float minTemp, float ma
             MAX7219_DIRECT_ADDRESSING_1,
             MAX7219_DIRECT_ADDRESSING_H
         };
-        sprintf(temp_str, "%.01f", maxTemp);
         string_to_max7219_symbols(temp_str, 3, symbols);
         ESP_RETURN_ON_ERROR(led_driver_max7219_set_digits(led_max7219_handle, MaximumTempChainId, 1, symbols, MAX7219_MAX_DIGIT), TAG, "Failed to update maximum temperature");
     }
@@ -220,6 +218,13 @@ static void string_to_max7219_symbols(char str[8], uint8_t startDigit, uint8_t s
     size_t length = strlen(str);
     uint8_t digitIndex = startDigit - 1;
     bool decimalPoint = false;
+
+    // Ensure we do not write outside of output array bounds - The decimal point does not count as a separate digit
+    uint8_t digitsToWrite = length - (strrchr(str, '.') != NULL ? 1 : 0);
+    if (digitsToWrite + startDigit >= MAX7219_MAX_DIGIT) {
+        ESP_LOGE(TAG, "Provided string '%s' is too long to be converted to MAX7219 / MAX7221 symbols starting at digit %d", str, startDigit);
+        return;
+    }
 
     for (int8_t strIndex = length - 1; strIndex >= 0; strIndex--) {
         switch (str[strIndex]) {
