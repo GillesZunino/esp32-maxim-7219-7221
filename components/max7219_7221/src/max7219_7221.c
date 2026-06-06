@@ -136,7 +136,7 @@ cleanup:
 }
 
 esp_err_t led_driver_max7219_free(led_driver_max7219_handle_t handle) {
-    if (handle->spi_device_handle == NULL) {
+    if ((handle == NULL) ||(handle->spi_device_handle == NULL)) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
         ESP_LOGE(LedDriverMax7219LogTag, "handle must not be NULL");
 #endif
@@ -380,7 +380,7 @@ esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint
 
         for (uint8_t srcDigitIndex = 0; srcDigitIndex < digitCodesCount; srcDigitIndex++) {
             // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the correct device in the chain 
-            memset(buffer, MAX7219_NOOP_ADDRESS, handle->hw_config.chain_length * sizeof(max7219_command_t));
+            memset(buffer, 0, handle->hw_config.chain_length * sizeof(max7219_command_t));
             max7219_command_t command = { .address = dstDigitIndex, .data = digitCodes[srcDigitIndex] };
             buffer[deviceIndex] = command;
 
@@ -470,7 +470,7 @@ static esp_err_t send_chain_command_private(led_driver_max7219_handle_t handle, 
             // The array is initialized to 0 which means .address is already set to MAX7219_NOOP_ADDRESS and .data is already set to 0
             // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
             uint8_t deviceIndex = handle->hw_config.chain_length - chainId;
-            memset(buffer, MAX7219_NOOP_ADDRESS, handle->hw_config.chain_length * sizeof(max7219_command_t));
+            memset(buffer, 0, handle->hw_config.chain_length * sizeof(max7219_command_t));
             buffer[deviceIndex] = cmd;
         }
 
