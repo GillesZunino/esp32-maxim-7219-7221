@@ -534,9 +534,9 @@ static esp_err_t check_driver_configuration_private(const max7219_config_t* conf
     }
 
     // Check hardware configuration - Chain length must be at least 1 and less than 255
-    if ((config->hw_config.chain_length < 1) || (config->hw_config.chain_length > 254)) {
+    if ((config->hw_config.chain_length < 1) || (config->hw_config.chain_length > 255)) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-        ESP_LOGE(LedDriverMax7219LogTag, "hw_config.chain_length must be >= 1 and <= 254");
+        ESP_LOGE(LedDriverMax7219LogTag, "hw_config.chain_length must be >= 1 and <= 255");
 #endif
         return ESP_ERR_INVALID_ARG;
     }
