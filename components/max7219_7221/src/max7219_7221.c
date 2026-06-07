@@ -533,8 +533,8 @@ static esp_err_t check_driver_configuration_private(const max7219_config_t* conf
         return ESP_ERR_INVALID_ARG;
     }
 
-    // Check hardware configuration - Chain length must be at least 1 and less than 255
-    if ((config->hw_config.chain_length < 1) || (config->hw_config.chain_length > 255)) {
+    // Check hardware configuration - Chain length must be at least 1 (uint8_t guarantees the maximum is 255)
+    if (config->hw_config.chain_length < 1) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
         ESP_LOGE(LedDriverMax7219LogTag, "hw_config.chain_length must be >= 1 and <= 255");
 #endif
@@ -579,6 +579,6 @@ static esp_err_t check_max_digit_private(led_driver_max7219_handle_t handle, uin
 
 static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount) {
     // Number of remaining digits starting at device 'startChainId' and at digit 'startDigitId'
-    const uint8_t availableDigits = ((handle->hw_config.chain_length - startChainId) * MAX7219_MAX_DIGIT) + (MAX7219_MAX_DIGIT - startDigitId) + 1;
+    const uint16_t availableDigits = ((handle->hw_config.chain_length - startChainId) * MAX7219_MAX_DIGIT) + (MAX7219_MAX_DIGIT - startDigitId) + 1;
     return (digitCodesCount > 0) && (digitCodesCount <= availableDigits) ? ESP_OK : ESP_ERR_INVALID_ARG;
 }
