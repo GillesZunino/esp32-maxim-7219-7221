@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "components/max7219_7221/examples/max7219_7221_decode"
+		},
+		{
+			"path": "components/max7219_7221/examples/max7219_7221_advanced_cascade"
 		}
 	],
 	"settings": {

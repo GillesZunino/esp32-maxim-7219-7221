@@ -232,6 +232,7 @@ The driver supports multiple instances of `led_driver_max7219_handle_t`. Current
 Several samples are located under `examples`. This section lists samples and capabilities demonstrated. Refer to a sample `README.md` file for more details.
 * [`max7219_7221_basic`](./examples/max7219_7221_basic/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and display symbols. This is a good starting point for new users,
 * [`max7219_7221_cascade`](./examples/max7219_7221_cascade/README.md) demonstrates how to initialize, configure a chain of three MAX7219 / MAX7221 cascaded devices and display symbols,
+* [`max7219_7221_advanced_cascade`](./examples/max7219_7221_advanced_cascade/README.md) demonstrates how to independently control the operating mode (normal, shutdown, test) of individual devices in a three-device cascade using `led_driver_max7219_set_mode()`,
 * [`max7219_7221_decode`](./examples/max7219_7221_decode/README.md) demonstrates how to initialize, configure a single MAX7219 / MAX7221 device and set per digit decode mode,
 * [`max7219_7221_intensity`](./examples/max7219_7221_intensity/README.md) demonstrates how to control display intensity,
 * [`max7219_7221_scanlimit`](./examples/max7219_7221_scanlimit/README.md) demonstrates how to control scan limit (how many digits are active on a given MAX7219 / MAX7221 device),

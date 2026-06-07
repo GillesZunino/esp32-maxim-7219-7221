@@ -1,0 +1,53 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+
+    "cmake.configureOnEdit": false,
+    "cmake.configureOnOpen": false,
+  
+    //
+    // ESP-IDF - Extension wide settings for the configuration [VS Code v2.0.x] [EIM v0.8.0]
+    //
+    //  * "idf.eimIdfJsonPath": "D:\\espressif\\\\eim_idf.json"
+    //  * "idf.eimExecutableArgs": [
+    //      "gui"
+    //    ]
+    //
+    //  ESP-IDF Per project (settings.json) configurations [VS Code v2.0.x] [EIM v0.8.0]
+    //  * "idf.currentSetup": Path to the selected ESP-IDF version to use (aka D:\\espressif\\vx.y.z\\esp-idf)
+    //
+    "idf.currentSetup": "D:\\espressif\\v6.0.1\\esp-idf",
+
+    "idf.customExtraVars": {
+        "IDF_TARGET": "esp32s3"
+    },
+
+    "idf.extraCleanPaths": [ "sdkconfig", "sdkconfig.old", "managed_components" ],
+
+    "idf.openOcdDebugLevel": 2,
+    "idf.openOcdConfigs": [
+        //
+        // Use one of the configurations below:
+        // * "openocd/esp32-ft2232hl-to-jtag.cfg" for ESP32 JTAG via USB to FT2232HL (2 channels) - Configured for Interface 1 (Channel B)
+        // * "openocd/esp32-ft4232hl-to-jtag.cfg" for ESP32 JTAG via USB to FT4232HL (4 channels) - Configured for Interface 1 (Channel B)
+        // * "openocd/esp32-s3-builtin-usb-to-jtag.cfg" for ESP32-S3 built-in JTAG via USB to dev board
+        //
+        //"openocd/esp32-ft2232hl-to-jtag.cfg"
+        //"openocd/esp32-ft4232hl-to-jtag.cfg"
+        "openocd/esp32-s3-builtin-usb-to-jtag.cfg"
+    ],
+    "idf.openOcdLaunchArgs": [
+        "--search", "./../../../../"
+    ],
+
+    "idf.monitorNoReset": false,
+    "idf.launchMonitorOnDebugSession": true,
+    "idf.enableSizeTaskAfterBuildTask": true,
+
+    // SVD files from https://github.com/espressif/svd/tree/main/svd
+    "idf.svdFilePath": "${workspaceFolder}/../../../../svd/${env:IDF_TARGET}.svd",
+
+    "idf.flashType": "JTAG",
+
+    "idf.portWin": "COM5",
+    "idf.port": "/dev/tty.usbmodem1411101"
+}
