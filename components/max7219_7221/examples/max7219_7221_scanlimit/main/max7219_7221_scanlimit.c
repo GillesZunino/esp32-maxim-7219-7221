@@ -100,6 +100,9 @@ void app_main(void) {
     ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
 
+    // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
+    ESP_LOGI(TAG, "Set Normal mode");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
 
     const uint8_t DeviceChainId = 1;
     const uint8_t MinScanLimit = 4;
