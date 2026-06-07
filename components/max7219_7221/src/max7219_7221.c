@@ -64,7 +64,7 @@ static esp_err_t check_driver_configuration_private(const max7219_config_t* conf
 static esp_err_t check_max_handle_private(led_driver_max7219_handle_t handle);
 static esp_err_t check_max_chain_id_private(led_driver_max7219_handle_t handle, uint8_t chainId);
 static esp_err_t check_max_digit_private(led_driver_max7219_handle_t handle, uint8_t digit);
-static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount);
+static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint16_t digitCodesCount);
 
 
 esp_err_t led_driver_max7219_init(const max7219_config_t* config, led_driver_max7219_handle_t* handle) {
@@ -362,7 +362,7 @@ esp_err_t led_driver_max7219_set_digit(led_driver_max7219_handle_t handle, uint8
 }
 
 
-esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, const uint8_t digitCodes[], uint8_t digitCodesCount) {
+esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, const uint8_t digitCodes[], uint16_t digitCodesCount) {
     ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
     ESP_RETURN_ON_ERROR(check_max_chain_id_private(handle, startChainId), LedDriverMax7219LogTag, "Invalid chain ID");
     ESP_RETURN_ON_ERROR(check_max_digit_private(handle, startDigitId), LedDriverMax7219LogTag, "Invalid start digit");
@@ -378,7 +378,7 @@ esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint
     esp_err_t ret = ESP_OK;
     ESP_GOTO_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMax7219LogTag, "Unable to acquire SPI bus");
 
-        for (uint8_t srcDigitIndex = 0; srcDigitIndex < digitCodesCount; srcDigitIndex++) {
+        for (uint16_t srcDigitIndex = 0; srcDigitIndex < digitCodesCount; srcDigitIndex++) {
             // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the correct device in the chain 
             memset(buffer, 0, handle->hw_config.chain_length * sizeof(max7219_command_t));
             max7219_command_t command = { .address = dstDigitIndex, .data = digitCodes[srcDigitIndex] };
@@ -577,7 +577,7 @@ static esp_err_t check_max_digit_private(led_driver_max7219_handle_t handle, uin
     return (digit >= MAX7219_MIN_DIGIT) && (digit <= MAX7219_MAX_DIGIT) ? ESP_OK : ESP_ERR_INVALID_ARG;
 }
 
-static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint8_t digitCodesCount) {
+static esp_err_t check_bulk_symbols_array_length(led_driver_max7219_handle_t handle, uint8_t startChainId, uint8_t startDigitId, uint16_t digitCodesCount) {
     // Number of remaining digits starting at device 'startChainId' and at digit 'startDigitId'
     const uint16_t availableDigits = ((handle->hw_config.chain_length - startChainId) * MAX7219_MAX_DIGIT) + (MAX7219_MAX_DIGIT - startDigitId) + 1;
     return (digitCodesCount > 0) && (digitCodesCount <= availableDigits) ? ESP_OK : ESP_ERR_INVALID_ARG;
