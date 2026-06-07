@@ -48,7 +48,7 @@ const gpio_num_t DIN_PIN = GPIO_NUM_25;
 const uint8_t ChainLength = 1;
 
 // Time between two display update
-const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(1000);
+const TickType_t DelayBetweenUpdates = pdMS_TO_TICKS(200);
 
 
 
@@ -103,6 +103,12 @@ void app_main(void) {
     // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimmest
     ESP_LOGI(TAG, "Set intensity to 'MAX7219_INTENSITY_DUTY_CYCLE_STEP_1' on all devices in the chain");
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_1));
+
+    // Reset all digits to 'blank' for a clean visual effect - We use MAX7219_CODE_B_BLANK since we configured Code B decode
+    // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
+    // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
+    ESP_LOGI(TAG, "Set all digits to blank");
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
     const uint8_t DeviceChainId = 1;
 
