@@ -16,19 +16,19 @@ static const char* GpioIsrTag = "gpio_isr";
 static QueueHandle_t s_gpio_isr_dispatch_queue = NULL;
 
 
-esp_err_t gpio_events_queue_dispatch(void) {
+esp_err_t gpio_events_queue_dispatch(TickType_t ticksToWait) {
     isr_handler_fn_ptr handlerFn = NULL;
-    BaseType_t dequeueOutcome = xQueueReceive(s_gpio_isr_dispatch_queue, &handlerFn, portMAX_DELAY);
+    BaseType_t dequeueOutcome = xQueueReceive(s_gpio_isr_dispatch_queue, &handlerFn, ticksToWait);
     if (dequeueOutcome == pdTRUE) {
         if (handlerFn != NULL) {
             handlerFn();
         } else {
             ESP_LOGE(GpioIsrTag, "xQueueReceive() retrieved an ISR request with NULL handler");
         }
+        return ESP_OK;
     } else {
-        ESP_LOGE(GpioIsrTag, "xQueueReceive() failed (0x%x) - ISR will be dropped", dequeueOutcome);
+        return ESP_ERR_TIMEOUT;
     }
-    return ESP_OK;
 }
 
 static void gpio_isr_handler(void* arg) {

@@ -70,7 +70,7 @@ led_driver_max7219_handle_t led_max7219_handle = NULL;
 static max7219_mode_t currentMode = MAX7219_NORMAL_MODE;
 static void on_momentary_button_pressed(void) {
     int buttonState = gpio_get_level(TESTMODE_PUSH_BUTTON_PIN);
-    bool isButtonPressed = buttonState == 1;
+    bool isButtonPressed = buttonState == 0;
 
     ESP_LOGI(TAG, "on_momentary_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
 
@@ -136,6 +136,9 @@ void app_main(void) {
     // Set digit intensity to a dim value
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, MAX7219_INTENSITY_DUTY_CYCLE_STEP_2));
 
+    // Configure decode mode to 'decode for all digits'
+    ESP_LOGI(TAG, "Configure decode for Code B on all digits in the chain");
+    ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_ALL));
 
     const uint8_t DeviceChainId = 1;
 
@@ -156,7 +159,10 @@ void app_main(void) {
     ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
 
     do {
-        ESP_ERROR_CHECK(gpio_events_queue_dispatch());
+        esp_err_t err = gpio_events_queue_dispatch(pdMS_TO_TICKS(1000));
+        if (err != ESP_OK && err != ESP_ERR_TIMEOUT) {
+            ESP_LOGE(TAG, "gpio_events_queue_dispatch() failed with error 0x%x", err);
+        }
     } while (true);
 
     // Shutdown MAX7219 / MAX7221 driver and SPI bus

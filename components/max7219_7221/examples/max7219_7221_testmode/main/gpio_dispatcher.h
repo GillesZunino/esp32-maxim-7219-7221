@@ -16,4 +16,4 @@ esp_err_t ht_gpio_isr_handler_delete(gpio_num_t gpioNum);
 esp_err_t configure_gpio_isr_dispatcher();
 esp_err_t shutdown_gpio_isr_dispatcher();
 
-esp_err_t gpio_events_queue_dispatch();
+esp_err_t gpio_events_queue_dispatch(TickType_t ticksToWait);
