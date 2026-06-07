@@ -19,6 +19,7 @@ const char* TAG = "max72[19|21]_temperature";
 
 //
 // NOTE: For maximum performance, prefer IO MUX over GPIO Matrix routing
+//  * See https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/spi_master.html#gpio-matrix-routing
 //
 
 // SPI Host ID
@@ -34,6 +35,18 @@ const gpio_num_t DIN_PIN = GPIO_NUM_16;
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_10;
 const gpio_num_t CLK_PIN = GPIO_NUM_12;
 const gpio_num_t DIN_PIN = GPIO_NUM_11;
+#else
+#if CONFIG_IDF_TARGET_ESP32C3
+const gpio_num_t CS_LOAD_PIN = GPIO_NUM_1;
+const gpio_num_t CLK_PIN = GPIO_NUM_2;
+const gpio_num_t DIN_PIN = GPIO_NUM_3;
+#else
+#if CONFIG_IDF_TARGET_ESP32H2
+const gpio_num_t CS_LOAD_PIN = GPIO_NUM_12;
+const gpio_num_t CLK_PIN = GPIO_NUM_22;
+const gpio_num_t DIN_PIN = GPIO_NUM_25;
+#endif
+#endif
 #endif
 #endif
 
