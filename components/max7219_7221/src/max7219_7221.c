@@ -56,9 +56,12 @@ typedef struct led_driver_max7219 {
 
 static void free_driver_memory_private(led_driver_max7219_handle_t handle);
 
+static esp_err_t set_mode_internal(led_driver_max7219_handle_t handle, uint8_t chainId, max7219_mode_t mode);
+
 static inline __attribute__((always_inline)) max7219_command_t* get_command_buffer_private(led_driver_max7219_handle_t handle);
 static esp_err_t send_chain_command_private(led_driver_max7219_handle_t handle, uint8_t chainId, const max7219_command_t cmd);
-static esp_err_t led_driver_max7219_send_private(led_driver_max7219_handle_t handle, const max7219_command_t* const data, uint16_t commandsCount);
+static esp_err_t send_chain_command_nolock_private(led_driver_max7219_handle_t handle, uint8_t chainId, const max7219_command_t cmd);
+static esp_err_t spi_send_private(led_driver_max7219_handle_t handle, const max7219_command_t* const data, uint16_t commandsCount);
 
 static esp_err_t check_driver_configuration_private(const max7219_config_t* config);
 static esp_err_t check_max_handle_private(led_driver_max7219_handle_t handle);
@@ -217,11 +220,36 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_max7219_handle_t ha
     return send_chain_command_private(handle, chainId, command);
 }
 
-
-
 esp_err_t led_driver_max7219_set_chain_mode(led_driver_max7219_handle_t handle, max7219_mode_t mode) {
     ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
 
+    switch (mode) {
+        case MAX7219_SHUTDOWN_MODE:
+        case MAX7219_NORMAL_MODE:
+        case MAX7219_TEST_MODE:
+            return set_mode_internal(handle, 0, mode);
+
+        default:
+            return ESP_ERR_INVALID_ARG;
+    }
+}
+
+esp_err_t led_driver_max7219_set_mode(led_driver_max7219_handle_t handle, uint8_t chainId, max7219_mode_t mode) {
+    ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
+    ESP_RETURN_ON_ERROR(check_max_chain_id_private(handle, chainId), LedDriverMax7219LogTag, "Invalid chain ID");
+
+    switch (mode) {
+        case MAX7219_SHUTDOWN_MODE:
+        case MAX7219_NORMAL_MODE: 
+        case MAX7219_TEST_MODE:
+            return set_mode_internal(handle, chainId, mode);
+
+        default:
+            return ESP_ERR_INVALID_ARG;
+    }
+}
+
+static esp_err_t set_mode_internal(led_driver_max7219_handle_t handle, uint8_t chainId, max7219_mode_t mode) {
     switch (mode) {
         case MAX7219_SHUTDOWN_MODE:
         case MAX7219_NORMAL_MODE: {
@@ -231,25 +259,14 @@ esp_err_t led_driver_max7219_set_chain_mode(led_driver_max7219_handle_t handle, 
             esp_err_t ret = ESP_OK;
             ESP_GOTO_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMax7219LogTag, "Unable to acquire SPI bus");
 
-                max7219_command_t* buffer = get_command_buffer_private(handle);
+                // Leave test mode (if on) by sending |MAX7219_TEST_ADDRESS|0| to all devices or the target device
+                max7219_command_t test_mode_off_command = { .address = MAX7219_TEST_ADDRESS, .data = 0 };
+                ESP_GOTO_ON_ERROR(send_chain_command_nolock_private(handle, chainId, test_mode_off_command), releasebus, LedDriverMax7219LogTag, "Failed to leave test mode on chain");
 
-                // Leave test mode (if on) by sending |MAX7219_TEST_ADDRESS|0| to all devices
-                {
-                    max7219_command_t command = { .address = MAX7219_TEST_ADDRESS, .data = 0 };
-                    for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
-                        buffer[deviceIndex] = command;
-                    }
-                    ESP_GOTO_ON_ERROR(led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
-                }
+                // Enter normal or shutdown mode by sending |MAX7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices or the target device
+                max7219_command_t normal_or_shutdown_command = { .address = MAX7219_SHUTDOWN_ADDRESS, .data = mode == MAX7219_SHUTDOWN_MODE ? 0 : 1 };
+                ESP_GOTO_ON_ERROR(send_chain_command_nolock_private(handle, chainId, normal_or_shutdown_command), releasebus, LedDriverMax7219LogTag, "Failed to enter normal or shutdown mode on chain");
 
-                // Enter normal or shutdown mode by sending |MAX7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices
-                {
-                    max7219_command_t command = { .address = MAX7219_SHUTDOWN_ADDRESS, .data = mode == MAX7219_SHUTDOWN_MODE ? 0 : 1 };
-                    for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
-                        buffer[deviceIndex] = command;
-                    }
-                    ESP_GOTO_ON_ERROR(led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
-                }
 releasebus:
             // Release access to the SPI bus
             spi_device_release_bus(handle->spi_device_handle);
@@ -263,40 +280,9 @@ cleanup:
             return ret;
         }
         break;
-        case MAX7219_TEST_MODE: {
-            // Send |MAX7219_TEST_ADDRESS|1| to all devices
-            max7219_command_t command = { .address = MAX7219_TEST_ADDRESS, .data = 1 };
-            return send_chain_command_private(handle, 0, command);
-        }
-        break;
-
-        default:
-            return ESP_ERR_INVALID_ARG;
-    }
-}
-
-esp_err_t led_driver_max7219_set_mode(led_driver_max7219_handle_t handle, uint8_t chainId, max7219_mode_t mode) {
-    ESP_RETURN_ON_ERROR(check_max_handle_private(handle), LedDriverMax7219LogTag, "Invalid handle");
-    ESP_RETURN_ON_ERROR(check_max_chain_id_private(handle, chainId), LedDriverMax7219LogTag, "Invalid chain ID");
-
-    switch (mode) {
-        case MAX7219_SHUTDOWN_MODE:
-        case MAX7219_NORMAL_MODE: {
-
-            // Leave test mode (if on) by sending |MAX7219_TEST_ADDRESS|0| to the requested device
-            max7219_command_t command = { .address = MAX7219_TEST_ADDRESS, .data = 0 };
-            esp_err_t err = send_chain_command_private(handle, chainId, command);
-            if (err == ESP_OK) {
-                // Enter normal or shutdown mode by sending |MAX7219_SHUTDOWN_ADDRESS|<0 or 1>| to the requested device
-                command = (max7219_command_t){ .address = MAX7219_SHUTDOWN_ADDRESS, .data = mode == MAX7219_SHUTDOWN_MODE ? 0 : 1 };    
-                err = send_chain_command_private(handle, chainId, command);
-            }
-            return err;
-        }
-        break;
 
         case MAX7219_TEST_MODE: {
-            // Send |MAX7219_TEST_ADDRESS|1| to the requested device
+            // Send |MAX7219_TEST_ADDRESS|1| to all devices or the target device
             max7219_command_t command = { .address = MAX7219_TEST_ADDRESS, .data = 1 };
             return send_chain_command_private(handle, chainId, command);
         }
@@ -357,7 +343,7 @@ esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint
             max7219_command_t command = { .address = dstDigitIndex, .data = digitCodes[srcDigitIndex] };
             buffer[deviceIndex] = command;
 
-            ESP_GOTO_ON_ERROR(led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
+            ESP_GOTO_ON_ERROR(spi_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
 
             dstDigitIndex++;
             if (dstDigitIndex > MAX7219_MAX_DIGIT) {
@@ -397,7 +383,7 @@ esp_err_t led_driver_max7219_set_chain(led_driver_max7219_handle_t handle, uint8
             for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
                 buffer[deviceIndex] = command;
             }
-            ESP_GOTO_ON_ERROR(led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
+            ESP_GOTO_ON_ERROR(spi_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
         }
 
 releasebus:
@@ -426,30 +412,9 @@ static esp_err_t send_chain_command_private(led_driver_max7219_handle_t handle, 
     esp_err_t ret = ESP_OK;
     ESP_GOTO_ON_ERROR(spi_device_acquire_bus(handle->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMax7219LogTag, "Unable to acquire SPI bus");
 
-        max7219_command_t* buffer = get_command_buffer_private(handle);
-        if (chainId == 0) {
-#if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-            ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", cmd.address, cmd.data);
-#endif
-            // Send all devices the same .address and .data
-            for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
-                buffer[deviceIndex] = cmd;
-            }
-        } else {
-#if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-            ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to device %d", cmd.address, cmd.data, chainId);
-#endif
-            // Target a specific device in the chain - The device is given in chainId which is 1-based
-            // The array is initialized to 0 which means .address is already set to MAX7219_NOOP_ADDRESS and .data is already set to 0
-            // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
-            uint8_t deviceIndex = handle->hw_config.chain_length - chainId;
-            memset(buffer, 0, handle->hw_config.chain_length * sizeof(max7219_command_t));
-            buffer[deviceIndex] = cmd;
-        }
+        // Send to the chain with no lock and no SPI bus exclusive access
+        ret = send_chain_command_nolock_private(handle, chainId, cmd);
 
-        ESP_GOTO_ON_ERROR(led_driver_max7219_send_private(handle, buffer, handle->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
-
-releasebus:
     // Release access to the SPI bus
     spi_device_release_bus(handle->spi_device_handle);
 
@@ -462,7 +427,32 @@ cleanup:
     return ret;
 }
 
-static esp_err_t led_driver_max7219_send_private(led_driver_max7219_handle_t handle, const max7219_command_t* const data, uint16_t commandsCount) {
+static esp_err_t send_chain_command_nolock_private(led_driver_max7219_handle_t handle, uint8_t chainId, const max7219_command_t cmd) {
+    max7219_command_t* buffer = get_command_buffer_private(handle);
+    if (chainId == 0) {
+#if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", cmd.address, cmd.data);
+#endif
+        // Send all devices the same .address and .data
+        for (uint8_t deviceIndex = 0; deviceIndex < handle->hw_config.chain_length; deviceIndex++) {
+            buffer[deviceIndex] = cmd;
+        }
+    } else {
+#if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
+        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to device %d", cmd.address, cmd.data, chainId);
+#endif
+        // Target a specific device in the chain - The device is given in chainId which is 1-based
+        // The array is initialized to 0 which means .address is already set to MAX7219_NOOP_ADDRESS and .data is already set to 0
+        // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
+        uint8_t deviceIndex = handle->hw_config.chain_length - chainId;
+        memset(buffer, 0, handle->hw_config.chain_length * sizeof(max7219_command_t));
+        buffer[deviceIndex] = cmd;
+    }
+
+    return spi_send_private(handle, buffer, handle->hw_config.chain_length);
+}
+
+static esp_err_t spi_send_private(led_driver_max7219_handle_t handle, const max7219_command_t* const data, uint16_t commandsCount) {
     uint16_t lengthInBytes = sizeof(max7219_command_t) * commandsCount;
     bool useTxData = lengthInBytes <= 4;
     spi_transaction_t spiTransaction = {
