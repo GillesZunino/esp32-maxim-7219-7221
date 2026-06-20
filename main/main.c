@@ -113,7 +113,7 @@ void app_main(void) {
         // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
         // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
         ESP_LOGI(TAG, "Set all digits to blank");
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
 
         // Hold 'test' mode for a little while
@@ -141,7 +141,7 @@ void app_main(void) {
         ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_NONE));
 
         // Blank all digits on the chain
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
 
         // Show lower case direct addressing symbols
         uint8_t digits[] = {
@@ -160,7 +160,7 @@ void app_main(void) {
          vTaskDelay(2 * DelayBetweenUpdates);
 
         // Blank all digits on the chain
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
 
         // Shutdown MAX7219 / MAX7221 driver and SPI bus
         ESP_ERROR_CHECK(led_driver_max7219_free(led_max7219_handle));

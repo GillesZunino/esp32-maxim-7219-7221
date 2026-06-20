@@ -22,8 +22,8 @@ extern "C" {
 /**
  * @brief Handle to a MAX7219 / MAX7221 device.
  */
-struct led_driver_max7219;
-typedef struct led_driver_max7219* led_driver_max7219_handle_t; ///< Handle to a MAX7219 / MAX7221 device
+struct led_driver_max7219_base;
+typedef struct led_driver_max7219_base* led_driver_max7219_handle_t; ///< Handle to a MAX7219 / MAX7221 device
 
 
 /**
@@ -367,7 +367,7 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_max7219_handle_t handle, u
  *      - ESP_ERR_INVALID_ARG: Invalid argument
  *      - ESP_ERR_INVALID_STATE: The driver is in an invalid state
  */
-esp_err_t led_driver_max7219_set_chain(led_driver_max7219_handle_t handle, uint8_t digitCode);
+esp_err_t led_driver_max7219_set_chain_digit(led_driver_max7219_handle_t handle, uint8_t digitCode);
 
 /**
  * @brief Set the given digit code on a MAX7219 / MAX7221 device on the chain.

@@ -133,7 +133,7 @@ void app_main(void) {
         vTaskDelay(2 * DelayBetweenUpdates);
 
         ESP_LOGI(TAG, "Reset all digits");
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
         vTaskDelay(DelayBetweenUpdates);
     } while (true);

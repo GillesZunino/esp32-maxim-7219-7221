@@ -11,7 +11,7 @@ MAX7219 / MAX7221 devices are controlled via Serial Peripheral Interface (SPI) a
     * `led_driver_max7219_set_chain_intensity()` / `led_driver_max7219_set_intensity()` to change display intensity,
     * `led_driver_max7219_configure_chain_scan_limit()` / `led_driver_max7219_configure_scan_limit` to configure scan limit.
 4. Turn LEDs on / off on one or more MAX7219 / MAX7221 device(s) with one of the following:
-    * `led_driver_max7219_set_chain()` / `led_driver_max7219_set_digit()` / `led_driver_max7219_set_digits()` to set all / one / n digits on the chain
+    * `led_driver_max7219_set_chain_digit()` / `led_driver_max7219_set_digit()` / `led_driver_max7219_set_digits()` to set all / one / n digits on the chain
 5. Shutdown the driver by calling `led_driver_max7219_free()` and optionally shut down the SPI master with `spi_bus_free()`.
 
 ### Initializing SPI
@@ -144,7 +144,7 @@ The driver header file offers convenient constants for both Code-B symbols and d
 Once a decode mode has been chosen, symbol codes can be sent to the chain as follows:
 ```c
 // Assume Code-B decode for all digits and set digit 1 to 'E' on all MAX7219 / MAX7221 devices in the chain
-ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_CODE_B_E));
+ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, 1, MAX7219_CODE_B_E));
 
 ...
 
@@ -154,7 +154,7 @@ ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, 2, 1, MAX7219_C
 ...
 
 // Assume direct addressing for all digits and set digit 1 to 'E' on all MAX7219 / MAX7221 devices in the chain
-ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_DIRECT_ADDRESSING_E));
+ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, 1, MAX7219_DIRECT_ADDRESSING_E));
 
 ...
 
@@ -174,7 +174,7 @@ ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_max7219_handle, 2, 3, symbols,
 Finally, a specific segment / LED can be turned on as follows:
 ```c
 // Assume direct addressing for all digits and turn on segment 'A' and decimal point on all MAX7219 / MAX7221 devices in the chain
-ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, 1, MAX7219_SEGMENT_A | MAX7219_SEGMENT_DP));
+ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, 1, MAX7219_SEGMENT_A | MAX7219_SEGMENT_DP));
 ```
 
 ### Configuring display intensity

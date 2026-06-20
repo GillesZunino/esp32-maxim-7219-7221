@@ -107,7 +107,7 @@ void app_main(void) {
         // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
         // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
         ESP_LOGI(TAG, "Set all digits to blank");
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
         // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
         ESP_LOGI(TAG, "Set Normal mode");
@@ -139,7 +139,7 @@ void app_main(void) {
 
         ESP_LOGI(TAG, "Configure decode to 'no decode' for all digits in the chain and blank the chain");
         ESP_ERROR_CHECK(led_driver_max7219_configure_chain_decode(led_max7219_handle, MAX7219_CODE_B_DECODE_NONE));
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
+        ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
 
         ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, MAX7219_NORMAL_MODE));
 

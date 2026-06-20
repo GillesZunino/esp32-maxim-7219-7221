@@ -108,7 +108,7 @@ void app_main(void) {
     // When the MAX7219 / MAX7221 is put in test mode, it preserves whatever digits were programmed before
     // If no digits were programmed before entering test mode, the MAX7219 / MAX7221 will load '8' in all digits
     ESP_LOGI(TAG, "Set all digits to blank");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_CODE_B_BLANK));
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_CODE_B_BLANK));
 
     const uint8_t DeviceChainId = 1;
 

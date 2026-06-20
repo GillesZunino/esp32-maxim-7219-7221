@@ -122,7 +122,7 @@ void app_main(void) {
 
     // Reset all digits to 'blank' for a clean visual effect
     ESP_LOGI(TAG, "Set all digits to blank");
-    ESP_ERROR_CHECK(led_driver_max7219_set_chain(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
+    ESP_ERROR_CHECK(led_driver_max7219_set_chain_digit(led_max7219_handle, MAX7219_DIRECT_ADDRESSING_BLANK));
 
     // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while
     ESP_LOGI(TAG, "Set Normal mode");
