@@ -103,7 +103,7 @@ static esp_err_t set_digits_api(led_driver_max7219_context_t* driver_context, ui
 //      Custom callbacks are invoked under an exclusive SPI bus access while holding the driver private SPI access semaphore
 //      ! To avoid deadlocks, callbacks MUST send via `send_chain_one_command_callback()` and/or `spi_send_private()`
 
-typedef struct chain_command {
+typedef struct {
     uint8_t chainId;
     max7219_command_t cmd;
 } chain_command_t;
@@ -115,13 +115,22 @@ static esp_err_t send_chain_with_callback_private(led_driver_max7219_context_t* 
 
 static esp_err_t send_chain_one_command_callback(led_driver_max7219_context_t* driver_context, void* arg);
 
-typedef struct chain_command_array {
+typedef struct {
     uint8_t chainId;
     uint8_t command_count;
     max7219_command_t commands[2];
 } chain_command_array_t;
-
 static esp_err_t send_chain_command_array_callback(led_driver_max7219_context_t* driver_context, void* arg);
+
+static esp_err_t send_chain_single_digit_callback(led_driver_max7219_context_t* driver_context, void* arg);
+
+typedef struct {
+    uint8_t startChainId;
+    uint8_t startDigitId;
+    const uint8_t* digitCodes;
+    uint16_t digitCodesCount;
+} chain_multiple_digits_t;
+static esp_err_t send_chain_multiple_digits_callback(led_driver_max7219_context_t* driver_context, void* arg);
 
 static esp_err_t spi_send_private(led_driver_max7219_context_t* driver_context, const max7219_command_t* const data, uint16_t commandsCount);
 // =================================================================================================================================================================================
@@ -384,16 +393,8 @@ esp_err_t led_driver_max7219_set_chain_digit(led_driver_max7219_handle_t handle,
     led_driver_max7219_context_t* driver_context = NULL;
     ACQUIRE_CONTEXT_OR_RETURN(handle);
     ESP_RETURN_ON_ERROR(check_max_handle_private(driver_context), LedDriverMax7219LogTag, "Invalid handle");
-    
-    uint16_t digitCount = driver_context->hw_config.chain_length * MAX7219_MAX_DIGIT;
-    uint8_t* digitCodes = heap_caps_calloc(1, digitCount, MALLOC_CAP_DEFAULT);
-    ESP_RETURN_ON_FALSE(digitCodes != NULL, ESP_ERR_NO_MEM, LedDriverMax7219LogTag, "Could not allocate memory for digits buffer");
 
-    memset(digitCodes, digitCode, digitCount);
-    esp_err_t ret = driver_context->api.set_digits(driver_context, 1, 1, digitCodes, digitCount);
-    heap_caps_free(digitCodes);
-
-    return ret;
+    return driver_context->api.set_digits(driver_context, 0, 0, &digitCode, 1);
 }
 
 esp_err_t led_driver_max7219_set_digit(led_driver_max7219_handle_t handle, uint8_t chainId, uint8_t digit, uint8_t digitCode) {
@@ -418,49 +419,68 @@ esp_err_t led_driver_max7219_set_digits(led_driver_max7219_handle_t handle, uint
 }
 
 static esp_err_t set_digits_api(led_driver_max7219_context_t* driver_context, uint8_t startChainId, uint8_t startDigitId, const uint8_t digitCodes[], uint16_t digitCodesCount) {
-    // Optimization for one digit - Use the SPI transaction data buffer directly and avoid the overhead of copying data to the command buffer
-    if (digitCodesCount == 1) {
-        // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the requested device
-        chain_command_t chain_command = {.chainId = startChainId, .cmd = { .address = startDigitId, .data = digitCodes[0] }};
-        return send_chain_command_private(driver_context, &chain_command);
+    // Optimization for one digit sent to the entire chain (startChainId == 0, startDigitId == 0)
+    if ((startChainId == 0) && (startDigitId == 0) && (digitCodesCount == 1)) {
+        return send_chain_with_callback_private(driver_context, send_chain_single_digit_callback, (void*) (uintptr_t) digitCodes[0]);
     } else {
-        ESP_RETURN_ON_FALSE(xSemaphoreTake(driver_context->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
-
-        max7219_command_t* buffer = get_command_buffer_private(driver_context);
-        uint8_t dstDigitIndex = startDigitId;
-        uint8_t deviceIndex = driver_context->hw_config.chain_length - startChainId;
-
-        // Take exclusive access of the SPI bus
-        esp_err_t ret = ESP_OK;
-        ESP_GOTO_ON_ERROR(spi_device_acquire_bus(driver_context->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMax7219LogTag, "Unable to acquire SPI bus");
-
-            for (uint16_t srcDigitIndex = 0; srcDigitIndex < digitCodesCount; srcDigitIndex++) {
-                // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the correct device in the chain 
-                memset(buffer, 0, driver_context->hw_config.chain_length * sizeof(max7219_command_t));
-                max7219_command_t command = { .address = dstDigitIndex, .data = digitCodes[srcDigitIndex] };
-                buffer[deviceIndex] = command;
-
-                ESP_GOTO_ON_ERROR(spi_send_private(driver_context, buffer, driver_context->hw_config.chain_length), releasebus, LedDriverMax7219LogTag, "Failed to send commands to chain");
-
-                dstDigitIndex++;
-                if (dstDigitIndex > MAX7219_MAX_DIGIT) {
-                    dstDigitIndex = MAX7219_MIN_DIGIT;
-                    deviceIndex--;
-                }
-            }
-
-    releasebus:
-        // Release access to the SPI bus
-        spi_device_release_bus(driver_context->spi_device_handle);
-
-    cleanup:
-        // Release mutex
-        if (xSemaphoreGive(driver_context->mutex) != pdTRUE) {
-            ESP_LOGE(LedDriverMax7219LogTag, "Could not release mutex - Exiting without releasing mutex which may cause a deadlock later");
+        // Optimization for one digit at one position in the chain - Use the SPI transaction data buffer directly and avoid the overhead of copying data to the command buffer
+        if (digitCodesCount == 1) {
+            // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the requested device
+            chain_command_t chain_command = {.chainId = startChainId, .cmd = { .address = startDigitId, .data = digitCodes[0] }};
+            return send_chain_command_private(driver_context, &chain_command);
+        } else {
+            // All other cases - With multiple digits to send we need to send multiple commands to the chain, one for each digit
+            chain_multiple_digits_t multiple_digits = {
+                .startChainId = startChainId,
+                .startDigitId = startDigitId,
+                .digitCodes = digitCodes,
+                .digitCodesCount = digitCodesCount
+            };
+            return send_chain_with_callback_private(driver_context, send_chain_multiple_digits_callback, (void*) &multiple_digits);
         }
-
-        return ret;
     }
+}
+
+static esp_err_t send_chain_single_digit_callback(led_driver_max7219_context_t* driver_context, void* arg) {
+    uint8_t digitCode = (uint8_t)(uintptr_t)arg;
+
+    // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to all devices
+    // NOTE: We first clear digit 1 on all devices, then digit 2 on all devices and so on
+    max7219_command_t* buffer = get_command_buffer_private(driver_context);
+    for (uint8_t digit = MAX7219_MIN_DIGIT; digit <= MAX7219_MAX_DIGIT; digit++) {
+        max7219_command_t command = { .address = digit, .data = digitCode };
+        for (uint8_t deviceIndex = 0; deviceIndex < driver_context->hw_config.chain_length; deviceIndex++) {
+            buffer[deviceIndex] = command;
+        }
+        ESP_RETURN_ON_ERROR(spi_send_private(driver_context, buffer, driver_context->hw_config.chain_length), LedDriverMax7219LogTag, "Failed to send commands to chain");
+    }
+
+    return ESP_OK;
+}
+
+static esp_err_t send_chain_multiple_digits_callback(led_driver_max7219_context_t* driver_context, void* arg) {
+    chain_multiple_digits_t* chain_digits = (chain_multiple_digits_t*)arg;
+    max7219_command_t* buffer = get_command_buffer_private(driver_context);
+    
+    uint8_t dstDigitIndex = chain_digits->startDigitId;
+    uint8_t deviceIndex = driver_context->hw_config.chain_length -  chain_digits->startChainId;
+
+    for (uint16_t srcDigitIndex = 0; srcDigitIndex < chain_digits->digitCodesCount; srcDigitIndex++) {
+        // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the correct device in the chain 
+        memset(buffer, 0, driver_context->hw_config.chain_length * sizeof(max7219_command_t));
+        max7219_command_t command = { .address = dstDigitIndex, .data = chain_digits->digitCodes[srcDigitIndex] };
+        buffer[deviceIndex] = command;
+
+        ESP_RETURN_ON_ERROR(spi_send_private(driver_context, buffer, driver_context->hw_config.chain_length), LedDriverMax7219LogTag, "Failed to send commands to chain");
+
+        dstDigitIndex++;
+        if (dstDigitIndex > MAX7219_MAX_DIGIT) {
+            dstDigitIndex = MAX7219_MIN_DIGIT;
+            deviceIndex--;
+        }
+    }
+
+    return ESP_OK;
 }
 
 
@@ -492,29 +512,27 @@ cleanup:
 
 static esp_err_t send_chain_one_command_callback(led_driver_max7219_context_t* driver_context, void* arg) {
     chain_command_t* chain_command = (chain_command_t*)arg;
-    uint8_t chainId = chain_command->chainId;
-    max7219_command_t cmd = chain_command->cmd;
     max7219_command_t* buffer = get_command_buffer_private(driver_context);
 
     // NOTE: chainId == 0 means broadcast to all devices, otherwise target a specific device
-    if (chainId == 0) {
+    if (chain_command->chainId == 0) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", cmd.address, cmd.data);
+        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", chain_command->cmd.address, chain_command->cmd.data);
 #endif
         // Send all devices the same .address and .data
         for (uint8_t deviceIndex = 0; deviceIndex < driver_context->hw_config.chain_length; deviceIndex++) {
-            buffer[deviceIndex] = cmd;
+            buffer[deviceIndex] = chain_command->cmd;
         }
     } else {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to device %d", cmd.address, cmd.data, chainId);
+        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to device %d", chain_command->cmd.address, chain_command->cmd.data, chain_command->chainId);
 #endif
         // Target a specific device in the chain - The device is given in chainId which is 1-based
         // The array is initialized to 0 which means .address is already set to MAX7219_NOOP_ADDRESS and .data is already set to 0
         // The data for the last device on the chain needs to be sent first so deviceId n is at index hw_config.chain_length - 1 in the array
-        uint8_t deviceIndex = driver_context->hw_config.chain_length - chainId;
+        uint8_t deviceIndex = driver_context->hw_config.chain_length - chain_command->chainId;
         memset(buffer, 0, driver_context->hw_config.chain_length * sizeof(max7219_command_t));
-        buffer[deviceIndex] = cmd;
+        buffer[deviceIndex] = chain_command->cmd;
     }
 
     return spi_send_private(driver_context, buffer, driver_context->hw_config.chain_length);
