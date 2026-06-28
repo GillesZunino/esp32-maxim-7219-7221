@@ -93,9 +93,39 @@ static esp_err_t set_mode_api(led_driver_max7219_context_t* driver_context, uint
 static esp_err_t set_intensity_api(led_driver_max7219_context_t* driver_context, uint8_t chainId, max7219_intensity_t intensity);
 static esp_err_t set_digits_api(led_driver_max7219_context_t* driver_context, uint8_t startChainId, uint8_t startDigitId, const uint8_t digitCodes[], uint16_t digitCodesCount);
 
-static esp_err_t send_chain_command_private(led_driver_max7219_context_t* driver_context, uint8_t chainId, const max7219_command_t cmd);
-static esp_err_t send_chain_command_nolock_private(led_driver_max7219_context_t* driver_context, uint8_t chainId, const max7219_command_t cmd);
+
+// ======================================================================= SPI DATA EXCHANGE ======================================================================================
+// Internally, the driver can send to the SPI bus via two methods:
+//  * - Send ONE MAX7219 command to the chain (one device or all devices) via `send_chain_command_private(const chain_command_t*)`
+//      The data is sent under an exclusive SPI bus access while holding the driver private SPI access semaphore
+//
+//  * - Send MULTIPLE commands to the chain via `send_chain_with_callback_private(const send_chain_callback_t, void* args)` and a custom callback function
+//      Custom callbacks are invoked under an exclusive SPI bus access while holding the driver private SPI access semaphore
+//      ! To avoid deadlocks, callbacks MUST send via `send_chain_one_command_callback()` and/or `spi_send_private()`
+
+typedef struct chain_command {
+    uint8_t chainId;
+    max7219_command_t cmd;
+} chain_command_t;
+
+static esp_err_t send_chain_command_private(led_driver_max7219_context_t* driver_context, const chain_command_t* cmd);
+
+typedef esp_err_t (*send_chain_callback_t)(led_driver_max7219_context_t* driver_context, void* args);
+static esp_err_t send_chain_with_callback_private(led_driver_max7219_context_t* driver_context, send_chain_callback_t send_cb, void* args);
+
+static esp_err_t send_chain_one_command_callback(led_driver_max7219_context_t* driver_context, void* arg);
+
+typedef struct chain_command_array {
+    uint8_t chainId;
+    uint8_t command_count;
+    max7219_command_t commands[2];
+} chain_command_array_t;
+
+static esp_err_t send_chain_command_array_callback(led_driver_max7219_context_t* driver_context, void* arg);
+
 static esp_err_t spi_send_private(led_driver_max7219_context_t* driver_context, const max7219_command_t* const data, uint16_t commandsCount);
+// =================================================================================================================================================================================
+
 
 static esp_err_t check_driver_configuration_private(const max7219_config_t* config);
 static esp_err_t check_max_handle_private(led_driver_max7219_context_t* driver_context);
@@ -130,7 +160,7 @@ esp_err_t led_driver_max7219_init(const max7219_config_t* config, led_driver_max
         ESP_GOTO_ON_FALSE(pLedMax7219->commands.commands_buffer != NULL, ESP_ERR_NO_MEM, cleanup, LedDriverMax7219LogTag, "Could not allocate memory for command buffer");
     }
 
-    // Initialize mutex for multi threading protection
+    // Initialize mutex for multithreading protection
     pLedMax7219->mutex = xSemaphoreCreateMutexWithCaps(MALLOC_CAP_DEFAULT);
     ESP_GOTO_ON_FALSE(pLedMax7219->mutex != NULL, ESP_ERR_NO_MEM, cleanup, LedDriverMax7219LogTag, "Could not allocate memory for mutex");
 
@@ -247,8 +277,8 @@ esp_err_t led_driver_max7219_configure_decode(led_driver_max7219_handle_t handle
 
 static esp_err_t configure_decode_api(led_driver_max7219_context_t* driver_context, uint8_t chainId, max7219_decode_mode_t decodeMode) {
     // Send |MAX7219_DECODE_MODE_ADDRESS|<mode>| to the requested device or all devices (chainId == 0)
-    max7219_command_t command = { .address = MAX7219_DECODE_MODE_ADDRESS, .data = decodeMode };
-    return send_chain_command_private(driver_context, chainId, command);
+    chain_command_t chain_command = {.chainId = chainId, .cmd = { .address = MAX7219_DECODE_MODE_ADDRESS, .data = decodeMode }};
+    return send_chain_command_private(driver_context, &chain_command);
 }
 
 
@@ -273,8 +303,8 @@ esp_err_t led_driver_max7219_configure_scan_limit(led_driver_max7219_handle_t ha
 
 static esp_err_t configure_scan_limit_api(led_driver_max7219_context_t* driver_context, uint8_t chainId, uint8_t digits) {
     // Send |MAX7219_SCAN_LIMIT_ADDRESS|<digits - 1>| to the requested device or all devices (chainId == 0)
-    max7219_command_t command = { .address = MAX7219_SCAN_LIMIT_ADDRESS, .data = digits - 1 };
-    return send_chain_command_private(driver_context, chainId, command);
+    chain_command_t chain_command = {.chainId = chainId, .cmd = { .address = MAX7219_SCAN_LIMIT_ADDRESS, .data = digits - 1 }};
+    return send_chain_command_private(driver_context, &chain_command);
 }
 
 
@@ -299,36 +329,24 @@ static esp_err_t set_mode_api(led_driver_max7219_context_t* driver_context, uint
     switch (mode) {
         case MAX7219_SHUTDOWN_MODE:
         case MAX7219_NORMAL_MODE: {
-            ESP_RETURN_ON_FALSE(xSemaphoreTake(driver_context->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
-
-            // Take exclusive access of the SPI bus
-            esp_err_t ret = ESP_OK;
-            ESP_GOTO_ON_ERROR(spi_device_acquire_bus(driver_context->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMax7219LogTag, "Unable to acquire SPI bus");
-
-                // Leave test mode (if on) by sending |MAX7219_TEST_ADDRESS|0| to all devices or the target device
-                max7219_command_t test_mode_off_command = { .address = MAX7219_TEST_ADDRESS, .data = 0 };
-                ESP_GOTO_ON_ERROR(send_chain_command_nolock_private(driver_context, chainId, test_mode_off_command), releasebus, LedDriverMax7219LogTag, "Failed to leave test mode on chain");
-
-                // Enter normal or shutdown mode by sending |MAX7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices or the target device
-                max7219_command_t normal_or_shutdown_command = { .address = MAX7219_SHUTDOWN_ADDRESS, .data = mode == MAX7219_SHUTDOWN_MODE ? 0 : 1 };
-                ESP_GOTO_ON_ERROR(send_chain_command_nolock_private(driver_context, chainId, normal_or_shutdown_command), releasebus, LedDriverMax7219LogTag, "Failed to enter normal or shutdown mode on chain");
-releasebus:
-            // Release access to the SPI bus
-            spi_device_release_bus(driver_context->spi_device_handle);
-cleanup:
-            // Release mutex
-            if (xSemaphoreGive(driver_context->mutex) != pdTRUE) {
-                ESP_LOGE(LedDriverMax7219LogTag, "Could not release mutex - Exiting without releasing mutex which may cause a deadlock later");
-            }
-
-            return ret;
+            chain_command_array_t cmd_array = {
+                .chainId = chainId,
+                .command_count = 2,
+                .commands = {
+                    // Leave test mode (if on) by sending |MAX7219_TEST_ADDRESS|0| to all devices or the target device
+                    { .address = MAX7219_TEST_ADDRESS, .data = 0 },
+                    // Enter normal or shutdown mode by sending |MAX7219_SHUTDOWN_ADDRESS|<0 or 1>| to all devices or the target device
+                    { .address = MAX7219_SHUTDOWN_ADDRESS, .data = mode == MAX7219_SHUTDOWN_MODE ? 0 : 1 }
+                }
+            };
+            return send_chain_with_callback_private(driver_context, send_chain_command_array_callback, &cmd_array);
         }
         break;
 
         case MAX7219_TEST_MODE: {
             // Send |MAX7219_TEST_ADDRESS|1| to all devices or the target device
-            max7219_command_t command = { .address = MAX7219_TEST_ADDRESS, .data = 1 };
-            return send_chain_command_private(driver_context, chainId, command);
+            chain_command_t chain_command = {.chainId = chainId, .cmd = { .address = MAX7219_TEST_ADDRESS, .data = 1 }};
+            return send_chain_command_private(driver_context, &chain_command);
         }
         break;
 
@@ -357,8 +375,8 @@ esp_err_t led_driver_max7219_set_intensity(led_driver_max7219_handle_t handle, u
 
 static esp_err_t set_intensity_api(led_driver_max7219_context_t* driver_context, uint8_t chainId, max7219_intensity_t intensity) {
     // Send |MAX7219_INTENSITY_ADDRESS|<intensity>| to the requested device or all devices (chainId == 0)
-    max7219_command_t command = { .address = MAX7219_INTENSITY_ADDRESS, .data = intensity };
-    return send_chain_command_private(driver_context, chainId, command);
+    chain_command_t chain_command = {.chainId = chainId, .cmd = { .address = MAX7219_INTENSITY_ADDRESS, .data = intensity }};
+    return send_chain_command_private(driver_context, &chain_command);
 }
 
 
@@ -403,8 +421,8 @@ static esp_err_t set_digits_api(led_driver_max7219_context_t* driver_context, ui
     // Optimization for one digit - Use the SPI transaction data buffer directly and avoid the overhead of copying data to the command buffer
     if (digitCodesCount == 1) {
         // Send |MAX7219_DIGIT<digit>_ADDRESS|<digitCode>| to the requested device
-        max7219_command_t command = { .address = startDigitId, .data = digitCodes[0] };
-        return send_chain_command_private(driver_context, startChainId, command);
+        chain_command_t chain_command = {.chainId = startChainId, .cmd = { .address = startDigitId, .data = digitCodes[0] }};
+        return send_chain_command_private(driver_context, &chain_command);
     } else {
         ESP_RETURN_ON_FALSE(xSemaphoreTake(driver_context->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
@@ -447,15 +465,18 @@ static esp_err_t set_digits_api(led_driver_max7219_context_t* driver_context, ui
 
 
 
-static esp_err_t send_chain_command_private(led_driver_max7219_context_t* driver_context, uint8_t chainId, const max7219_command_t cmd) {
+static esp_err_t send_chain_command_private(led_driver_max7219_context_t* driver_context, const chain_command_t* cmd) {
+    return send_chain_with_callback_private(driver_context, send_chain_one_command_callback, (void*)cmd);
+}
+
+static esp_err_t send_chain_with_callback_private(led_driver_max7219_context_t* driver_context, send_chain_callback_t send_cb, void* args) {
     ESP_RETURN_ON_FALSE(xSemaphoreTake(driver_context->mutex, portMAX_DELAY) == pdTRUE, ESP_ERR_TIMEOUT, LedDriverMax7219LogTag, "Could not acquire mutex");
 
     // Take exclusive access of the SPI bus
     esp_err_t ret = ESP_OK;
     ESP_GOTO_ON_ERROR(spi_device_acquire_bus(driver_context->spi_device_handle, portMAX_DELAY), cleanup, LedDriverMax7219LogTag, "Unable to acquire SPI bus");
 
-        // Send to the chain with no lock and no SPI bus exclusive access
-        ret = send_chain_command_nolock_private(driver_context, chainId, cmd);
+        ret = send_cb(driver_context, args);
 
     // Release access to the SPI bus
     spi_device_release_bus(driver_context->spi_device_handle);
@@ -469,8 +490,13 @@ cleanup:
     return ret;
 }
 
-static esp_err_t send_chain_command_nolock_private(led_driver_max7219_context_t* driver_context, uint8_t chainId, const max7219_command_t cmd) {
+static esp_err_t send_chain_one_command_callback(led_driver_max7219_context_t* driver_context, void* arg) {
+    chain_command_t* chain_command = (chain_command_t*)arg;
+    uint8_t chainId = chain_command->chainId;
+    max7219_command_t cmd = chain_command->cmd;
     max7219_command_t* buffer = get_command_buffer_private(driver_context);
+
+    // NOTE: chainId == 0 means broadcast to all devices, otherwise target a specific device
     if (chainId == 0) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
         ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", cmd.address, cmd.data);
@@ -492,6 +518,21 @@ static esp_err_t send_chain_command_nolock_private(led_driver_max7219_context_t*
     }
 
     return spi_send_private(driver_context, buffer, driver_context->hw_config.chain_length);
+}
+
+static esp_err_t send_chain_command_array_callback(led_driver_max7219_context_t* driver_context, void* arg) {
+    chain_command_array_t* chain_command_array = (chain_command_array_t*)arg;
+
+    for (uint8_t cmd_index = 0; cmd_index < chain_command_array->command_count; cmd_index++) {
+        chain_command_t chain_command = { .chainId = chain_command_array->chainId, .cmd = chain_command_array->commands[cmd_index] };
+        esp_err_t err = send_chain_one_command_callback(driver_context, &chain_command);
+        if (err != ESP_OK) {
+            ESP_LOGE(LedDriverMax7219LogTag, "Failed to send chain (chainId: %d) command { address: %d, data: %d}", chain_command.chainId, chain_command.cmd.address, chain_command.cmd.data);
+            return err;
+        }
+    }
+
+    return ESP_OK;
 }
 
 static esp_err_t spi_send_private(led_driver_max7219_context_t* driver_context, const max7219_command_t* const data, uint16_t commandsCount) {
@@ -522,7 +563,7 @@ static esp_err_t check_driver_configuration_private(const max7219_config_t* conf
         return ESP_ERR_INVALID_ARG;
     }
 
-    // Check SPI configuration - Clock speed must be non zero and up to 10 MHz
+    // Check SPI configuration - Clock speed must be non-zero and up to 10 MHz
     if ((config->spi_cfg.clock_speed_hz <= 0) || (config->spi_cfg.clock_speed_hz > 10 * 1000000)) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
         ESP_LOGE(LedDriverMax7219LogTag, "spi_cfg.clock_speed_hz must be > 0 and <= 10 MHz");
