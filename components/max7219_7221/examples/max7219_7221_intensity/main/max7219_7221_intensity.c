@@ -131,14 +131,21 @@ void app_main(void) {
     
     // Cycle through all intensities
     max7219_intensity_t intensity = MAX7219_INTENSITY_DUTY_CYCLE_STEP_1;
+    int8_t direction = 1;
     do {
         // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimmest
         ESP_LOGI(TAG, "Set intensity to '%d' on all devices in the chain", intensity);
         ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, intensity));
-        intensity = intensity + 1;
-        if (intensity > MAX7219_INTENSITY_DUTY_CYCLE_STEP_16) {
-            intensity = MAX7219_INTENSITY_DUTY_CYCLE_STEP_1;
+
+        if (intensity == MAX7219_INTENSITY_DUTY_CYCLE_STEP_16) {
+            direction = -1;
         }
+        if (intensity == MAX7219_INTENSITY_DUTY_CYCLE_STEP_1) {
+            direction = 1;
+        }
+
+        intensity += direction;
+
         vTaskDelay(DelayBetweenUpdates);
     } while (true);
 
