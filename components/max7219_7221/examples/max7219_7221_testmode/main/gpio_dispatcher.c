@@ -17,6 +17,8 @@ static QueueHandle_t s_gpio_isr_dispatch_queue = NULL;
 
 
 esp_err_t gpio_events_queue_dispatch(TickType_t ticksToWait) {
+    ESP_RETURN_ON_FALSE(s_gpio_isr_dispatch_queue != NULL, ESP_ERR_INVALID_STATE, GpioIsrTag, "Dispatch queue not configured");
+
     isr_handler_fn_ptr handlerFn = NULL;
     BaseType_t dequeueOutcome = xQueueReceive(s_gpio_isr_dispatch_queue, &handlerFn, ticksToWait);
     if (dequeueOutcome == pdTRUE) {
@@ -32,10 +34,12 @@ esp_err_t gpio_events_queue_dispatch(TickType_t ticksToWait) {
 }
 
 static void gpio_isr_handler(void* arg) {
-    isr_handler_fn_ptr handlerFn = (isr_handler_fn_ptr) arg;
-    BaseType_t enqueueOutcome = xQueueGenericSendFromISR(s_gpio_isr_dispatch_queue, &handlerFn, NULL, queueSEND_TO_BACK);
-    if (enqueueOutcome != pdPASS) {
-        ESP_DRAM_LOGE(GpioIsrTag, "xQueueGenericSendFromISR() failed (0x%x) - ISR will be dropped", enqueueOutcome);
+    if (s_gpio_isr_dispatch_queue != NULL) {
+        isr_handler_fn_ptr handlerFn = (isr_handler_fn_ptr) arg;
+        BaseType_t enqueueOutcome = xQueueGenericSendFromISR(s_gpio_isr_dispatch_queue, &handlerFn, NULL, queueSEND_TO_BACK);
+        if (enqueueOutcome != pdPASS) {
+            ESP_DRAM_LOGE(GpioIsrTag, "xQueueGenericSendFromISR() failed (0x%x) - ISR will be dropped", enqueueOutcome);
+        }
     }
 }
 
@@ -87,6 +91,9 @@ esp_err_t configure_gpio_isr_dispatcher(void) {
 
 esp_err_t shutdown_gpio_isr_dispatcher() {
     esp_err_t err = shutdown_gpio_isr_queue();
-    gpio_uninstall_isr_service();
+    esp_err_t uninstall_err = gpio_uninstall_isr_service();
+    if ((err == ESP_OK) && (uninstall_err != ESP_OK) && (uninstall_err != ESP_ERR_INVALID_STATE)) {
+        err = uninstall_err;
+    }
     return err;
 }

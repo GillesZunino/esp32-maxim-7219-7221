@@ -28,31 +28,28 @@ const gpio_num_t CLK_PIN = GPIO_NUM_18;
 const gpio_num_t DIN_PIN = GPIO_NUM_16;
 
 const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_17;
-#else
-#if CONFIG_IDF_TARGET_ESP32S3
+#elif CONFIG_IDF_TARGET_ESP32S3
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_10;
 const gpio_num_t CLK_PIN = GPIO_NUM_12;
 const gpio_num_t DIN_PIN = GPIO_NUM_11;
 
 const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_38;
-#else
-#if CONFIG_IDF_TARGET_ESP32C3
+#elif CONFIG_IDF_TARGET_ESP32C3
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_1;
 const gpio_num_t CLK_PIN = GPIO_NUM_2;
 const gpio_num_t DIN_PIN = GPIO_NUM_3;
 
-const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_;
-#else
-#if CONFIG_IDF_TARGET_ESP32H2
+// On ESP32-C3-DevKitM-1 this is the button labelled "BOOT" (GPIO9)
+const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_9;
+#elif CONFIG_IDF_TARGET_ESP32H2
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_12;
 const gpio_num_t CLK_PIN = GPIO_NUM_22;
 const gpio_num_t DIN_PIN = GPIO_NUM_25;
 
 // On ESP32-H2-DevKitM-a this is the button lavelled "BOOT" or "SW1"
 const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_9;
-#endif
-#endif
-#endif
+#else
+#error "Unsupported target: define CS_LOAD_PIN, CLK_PIN, DIN_PIN and TESTMODE_PUSH_BUTTON_PIN for this CONFIG_IDF_TARGET_*"
 #endif
 
 // Number of devices MAX7219 / MAX7221 in the chain
@@ -69,20 +66,25 @@ led_driver_max7219_handle_t led_max7219_handle = NULL;
 
 static max7219_mode_t currentMode = MAX7219_NORMAL_MODE;
 static void on_momentary_button_pressed(void) {
-    int buttonState = gpio_get_level(TESTMODE_PUSH_BUTTON_PIN);
-    bool isButtonPressed = buttonState == 0;
+    if (led_max7219_handle != NULL) {
+        int buttonState = gpio_get_level(TESTMODE_PUSH_BUTTON_PIN);
+        bool isButtonPressed = buttonState == 0;
 
-    ESP_LOGI(TAG, "on_momentary_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
+        ESP_LOGI(TAG, "on_momentary_button_pressed() Button pressed - Button is '%s'", isButtonPressed ? "PRESSED" : "RELEASED");
 
-    max7219_mode_t newMode = isButtonPressed ? MAX7219_TEST_MODE : MAX7219_NORMAL_MODE;
-    if (newMode != currentMode) {
-        currentMode = newMode;
-        ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, currentMode));
-        ESP_LOGI(TAG, "on_momentary_button_pressed() Switched to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
+        max7219_mode_t newMode = isButtonPressed ? MAX7219_TEST_MODE : MAX7219_NORMAL_MODE;
+        if (newMode != currentMode) {
+            currentMode = newMode;
+            ESP_ERROR_CHECK(led_driver_max7219_set_chain_mode(led_max7219_handle, currentMode));
+            ESP_LOGI(TAG, "on_momentary_button_pressed() Switched to mode '%s'", isButtonPressed ? "TEST" : "NORMAL");
+        }
     }
 }
 
 void app_main(void) {
+    // Validate the push button pin before it is used in a shift or GPIO call
+    ESP_RETURN_ON_FALSE((TESTMODE_PUSH_BUTTON_PIN >= 0) && (TESTMODE_PUSH_BUTTON_PIN < GPIO_NUM_MAX), ESP_ERR_INVALID_ARG, TAG, "Invalid TESTMODE_PUSH_BUTTON_PIN %d", TESTMODE_PUSH_BUTTON_PIN);
+
     // Listen to momentary push button on TESTMODE_PUSH_BUTTON_PIN
     ESP_ERROR_CHECK(configure_gpio_isr_dispatcher());
     gpio_config_t buttonPinConfiguration = {
