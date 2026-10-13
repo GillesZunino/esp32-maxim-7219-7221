@@ -145,12 +145,12 @@ void app_main(void) {
 
     // Populate every digit with a different symbol
     max7219_code_b_font_t symbol = MAX7219_CODE_B_0;
-    for (uint8_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
+    for (uint16_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
         // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
         bool decimalOn = symbol % 2 == 0;
         max7219_code_b_font_t symbolWithDecimal = decimalOn ? symbol | MAX7219_CODE_B_DP_MASK : symbol;
         ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
-        ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, digitId, symbolWithDecimal));
+        ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, (uint8_t)digitId, symbolWithDecimal));
 
         symbol++;
     }
