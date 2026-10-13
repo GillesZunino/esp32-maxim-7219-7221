@@ -79,7 +79,8 @@ void app_main(void) {
         .mosi_io_num = DIN_PIN,
         .miso_io_num = GPIO_NUM_NC,
         .sclk_io_num = CLK_PIN,
-
+        .quadwp_io_num = GPIO_NUM_NC,
+        .quadhd_io_num = GPIO_NUM_NC,
         .data2_io_num = GPIO_NUM_NC,
         .data3_io_num = GPIO_NUM_NC,
 
