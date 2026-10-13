@@ -135,10 +135,10 @@ ESP_ERROR_CHECK(led_driver_max7219_configure_decode(led_max7219_handle, 2, MAX72
 ##### Symbol codes for Code-B and Direct Addressing
 The driver header file offers convenient constants for both Code-B symbols and direct addressing symbols:
 
-* Code-B: `MAX7219_CODE_B_0` to `MAX7219_CODE_BLANK`. To enable the decimal point, combine a character with `MAX7219_CODE_B_DP_MASK` as in `MAX7219_CODE_B_0 | MAX7219_CODE_B_DP_MASK`
+* Code-B: `MAX7219_CODE_B_0` to `MAX7219_CODE_B_BLANK`. To enable the decimal point, combine a character with `MAX7219_CODE_B_DP_MASK` as in `MAX7219_CODE_B_0 | MAX7219_CODE_B_DP_MASK`
 * Direct Addressing offers two sets of constants:
     * Individual LEDs: `MAX7219_SEGMENT_A` to `MAX7219_SEGMENT_G` with `MAX7219_SEGMENT_DP` as the mask for the decimal point,
-    * Predefined letters, numbers and symbols: `MAX7219_CUSTOM_0` to `MAX7219_CUSTOM_BLANK` with `MAX7219_SEGMENT_DP` as the mask for the decimal point.
+    * Predefined letters, numbers and symbols: `MAX7219_DIRECT_ADDRESSING_0` to `MAX7219_DIRECT_ADDRESSING_BLANK` with `MAX7219_SEGMENT_DP` as the mask for the decimal point.
 
 #### Turning LEDs on or off
 Once a decode mode has been chosen, symbol codes can be sent to the chain as follows:
@@ -224,7 +224,7 @@ ESP_ERROR_CHECK(led_driver_max7219_set_mode(led_max7219_handle, 2, MAX7219_TEST_
 ```
 
 ## Thread Safety
-All driver functions are thread safe with the exception of `led_driver_max7219_init()` and `led_driver_max7219_free()`. Internally, each instance of the driver has a global semaphore which is acquired after validating arguments and before accessing any SPI function. 
+All driver functions are thread safe with the exception of `led_driver_max7219_init()` and `led_driver_max7219_free()`. Internally, each instance of the driver has a mutex which is acquired after validating arguments and before accessing any SPI function. 
 
 The driver supports multiple instances of `led_driver_max7219_handle_t`. Currently, all `led_driver_max7219_handle_t` instances must be accessed by the same FreeRTOS task.  
 
