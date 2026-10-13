@@ -46,7 +46,7 @@ const gpio_num_t CS_LOAD_PIN = GPIO_NUM_12;
 const gpio_num_t CLK_PIN = GPIO_NUM_22;
 const gpio_num_t DIN_PIN = GPIO_NUM_25;
 
-// On ESP32-H2-DevKitM-a this is the button lavelled "BOOT" or "SW1"
+// On ESP32-H2-DevKitM-a this is the button labelled "BOOT" or "SW1"
 const gpio_num_t TESTMODE_PUSH_BUTTON_PIN = GPIO_NUM_9;
 #else
 #error "Unsupported target: define CS_LOAD_PIN, CLK_PIN, DIN_PIN and TESTMODE_PUSH_BUTTON_PIN for this CONFIG_IDF_TARGET_*"
