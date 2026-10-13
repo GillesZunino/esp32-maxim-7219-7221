@@ -24,24 +24,20 @@ const spi_host_device_t SPI_HOSTID = SPI2_HOST;
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_19;
 const gpio_num_t CLK_PIN = GPIO_NUM_18;
 const gpio_num_t DIN_PIN = GPIO_NUM_16;
-#else
-#if CONFIG_IDF_TARGET_ESP32S3
+#elif CONFIG_IDF_TARGET_ESP32S3
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_10;
 const gpio_num_t CLK_PIN = GPIO_NUM_12;
 const gpio_num_t DIN_PIN = GPIO_NUM_11;
-#else
-#if CONFIG_IDF_TARGET_ESP32C3
+#elif CONFIG_IDF_TARGET_ESP32C3
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_1;
 const gpio_num_t CLK_PIN = GPIO_NUM_2;
 const gpio_num_t DIN_PIN = GPIO_NUM_3;
-#else
-#if CONFIG_IDF_TARGET_ESP32H2
+#elif CONFIG_IDF_TARGET_ESP32H2
 const gpio_num_t CS_LOAD_PIN = GPIO_NUM_12;
 const gpio_num_t CLK_PIN = GPIO_NUM_22;
 const gpio_num_t DIN_PIN = GPIO_NUM_25;
-#endif
-#endif
-#endif
+#else
+#error "Unsupported target: define CS_LOAD_PIN, CLK_PIN, DIN_PIN for this CONFIG_IDF_TARGET_*"
 #endif
 
 // Number of devices MAX7219 / MAX7221 in the chain
