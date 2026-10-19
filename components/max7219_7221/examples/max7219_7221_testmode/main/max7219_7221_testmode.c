@@ -83,7 +83,7 @@ static void on_momentary_button_pressed(void) {
 
 void app_main(void) {
     // Validate the push button pin before it is used in a shift or GPIO call
-    ESP_RETURN_ON_FALSE((TESTMODE_PUSH_BUTTON_PIN >= 0) && (TESTMODE_PUSH_BUTTON_PIN < GPIO_NUM_MAX), ESP_ERR_INVALID_ARG, TAG, "Invalid TESTMODE_PUSH_BUTTON_PIN %d", TESTMODE_PUSH_BUTTON_PIN);
+    ESP_ERROR_CHECK((TESTMODE_PUSH_BUTTON_PIN >= 0) && (TESTMODE_PUSH_BUTTON_PIN < GPIO_NUM_MAX) ? ESP_OK : ESP_ERR_INVALID_ARG);
 
     // Listen to momentary push button on TESTMODE_PUSH_BUTTON_PIN
     ESP_ERROR_CHECK(configure_gpio_isr_dispatcher());
