@@ -38,7 +38,7 @@ static void gpio_isr_handler(void* arg) {
         isr_handler_fn_ptr handlerFn = (isr_handler_fn_ptr) arg;
         BaseType_t enqueueOutcome = xQueueGenericSendFromISR(s_gpio_isr_dispatch_queue, &handlerFn, NULL, queueSEND_TO_BACK);
         if (enqueueOutcome != pdPASS) {
-            ESP_DRAM_LOGE(GpioIsrTag, "xQueueGenericSendFromISR() failed (0x%x) - ISR will be dropped", enqueueOutcome);
+            ESP_DRAM_LOGE(GpioIsrTag, "xQueueGenericSendFromISR() failed (0x%" PRIX32 ") - ISR will be dropped", (uint32_t)enqueueOutcome);
         }
     }
 }
@@ -82,7 +82,7 @@ esp_err_t configure_gpio_isr_dispatcher(void) {
     esp_err_t err =  gpio_install_isr_service(ESP_INTR_FLAG_NONE);
     if (err != ESP_OK) {
         if (shutdown_gpio_isr_queue() != ESP_OK) {
-            ESP_LOGE(GpioIsrTag, "gpio_install_isr_service() failed and cleanup action shutdown_gpio_isr_queue() failed (0x%x)", err);
+            ESP_LOGE(GpioIsrTag, "gpio_install_isr_service() failed and cleanup action shutdown_gpio_isr_queue() failed (0x%" PRIX32 ")", (uint32_t)err);
         }
     }
 

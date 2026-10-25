@@ -124,7 +124,7 @@ void app_main(void) {
         // Display '8' sequentially on all digits of all devices
         for (uint16_t chainId = 1; chainId <= ChainLength; chainId++) {
             for (uint16_t digitId = MAX7219_MIN_DIGIT; digitId <= MAX7219_MAX_DIGIT; digitId++) {
-                ESP_LOGI(TAG, "Device %d: Set digit index %d to 'MAX7219_CODE_B_8'", chainId, digitId);
+                ESP_LOGI(TAG, "Device %" PRIu16 ": Set digit index %" PRIu16 " to 'MAX7219_CODE_B_8'", chainId, digitId);
                 ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, (uint8_t)chainId, (uint8_t)digitId, MAX7219_CODE_B_8));
                 vTaskDelay(DelayBetweenUpdates);
             }

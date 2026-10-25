@@ -235,14 +235,14 @@ esp_err_t led_driver_max7219_free(led_driver_max7219_handle_t handle) {
     esp_err_t err = led_driver_max7219_set_chain_mode(handle, MAX7219_SHUTDOWN_MODE);
     if (err != ESP_OK) {
         firstError = firstError == ESP_OK ? err : firstError;
-        ESP_LOGW(LedDriverMax7219LogTag, "Failed to set MAX7219/MAX7221 in shutdown mode (%d)", err);
+        ESP_LOGW(LedDriverMax7219LogTag, "Failed to set MAX7219/MAX7221 in shutdown mode (%" PRId32 ")", (int32_t)err);
     }
 
     // Remove the device from the bus
     err = spi_bus_remove_device(driver_context->spi_device_handle);
     if (err != ESP_OK) {
         firstError = firstError == ESP_OK ? err : firstError;
-        ESP_LOGW(LedDriverMax7219LogTag, "Failed to remove MAX7219/MAX7221 from SPI bus (%d)", err);
+        ESP_LOGW(LedDriverMax7219LogTag, "Failed to remove MAX7219/MAX7221 from SPI bus (%" PRId32 ")", (int32_t)err);
     }
 
     // Release memory
@@ -517,7 +517,7 @@ static esp_err_t send_chain_one_command_callback(led_driver_max7219_context_t* d
     // NOTE: chainId == 0 means broadcast to all devices, otherwise target a specific device
     if (chain_command->chainId == 0) {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to all devices", chain_command->cmd.address, chain_command->cmd.data);
+        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02" PRIX8 ", data: 0x%02" PRIX8 " } to all devices", chain_command->cmd.address, chain_command->cmd.data);
 #endif
         // Send all devices the same .address and .data
         for (uint8_t deviceIndex = 0; deviceIndex < driver_context->hw_config.chain_length; deviceIndex++) {
@@ -525,7 +525,7 @@ static esp_err_t send_chain_one_command_callback(led_driver_max7219_context_t* d
         }
     } else {
 #if CONFIG_MAX_7219_7221_ENABLE_DEBUG_LOG
-        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02X, data: 0x%02X } to device %d", chain_command->cmd.address, chain_command->cmd.data, chain_command->chainId);
+        ESP_LOGI(LedDriverMax7219LogTag, "Sending { address: 0x%02" PRIX8 ", data: 0x%02" PRIX8 " } to device %" PRIu8, chain_command->cmd.address, chain_command->cmd.data, chain_command->chainId);
 #endif
         // Target a specific device in the chain - The device is given in chainId which is 1-based
         // The array is initialized to 0 which means .address is already set to MAX7219_NOOP_ADDRESS and .data is already set to 0
@@ -545,7 +545,7 @@ static esp_err_t send_chain_command_array_callback(led_driver_max7219_context_t*
         chain_command_t chain_command = { .chainId = chain_command_array->chainId, .cmd = chain_command_array->commands[cmd_index] };
         esp_err_t err = send_chain_one_command_callback(driver_context, &chain_command);
         if (err != ESP_OK) {
-            ESP_LOGE(LedDriverMax7219LogTag, "Failed to send chain (chainId: %d) command { address: %d, data: %d}", chain_command.chainId, chain_command.cmd.address, chain_command.cmd.data);
+            ESP_LOGE(LedDriverMax7219LogTag, "Failed to send chain (chainId: %" PRIu8 ") command { address: %" PRIu8 ", data: %" PRIu8 "}", chain_command.chainId, chain_command.cmd.address, chain_command.cmd.data);
             return err;
         }
     }

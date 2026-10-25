@@ -118,7 +118,7 @@ void app_main(void) {
     const uint8_t digitsCount = sizeof(digitsToDisplay) / sizeof(digitsToDisplay[0]);
 
     // Set digits on the display - This has a mix of Code B and Direct Addressing digits
-    ESP_LOGI(TAG, "Start Device %d: - Start digit index %d", StartDeviceChainId, StartDigitId);
+    ESP_LOGI(TAG, "Start Device %" PRIu8 ": - Start digit index %" PRIu8, StartDeviceChainId, StartDigitId);
     ESP_ERROR_CHECK(led_driver_max7219_set_digits(led_max7219_handle, StartDeviceChainId, StartDigitId, digitsToDisplay, digitsCount));
 
     // Switch to 'normal' mode so digits can be displayed and hold 'all blank' for a little while

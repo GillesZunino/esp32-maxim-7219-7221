@@ -118,7 +118,7 @@ void app_main(void) {
         // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
         bool decimalOn = symbol % 2 == 0;
         max7219_code_b_font_t symbolWithDecimal = decimalOn ? symbol | MAX7219_CODE_B_DP_MASK : symbol;
-        ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+        ESP_LOGI(TAG, "Device %" PRIu8 ": Set digit index %" PRIu16 " to '%" PRIu8 "' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
         ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, (uint8_t)digitId, symbolWithDecimal));
 
         symbol++;
@@ -134,7 +134,7 @@ void app_main(void) {
     int8_t direction = 1;
     do {
         // Set intensity on all devices - MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 is dimmest
-        ESP_LOGI(TAG, "Set intensity to '%d' on all devices in the chain", intensity);
+        ESP_LOGI(TAG, "Set intensity to '%" PRIu8 "' on all devices in the chain", intensity);
         ESP_ERROR_CHECK(led_driver_max7219_set_chain_intensity(led_max7219_handle, intensity));
 
         if (intensity == MAX7219_INTENSITY_DUTY_CYCLE_STEP_16) {

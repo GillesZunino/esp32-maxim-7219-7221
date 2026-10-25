@@ -123,7 +123,7 @@ void app_main(void) {
                 // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
                 bool decimalOn = symbol % 2 == 0;
                 max7219_code_b_font_t symbolWithDecimal = decimalOn ? symbol | MAX7219_CODE_B_DP_MASK : symbol;
-                ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+                ESP_LOGI(TAG, "Device %" PRIu8 ": Set digit index %" PRIu16 " to '%" PRIu8 "' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
                 ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, (uint8_t)digitId, symbolWithDecimal));
                 vTaskDelay(DelayBetweenUpdates);
             }
@@ -185,7 +185,7 @@ void app_main(void) {
                 max7219_direct_addressing_font_t symbol = AllCustomSymbols[symbolIndex];
                 bool decimalOn = ((symbolIndex % 2) == 0) && (symbol != MAX7219_DIRECT_ADDRESSING_BLANK);
                 max7219_direct_addressing_font_t symbolWithDecimal = decimalOn ? symbol | MAX7219_SEGMENT_DP : symbol;
-                ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+                ESP_LOGI(TAG, "Device %" PRIu8 ": Set digit index %" PRIu16 " to '%" PRIu8 "' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
                 ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, (uint8_t)digitId, symbolWithDecimal));
                 vTaskDelay(DelayBetweenUpdates);
             }

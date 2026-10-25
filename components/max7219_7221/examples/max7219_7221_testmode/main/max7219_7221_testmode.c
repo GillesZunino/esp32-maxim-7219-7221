@@ -150,7 +150,7 @@ void app_main(void) {
         // Set the symbol on the specific digit - Also toggle the decimal point on / off as we go
         bool decimalOn = symbol % 2 == 0;
         max7219_code_b_font_t symbolWithDecimal = decimalOn ? symbol | MAX7219_CODE_B_DP_MASK : symbol;
-        ESP_LOGI(TAG, "Device %d: Set digit index %d to '%d' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
+        ESP_LOGI(TAG, "Device %" PRIu8 ": Set digit index %" PRIu16 " to '%" PRIu8 "' - Decimal '%s'", DeviceChainId, digitId, symbolWithDecimal, decimalOn ? "ON" : "OFF");
         ESP_ERROR_CHECK(led_driver_max7219_set_digit(led_max7219_handle, DeviceChainId, (uint8_t)digitId, symbolWithDecimal));
 
         symbol++;
@@ -163,7 +163,7 @@ void app_main(void) {
     do {
         esp_err_t err = gpio_events_queue_dispatch(pdMS_TO_TICKS(1000));
         if (err != ESP_OK && err != ESP_ERR_TIMEOUT) {
-            ESP_LOGE(TAG, "gpio_events_queue_dispatch() failed with error 0x%x", err);
+            ESP_LOGE(TAG, "gpio_events_queue_dispatch() failed with error 0x%" PRIX32, (uint32_t)err);
         }
     } while (true);
 

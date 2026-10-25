@@ -153,10 +153,10 @@ void app_main(void) {
 
             err = display_temp_min_max(currentTemp, minTemp, maxTemp);
             if (err != ESP_OK) {
-                ESP_LOGE(TAG, "Failed to update temperature display '%d'", err);
+                ESP_LOGE(TAG, "Failed to update temperature display '%" PRId32 "'", (int32_t)err);
             }
         } else {
-            ESP_LOGE(TAG, "Unable to read ESP temperature sensor '%d'", err);
+            ESP_LOGE(TAG, "Unable to read ESP temperature sensor '%" PRId32 "'", (int32_t)err);
         }
 
         vTaskDelay(DelayBetweenUpdates);
@@ -235,7 +235,7 @@ static esp_err_t display_temp_min_max(float currentTemp, float minTemp, float ma
 
 static esp_err_t string_to_max7219_symbols(const char* str, uint8_t startDigit, uint8_t symbols[MAX7219_MAX_DIGIT]) {
     ESP_RETURN_ON_FALSE((str != NULL) && (symbols != NULL), ESP_ERR_INVALID_ARG, TAG, "NULL string or symbols array");
-    ESP_RETURN_ON_FALSE((startDigit >= MAX7219_MIN_DIGIT) && (startDigit <= MAX7219_MAX_DIGIT), ESP_ERR_INVALID_ARG, TAG, "Invalid start digit %d", startDigit);
+    ESP_RETURN_ON_FALSE((startDigit >= MAX7219_MIN_DIGIT) && (startDigit <= MAX7219_MAX_DIGIT), ESP_ERR_INVALID_ARG, TAG, "Invalid start digit %" PRIu8, startDigit);
 
     size_t length = strlen(str);
     ESP_RETURN_ON_FALSE(length != 0, ESP_ERR_INVALID_ARG, TAG, "Empty string");
@@ -251,7 +251,7 @@ static esp_err_t string_to_max7219_symbols(const char* str, uint8_t startDigit, 
         }
     }
     if ((digitIndex + charCount > MAX7219_MAX_DIGIT) || (charCount > MAX7219_MAX_DIGIT)) {
-        ESP_LOGE(TAG, "Provided string '%s' is too long to be converted to MAX7219 / MAX7221 symbols starting at digit %d", str, startDigit);
+        ESP_LOGE(TAG, "Provided string '%s' is too long to be converted to MAX7219 / MAX7221 symbols starting at digit %" PRIu8, str, startDigit);
         return ESP_ERR_INVALID_SIZE;
     }
 
