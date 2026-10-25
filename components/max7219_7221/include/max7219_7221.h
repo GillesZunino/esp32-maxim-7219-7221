@@ -29,7 +29,7 @@ typedef struct led_driver_max7219_base* led_driver_max7219_handle_t; ///< Handle
 /**
  * @brief MAX7219 / MAX7221 Code-B symbols.
  */
-typedef enum {
+typedef enum : uint8_t {
     MAX7219_CODE_B_0 = 0,         ///< Digit 0
     MAX7219_CODE_B_1 = 1,         ///< Digit 1
     MAX7219_CODE_B_2 = 2,         ///< Digit 2
@@ -63,7 +63,7 @@ typedef enum {
          - D - DP
  * 
  */
-typedef enum {
+typedef enum : uint8_t{
     MAX7219_SEGMENT_G = 0x01,         ///< Segment G
     MAX7219_SEGMENT_F = 0x02,         ///< Segment F
     MAX7219_SEGMENT_E = 0x04,         ///< Segment E
@@ -77,7 +77,7 @@ typedef enum {
 /**
  * @brief Custom seven-segment display symbols.
  */
-typedef enum {
+typedef enum : uint8_t {
     MAX7219_DIRECT_ADDRESSING_0 = MAX7219_SEGMENT_A | MAX7219_SEGMENT_B | MAX7219_SEGMENT_C | MAX7219_SEGMENT_D | MAX7219_SEGMENT_E | MAX7219_SEGMENT_F,                       ///< Digit 0
     MAX7219_DIRECT_ADDRESSING_1 = MAX7219_SEGMENT_B | MAX7219_SEGMENT_C,                                                                                                       ///< Digit 1
     MAX7219_DIRECT_ADDRESSING_2 = MAX7219_SEGMENT_A | MAX7219_SEGMENT_B | MAX7219_SEGMENT_G | MAX7219_SEGMENT_E | MAX7219_SEGMENT_D,                                           ///< Digit 2
@@ -115,7 +115,7 @@ typedef enum {
 /**
  * @brief MAX7219 / MAX7221 Code-B digit decode.
  */
-typedef enum {
+typedef enum : uint8_t {
     MAX7219_CODE_B_DECODE_NONE = 0x00,        ///< Code B font decode disabled
 
     MAX7219_CODE_B_DECODE_DIGIT_1 = 0x01,     ///< Code B font decode the first digit
@@ -135,7 +135,7 @@ typedef enum {
 /**
  * @brief MAX7219 / MAX7221 operation mode.
  */
-typedef enum {
+typedef enum : uint8_t {
     MAX7219_SHUTDOWN_MODE = 0,        ///< Shutdown mode. All digits are blanked
     MAX7219_NORMAL_MODE = 1,          ///< Normal mode. All digits are displayed normally
     MAX7219_TEST_MODE = 2             ///< Test mode. All segments are turned on, intensity settings are ignored
@@ -147,7 +147,7 @@ typedef enum {
  *       * MAX7219 MAX7219_INTENSITY_STEP_1 means 1/16 duty cycle.
  *       * MAX7221 MAX7219_INTENSITY_STEP_1 means 1/32 duty cycle.
  */
-typedef enum {
+typedef enum : uint8_t {
     MAX7219_INTENSITY_DUTY_CYCLE_STEP_1 = 0x00,       ///< Intensity duty cycle 1/16 (MAX7219) or 1/32 (MAX7221)
     MAX7219_INTENSITY_DUTY_CYCLE_STEP_2 = 0x01,       ///< Intensity duty cycle 2/16 (MAX7219) or 3/32 (MAX7221)
     MAX7219_INTENSITY_DUTY_CYCLE_STEP_3 = 0x02,       ///< Intensity duty cycle 3/16 (MAX7219) or 5/32 (MAX7221)
